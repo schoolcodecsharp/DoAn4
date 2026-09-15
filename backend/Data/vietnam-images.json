@@ -1,0 +1,14 @@
+[
+  { "file": "ha-long.jpg", "title": "File:HaLongBay.JPG", "caption": "Vịnh Hạ Long, Quảng Ninh", "targets": { "Tour": [1,3], "DiaDiem": [1,5,15] } },
+  { "file": "my-khe.jpg", "title": "File:My Khe Beach 1.jpg", "caption": "Bãi biển Mỹ Khê, Đà Nẵng", "targets": { "Tour": [2,4], "DiaDiem": [2,6,16] } },
+  { "file": "cau-vang.jpg", "title": "File:Golden Bridge, Da Nang (I).jpg", "caption": "Cầu Vàng, Bà Nà, Đà Nẵng", "targets": { "Tour": [4], "DiaDiem": [3] } },
+  { "file": "hoi-an.jpg", "title": "File:Hoi'an by the river.jpg", "caption": "Phố cổ Hội An bên sông Thu Bồn", "targets": { "Tour": [2,4], "DiaDiem": [4,7,17] } },
+  { "file": "ma-pi-leng.jpg", "title": "File:Mã Pí Lèng by minhphuc 99kdd.jpg", "caption": "Đèo Mã Pí Lèng, Hà Giang", "targets": { "Tour": [5], "DiaDiem": [8,18] } },
+  { "file": "dong-van.jpg", "title": "File:Dong Van old town.jpg", "caption": "Phố cổ Đồng Văn, Hà Giang", "targets": { "Tour": [5], "DiaDiem": [9,19] } },
+  { "file": "ban-gioc.jpg", "title": "File:Ban Gioc Waterfall - Trung Kanh District - Cao Bang Province - Vietnam - 01 (48119813303).jpg", "caption": "Thác Bản Giốc, Cao Bằng", "targets": { "Tour": [6], "DiaDiem": [10,20] } },
+  { "file": "dai-noi-hue.jpg", "title": "File:Main gate of Imperial palace in Hue - citadel - 2011.jpg", "caption": "Ngọ Môn, Đại Nội Huế", "targets": { "Tour": [7], "DiaDiem": [11,21] } },
+  { "file": "ly-son.jpg", "title": "File:Ly Son Islands (14983179006).jpg", "caption": "Ruộng tỏi trên đảo Lý Sơn, Quảng Ngãi", "targets": { "Tour": [8], "DiaDiem": [12,22] } },
+  { "file": "vuon-hoa-da-lat.jpg", "title": "File:Da Lat Flower Park 1.jpg", "caption": "Vườn hoa Đà Lạt, Lâm Đồng", "targets": { "Tour": [9], "DiaDiem": [13,23] } },
+  { "file": "cai-rang.jpg", "title": "File:Le marché flottant (Cai Rang, Vietnam) (6642699407).jpg", "caption": "Chợ nổi Cái Răng, Cần Thơ", "targets": { "Tour": [10], "DiaDiem": [14,24] } },
+  { "file": "saigon-morin-hue.jpg", "title": "File:Hotel Saigon Morin, Hue (2024) 02.jpg", "caption": "Mặt ngoài khách sạn Saigon Morin, Huế", "targets": { "KhachSan": [8,16] } }
+]

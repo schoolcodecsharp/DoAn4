@@ -1,0 +1,118 @@
+
+/* TripMate product navigation and itinerary workspace. */
+.site-header{height:110px;padding:0 5%;gap:30px;background:linear-gradient(#0b151c66,transparent)}
+.product-nav{display:flex;gap:6px;align-items:center;margin-left:auto;padding:5px;background:#ffffff12;border:1px solid #ffffff25;border-radius:40px;backdrop-filter:blur(16px)}
+.product-nav button{background:none;border:0;color:#fff;padding:11px 17px;border-radius:30px;font-size:13px;white-space:nowrap;transition:background .2s}
+.product-nav button:hover,.product-nav button:focus-visible{background:#ffffff24}.product-nav button[data-view=planner]{background:#ecf4de;color:#244b3e;font-weight:500}
+.site-header .header-actions{margin-left:0;gap:12px}.site-header .menu-button{display:none}.journey-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid #ffffff20;padding:14px 0}
+.workspace-dialog{width:min(1170px,calc(100vw - 40px));max-height:calc(100dvh - 40px);border-radius:22px;color:#243b34;font:400 15px Arial,sans-serif;background:#fafbf7;padding:0;overflow:auto}
+.workspace-dialog::backdrop{background:#081c21aa;backdrop-filter:blur(8px)}
+.workspace-top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:30px 34px;border-bottom:1px solid #e0e6db;background:#fff}
+.workspace-eyebrow{font-size:10px;font-weight:700;letter-spacing:1.8px;color:#738166}.workspace-top h2{font:500 29px EuclidSquare,Arial,sans-serif;letter-spacing:-.7px;margin:10px 0 0;color:#243b34}
+.workspace-close{flex-shrink:0;border:1px solid #d9dfd3;border-radius:50%;width:38px;height:38px;background:white;color:#395347;font-size:25px}
+.planner-layout{display:grid;grid-template-columns:330px minmax(0,1fr)}.planner-form{padding:28px;border-right:1px solid #e0e6db;background:white}.planner-form h3{font-size:18px;margin:0 0 8px}.form-intro{font-size:13px;line-height:1.5;color:#758277;margin-bottom:25px}
+.planner-form>label,.form-pair>label{display:flex;flex-direction:column;gap:9px;font-weight:600;font-size:12px;margin-bottom:20px}.planner-form input[type=number],.planner-form select{width:100%;border:1px solid #dbe2d5;border-radius:9px;background:#fafbf7;color:#263e34;padding:12px;font-size:15px;min-height:45px}
+.form-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.planner-form fieldset{border:0;margin:0;padding:0}.planner-form legend{font-size:12px;font-weight:600;margin-bottom:12px}.interest-options{display:flex;flex-wrap:wrap;gap:8px}.interest-options label{position:relative;cursor:pointer}.interest-options input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}.interest-options span{display:block;padding:9px 12px;border-radius:30px;border:1px solid #dbe2d5;font-size:12px;background:white;color:#52684f}.interest-options input:checked+span{background:#eaf1dd;color:#304e2c;border-color:#a8bd8e}.interest-options input:focus-visible+span{outline:2px solid #456b37;outline-offset:2px}
+.primary-action{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;border-radius:10px;background:#244f40;color:#fff;padding:14px 17px;font-size:14px}.primary-action:hover{background:#32624e}.planning-note{font-size:11px;line-height:1.65;color:#788275;margin-top:15px}.form-error{color:#aa3434;font-size:12px;line-height:1.5;margin:12px 0}
+.plan-result{padding:30px;min-width:0}.plan-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:460px}.plan-empty>span{font-size:75px;color:#88a075}.plan-empty h3{font-size:21px;font-weight:500;margin:12px 0}.plan-empty p{font-size:14px;line-height:1.7;color:#7a8776}.plan-empty>div{font-size:12px;line-height:2.3;color:#7b876d;margin-top:30px;text-align:left}
+.result-heading{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.result-heading h3{font:500 30px EuclidSquare,Arial,sans-serif;margin:0 0 8px}.result-heading p{font-size:13px;color:#71806b;line-height:1.5}.result-badge{border-radius:20px;background:#e8eedf;font-size:10px;padding:7px 10px;white-space:nowrap}
+.budget-summary{margin:23px 0;border:1px solid #dce4d4;background:#eff4e7;border-radius:13px;padding:18px}.budget-total{display:flex;justify-content:space-between;gap:20px;align-items:center}.budget-total span{font-size:12px;color:#5b6f51}.budget-total strong{font-size:23px;letter-spacing:-.5px}.budget-detail{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:17px;border-top:1px solid #d8e2ce;padding-top:15px}.budget-detail div{font-size:10px;color:#6e7c66}.budget-detail b{display:block;font-size:11px;color:#334a2a;margin-top:5px;font-weight:500}.budget-alert{font-size:12px;line-height:1.5;margin-top:12px;color:#9a5921}.budget-note{font-size:11px;color:#6e7c66;margin-top:12px}
+.result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:25px}.result-actions button,.saved-card button{border:1px solid #ccd8c3;border-radius:8px;padding:9px 12px;background:#fff;color:#355331;font-size:12px}.result-actions .save-plan{background:#244f40;color:white;border-color:#244f40}
+.day-card{position:relative;border:1px solid #e0e5da;border-radius:12px;background:#fff;padding:18px 20px;margin-bottom:12px}.day-card header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.day-card h4{font-size:15px;margin:0}.day-card header button{background:transparent;border:0;color:#547b42;font-size:11px;padding:6px}
+.activity{display:grid;grid-template-columns:43px 1fr auto;gap:12px;padding:11px 0;border-top:1px solid #edf0e8}.activity time{font-size:11px;color:#7b8873}.activity strong{font-size:13px;font-weight:500;display:block}.activity small{font-size:10px;color:#8b967f;margin-top:5px;display:block}.activity>span{font-size:11px;color:#6e7d61;white-space:nowrap}.workspace-feedback{padding:0 30px 18px;color:#456438;font-size:13px;line-height:1.5}.saved-dialog{max-width:900px}.saved-note{padding:20px 30px 0;font-size:13px;color:#7b8772}.saved-card{margin:18px 30px;padding:20px;border:1px solid #dce4d3;border-radius:12px;background:white}.saved-card h3{font-size:20px;margin:0 0 8px}.saved-card p{font-size:13px;line-height:1.7;color:#728069}.saved-card footer{display:flex;gap:9px;margin-top:14px}.saved-card .delete-plan{margin-left:auto;color:#a65043}
+.workspace-dialog button:focus-visible,.workspace-dialog input:focus-visible,.workspace-dialog select:focus-visible{outline:2px solid #6c8e50;outline-offset:3px}
+@media(max-width:850px){.site-header{height:90px;padding:0 24px}.product-nav{display:none}.site-header .menu-button{display:block}.header-actions .text-button{font-size:12px}.workspace-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 20px);border-radius:15px}.workspace-top{padding:23px}.workspace-top h2{font-size:24px}.planner-layout{grid-template-columns:1fr}.planner-form{border:0;border-bottom:1px solid #e0e6db;padding:23px}.plan-result{padding:23px}.plan-empty{min-height:260px}.budget-detail{grid-template-columns:repeat(3,1fr);row-gap:13px}.budget-total strong{font-size:19px}.result-heading h3{font-size:26px}.activity{gap:8px;grid-template-columns:38px 1fr}.activity>span{grid-column:2}.saved-card{margin:16px 22px}.workspace-eyebrow{font-size:9px}.result-badge{display:none}}
+
+.return-to-plan{display:block;margin:0 auto 17px;padding:8px 12px;background:#edf3e6;border:1px solid #d7e0ce;border-radius:8px;color:#3e6334;font:12px Arial,sans-serif}
+
+/* Motion for TripMate's functional controls. */
+.product-nav button,.workspace-dialog button,#chat-dialog button:not(.close-chat){position:relative;isolation:isolate}
+.product-nav button,.workspace-dialog button:not(.workspace-close),#chat-dialog button{overflow:hidden}
+.ui-ripple{position:absolute;border-radius:50%;background:currentColor;pointer-events:none;z-index:0}
+.product-nav button,.primary-action,.result-actions button,.saved-card button,.workspace-close,.return-to-plan{transition:background-color .2s,box-shadow .2s,transform .2s,border-color .2s}
+@media(hover:hover){.primary-action:hover,.result-actions button:hover,.saved-card button:hover{transform:translateY(-2px);box-shadow:0 5px 12px #263e3412}.workspace-close:hover{transform:rotate(90deg)}}
+.product-nav button:active,.primary-action:active,.result-actions button:active,.saved-card button:active{transform:scale(.97)}
+.planner-form select,.planner-form input[type=number]{transition:border-color .2s,box-shadow .2s,background .2s}
+.planner-form select:focus,.planner-form input[type=number]:focus{border-color:#91aa79;background:white;box-shadow:0 0 0 3px #b2c99422}
+.interest-options span{transition:background .22s,border-color .22s,transform .22s,box-shadow .22s}
+.interest-options input:checked+span{box-shadow:0 2px 6px #5b78461a;animation:interestSelect .25s ease-out}
+@keyframes interestSelect{0%{transform:scale(.94)}65%{transform:scale(1.04)}100%{transform:scale(1)}}
+.workspace-dialog[open]{animation:none}
+.workspace-dialog[open]::backdrop{animation:workspaceBackdrop .25s ease-out}
+@keyframes workspaceBackdrop{from{background-color:#081c2100;backdrop-filter:blur(0)}to{background-color:#081c21aa;backdrop-filter:blur(8px)}}
+.budget-total strong{font-variant-numeric:tabular-nums}
+#chat-messages .message{animation:messageArrive .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes messageArrive{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.journey-menu:not([hidden]) button{animation:menuItemEnter .28s both}
+.journey-menu:not([hidden]) button:nth-of-type(2){animation-delay:40ms}.journey-menu:not([hidden]) button:nth-of-type(3){animation-delay:80ms}.journey-menu:not([hidden]) button:nth-of-type(4){animation-delay:120ms}
+@keyframes menuItemEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.product-nav *,.workspace-dialog *,.workspace-dialog::backdrop,#chat-dialog *,.journey-menu *{animation:none!important;transition:none!important}.ui-ripple{display:none}.primary-action:hover,.result-actions button:hover,.saved-card button:hover,.workspace-close:hover{transform:none}}
+
+
+.motion-toggle{border:1px solid #ffffff55;border-radius:24px;padding:9px 12px;background:#ffffff15;color:#fff;white-space:nowrap;font-size:11px;cursor:pointer;transition:background .2s}
+.motion-toggle[aria-pressed=true]{background:#e8f2dc;color:#325232;border-color:#d8e6c8}
+.workspace-motion-toggle{margin-left:auto;color:#536348;border-color:#d6dfce;background:#eff3e8}
+.product-nav button{position:relative}.product-nav button:after{content:'';position:absolute;bottom:5px;left:25%;width:50%;height:2px;border-radius:2px;background:currentColor;transform:scaleX(0);transition:transform .3s}
+.product-nav button:hover:after,.product-nav button:focus-visible:after{transform:scaleX(1)}
+.interface-motion-on .workspace-dialog input,.interface-motion-on .workspace-dialog select,.interface-motion-on .interest-options span{transition:border-color .25s,background .25s,box-shadow .25s!important}
+.interface-motion-on .product-nav button{transition:background .25s,transform .25s!important}
+.interface-motion-on #chat-messages .message{animation:messageArrive .45s cubic-bezier(.2,.8,.2,1)!important}
+.interface-motion-on .interest-options input:checked+span{animation:interestSelect .35s ease-out!important}
+.interface-motion-off .workspace-dialog *,.interface-motion-off #chat-dialog *,.interface-motion-off .product-nav *{animation:none!important;transition:none!important}
+@media(max-width:850px){.motion-toggle{font-size:10px;padding:8px}.workspace-top{flex-wrap:wrap;gap:12px}.workspace-top>div{flex:1;min-width:180px}.workspace-motion-toggle{order:3;margin:0}.workspace-top .workspace-close{margin-left:auto}}
+
+/* Keep the close control out of generic button/ripple positioning. */
+#chat-dialog .close-chat{position:absolute;top:12px;right:12px;z-index:10;width:36px;height:36px;display:grid;place-items:center;padding:0;margin:0;line-height:1;border-radius:50%;cursor:pointer;pointer-events:auto;overflow:hidden;isolation:isolate}
+#chat-dialog .close-chat:hover{background:#edf2e8}
+#chat-dialog .chat-heading{padding-right:58px}
+
+/* Interface animations remain enabled without a toggle. */
+.interface-motion-on .workspace-dialog[open]::backdrop{animation:workspaceBackdrop .25s ease-out!important}
+.interface-motion-on .journey-menu:not([hidden]) button{animation:menuItemEnter .28s both!important}
+/* Compact transparent trigger and unrestricted full-screen menu. */
+.site-header .header-actions{margin-left:auto}
+.site-header .menu-button{width:40px;height:40px;padding:9px;gap:5px;border:1px solid #ffffff28;border-radius:9px;background:transparent;backdrop-filter:blur(6px);box-shadow:none;transition:background .25s,border-color .25s}
+.site-header .menu-button:hover{background:#ffffff0d;border-color:#ffffff65}
+.site-header .menu-button span{width:19px;height:1px}
+#journey-menu.immersive-menu{inset:0;width:100vw;height:100vh;height:100dvh;max-height:none;min-height:100dvh;max-width:none;margin:0;animation:none;box-sizing:border-box;overflow-x:hidden;overflow-y:auto}
+/* Minimal close control and a smaller, slower destination strip. */
+#journey-menu .menu-dismiss{border:0;border-radius:0;background:transparent;box-shadow:none}
+#journey-menu .menu-destination{width:22vw;min-width:190px;height:22vh;min-height:140px;max-height:210px}
+#journey-menu .menu-destination figcaption{bottom:15px;left:17px}
+#journey-menu .menu-destination strong{font-size:23px}
+#journey-menu .menu-film{animation:menu-drift-left 100s linear infinite}
+@keyframes menu-drift-left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:700px){#journey-menu .menu-destination{width:48vw;min-width:160px;height:19vh;min-height:130px}}
+/* Airier menu proportions. */
+#journey-menu .menu-brand{font-size:38px;letter-spacing:-1.5px}
+#journey-menu .menu-brand>span{font-size:9px;padding:4px 6px}
+#journey-menu .menu-brand p{font-size:11px;margin-top:14px}
+#journey-menu .menu-links button{font-size:clamp(21px,2.3vw,32px);padding:9px 0}
+#journey-menu .menu-links button>span{font-size:20px}
+#journey-menu .menu-gallery{padding-top:45px}
+#journey-menu .menu-destination{width:19vw;min-width:170px;height:19vh;min-height:125px;max-height:180px}
+#journey-menu .menu-destination strong{font-size:20px}
+@media(max-width:700px){#journey-menu .menu-brand{font-size:30px}#journey-menu .menu-links button{font-size:23px}#journey-menu .menu-gallery{padding-top:30px}#journey-menu .menu-destination{width:43vw;min-width:145px;height:17vh;min-height:115px}}
+/* Balance the menu around a shared content grid. */
+#journey-menu.immersive-menu{display:flex;flex-direction:column}
+#journey-menu .menu-top{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:8vw;width:100%;max-width:1440px;margin:0 auto;min-height:0;padding:clamp(65px,10vh,110px) 9vw 35px;box-sizing:border-box;flex-shrink:0}
+#journey-menu .menu-brand{padding-top:25px}
+#journey-menu .menu-links{width:100%;max-width:420px;justify-self:end;margin-top:0}
+#journey-menu .menu-gallery{margin-top:auto;padding-top:30px;flex-shrink:0}
+#journey-menu .menu-gallery-heading{max-width:1440px;margin:0 auto;box-sizing:border-box}
+#journey-menu .menu-foot{width:100%;max-width:1440px;margin:0 auto;padding:24px 9vw 30px;box-sizing:border-box;flex-shrink:0}
+#journey-menu .menu-dismiss{top:28px;right:4vw;text-align:center;padding:0;display:grid;place-items:center;line-height:1}
+@media(max-width:700px){#journey-menu .menu-top{grid-template-columns:1fr;gap:25px;padding:65px 7vw 22px}#journey-menu .menu-brand{padding-top:0}#journey-menu .menu-links{max-width:none}#journey-menu .menu-gallery{padding-top:20px}#journey-menu .menu-foot{padding:20px 7vw}}
+/* Spread menu content toward the viewport edges. */
+#journey-menu .menu-top{max-width:none;margin:0;padding-left:4vw;padding-right:4vw}
+#journey-menu .menu-gallery-heading{max-width:none;padding-left:4vw;padding-right:4vw}
+#journey-menu .menu-foot{max-width:none;padding-left:4vw;padding-right:4vw}
+@media(max-width:700px){#journey-menu .menu-top,#journey-menu .menu-gallery-heading,#journey-menu .menu-foot{padding-left:24px;padding-right:24px}}
+/* Anchor the menu logo in the upper-left corner. */
+#journey-menu .menu-brand{position:absolute;top:28px;left:4vw;padding-top:0}
+#journey-menu .menu-links{grid-column:2}
+@media(max-width:700px){#journey-menu .menu-brand{top:24px;left:24px}#journey-menu .menu-top{padding-top:125px}#journey-menu .menu-links{grid-column:1}}
+#journey-menu .menu-brand{top:44px}
+@media(max-width:700px){#journey-menu .menu-brand{top:36px}}
+/* Raise the destination strip slightly while preserving its spacing. */
+#journey-menu .menu-gallery{position:relative;top:-24px}

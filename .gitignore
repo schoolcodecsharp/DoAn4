@@ -1,0 +1,41 @@
+# Local configuration and secrets
+backend/appsettings.json
+backend/appsettings.*.local.json
+.env
+.env.*
+!.env.example
+
+# .NET build and IDE files
+**/bin/
+**/obj/
+**/.vs/
+*.user
+*.suo
+
+# Frontend dependencies and build output
+**/node_modules/
+**/dist/
+
+# Logs and temporary command output
+*.log
+err*.txt
+out*.txt
+final_err.txt
+final_out.txt
+fix_err.txt
+fix_out.txt
+mysql_error.txt
+mysql_output.txt
+
+# Local database/image backups
+backend/backups/
+
+# Legacy working copy (contains its own Git repository and duplicate assets)
+frontend_original/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
