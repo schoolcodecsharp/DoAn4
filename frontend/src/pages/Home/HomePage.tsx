@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './home.css';
 import { useResource, type TravelImage } from '../User/catalog';
@@ -21,22 +21,67 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useSession();
   const { data: images } = useResource<TravelImage[]>('/hinhanh');
-  const imageFor = (ownerId: number) => localImageUrl(images?.find(p => p.loaiDoiTuong === 'DiaDiem' && p.maDoiTuong === ownerId)?.duongDan);
+  const imageFor = (ownerId: number) => localImageUrl(images?.find(p => p.loaiDoiTuong === 'DiaDiem' && p.maDoiTuong === ownerId)?.duongDan) || ({ 1: '/images/Vinh-ha-long.jpg', 4: '/images/hoi-an.jpg', 3: '/images/cau-vang.jpg' }[ownerId]);
   const heroSlides = slideContent.map(slide => ({ ...slide, image: imageFor(slide.ownerId) }));
   const destinations = destinationContent.map(destination => ({ ...destination, image: imageFor(destination.ownerId) }));
   const [activeSlide, setActiveSlide] = useState(0);
   const [paused, setPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const holdTimer = useRef<number | undefined>(undefined);
+  const [holding, setHolding] = useState(false);
+  const cancelHold = () => {
+    window.clearTimeout(holdTimer.current);
+    holdTimer.current = undefined;
+    setHolding(false);
+  };
+  useEffect(() => {
+    const cancel = () => {
+      window.clearTimeout(holdTimer.current);
+      holdTimer.current = undefined;
+      setHolding(false);
+    };
+    window.addEventListener('pointerup', cancel);
+    window.addEventListener('blur', cancel);
+    document.addEventListener('visibilitychange', cancel);
+    document.addEventListener('scroll', cancel, true);
+    return () => {
+      window.clearTimeout(holdTimer.current);
+      window.removeEventListener('pointerup', cancel);
+      window.removeEventListener('blur', cancel);
+      document.removeEventListener('visibilitychange', cancel);
+      document.removeEventListener('scroll', cancel, true);
+    };
+  }, []);
+  const isBannerSurface = (event: React.PointerEvent<HTMLElement>) =>
+    event.pointerType === 'mouse' && !(event.target as Element).closest('a, button, input, select, textarea');
+  const startHold = (event: React.PointerEvent<HTMLElement>) => {
+    if (!isBannerSurface(event) || event.button !== 0 || holdTimer.current !== undefined) return;
+    event.preventDefault();
+    setHolding(true);
+    setPaused(true);
+    holdTimer.current = window.setTimeout(() => {
+      setActiveSlide(current => (current + 1) % slideContent.length);
+      setHolding(false);
+      holdTimer.current = undefined;
+    }, 850);
+  };
   useEffect(() => {
     if (paused) return;
     const timer = window.setInterval(() => setActiveSlide(current => (current + 1) % heroSlides.length), 6000);
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [paused, heroSlides.length]);
   const hero = heroSlides[activeSlide];
   return <main className="booking-home">
-    <section className="booking-hero">
-      {hero.image && <img className="booking-hero__image" key={hero.image} src={hero.image} alt={hero.alt} />}
+    <section className={`booking-hero ${holding ? 'is-holding' : ''}`}
+      onPointerDown={startHold}
+      onPointerMove={event => {
+        if (!isBannerSurface(event)) cancelHold();
+      }}
+      onPointerUp={cancelHold} onPointerCancel={cancelHold}
+      onPointerLeave={cancelHold}>
+      {heroSlides.map((slide, i) => slide.image && <img className={`booking-hero__image ${i === activeSlide ? 'is-active' : ''}`} key={slide.ownerId} src={slide.image} alt={i === activeSlide ? slide.alt : ''} aria-hidden={i !== activeSlide} />)}
       <div className="booking-hero__shade" />
-      <div className="booking-hero__content">
+      <p className="banner-hold-hint">Nhấn giữ chuột trái để đổi điểm đến <span>↗</span></p>
+      <div className="booking-hero__content" key={activeSlide}>
         <p className="booking-eyebrow">{hero.eyebrow}</p>
         <h1>{hero.title}</h1>
         <p className="booking-hero__copy">{hero.copy}</p>
@@ -56,6 +101,7 @@ const HomePage: React.FC = () => {
       <button className="booking-search__field" onClick={() => navigate('/hotels')}><small>02 · NGHỈ NGƠI</small><b>Tìm khách sạn</b></button>
       <button className="booking-search__go" onClick={() => navigate('/tours')}>Xem tour</button>
     </section>
+    <section className="home-story" id="gioi-thieu"><div><p className="user-kicker">01 / VỀ NVT DU LỊCH</p><h2>Đi để thấy.<br/>Ở lại để <em>cảm nhận.</em></h2></div><div><p className="story-lead">Có những nơi ta đến một lần,<br/>nhưng nhớ về rất lâu.</p><p>Tiếng sóng buổi sớm, một con phố nhỏ, bữa cơm đậm vị địa phương. Chúng mình tin rằng một chuyến đi đáng nhớ bắt đầu từ những điều giản dị như thế.</p><p>NVT đồng hành cùng bạn tìm điểm đến, chọn nơi nghỉ và sắp xếp từng ngày — để mỗi hành trình mang một dấu ấn riêng.</p><Link to="/destinations" className="editorial-link">Tìm cảm hứng cho chuyến đi <span>↗</span></Link></div></section>
     <section className="booking-section booking-services">
       <div className="booking-section__heading"><div><p className="booking-eyebrow booking-eyebrow--dark">MỌI THỨ CHO CHUYẾN ĐI CỦA BẠN</p><h2>Một điểm dừng,<br /><em>vạn trải nghiệm.</em></h2></div><p className="booking-section__description">Từ một ý tưởng nhỏ đến một hành trình đáng nhớ.<br />Tìm mọi điều bạn cần, ở cùng một nơi.</p></div>
       <div className="booking-services__grid">
