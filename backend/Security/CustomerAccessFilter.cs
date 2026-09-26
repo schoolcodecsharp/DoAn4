@@ -19,7 +19,16 @@ public sealed class CustomerAccessFilter(INguoiDungRepository users) : IAsyncAut
         var controller = context.RouteData.Values["controller"]?.ToString() ?? "";
         var action = context.RouteData.Values["action"]?.ToString() ?? "";
         if (controller.Equals("Auth", StringComparison.OrdinalIgnoreCase) && (action is "Login" or "Register")) return;
-        if (HttpMethods.IsGet(context.HttpContext.Request.Method) && PublicCatalogs.Contains(controller)) return;
+        if (HttpMethods.IsGet(context.HttpContext.Request.Method) && PublicCatalogs.Contains(controller))
+        {
+            var reader = context.HttpContext.User;
+            if (reader.IsInRole("1") && int.TryParse(reader.FindFirstValue(ClaimTypes.NameIdentifier), out var readerId))
+            {
+                var account = await users.GetByIdAsync(readerId);
+                context.HttpContext.Items["CatalogAdmin"] = account is { TrangThai: true, MaVaiTro: 1 };
+            }
+            return;
+        }
         var principal = context.HttpContext.User;
         if (principal.Identity?.IsAuthenticated != true || !int.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var id))
         { context.Result = new UnauthorizedObjectResult(new { message = "Vui lòng đăng nhập để tiếp tục." }); return; }
