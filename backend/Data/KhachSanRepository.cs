@@ -60,10 +60,10 @@ namespace backend.Data
             using var conn = GetConnection();
             var sql = @"
                 INSERT INTO KhachSan (TenKhachSan, LoaiLuuTru, MoTa, DiaChi, PhuongXa, QuanHuyen, 
-                                      TinhThanh, ViDo, KinhDo, AnhDaiDien, GiaPhongMin, GiaPhongMax, 
+                                      TinhThanh, ViDo, KinhDo, GiaPhongMin, GiaPhongMax, 
                                       SoDienThoai, TrangThai, NgayTao, NgayCapNhat)
                 VALUES (@TenKhachSan, @LoaiLuuTru, @MoTa, @DiaChi, @PhuongXa, @QuanHuyen, 
-                        @TinhThanh, @ViDo, @KinhDo, @AnhDaiDien, @GiaPhongMin, @GiaPhongMax, 
+                        @TinhThanh, @ViDo, @KinhDo, @GiaPhongMin, @GiaPhongMax, 
                         @SoDienThoai, @TrangThai, NOW(), NOW());
                 SELECT LAST_INSERT_ID();";
             return await conn.ExecuteScalarAsync<int>(sql, dto);
@@ -76,7 +76,7 @@ namespace backend.Data
                 UPDATE KhachSan SET 
                     TenKhachSan = @TenKhachSan, LoaiLuuTru = @LoaiLuuTru, MoTa = @MoTa, DiaChi = @DiaChi, 
                     PhuongXa = @PhuongXa, QuanHuyen = @QuanHuyen, TinhThanh = @TinhThanh, 
-                    ViDo = @ViDo, KinhDo = @KinhDo, AnhDaiDien = @AnhDaiDien, GiaPhongMin = @GiaPhongMin, 
+                    ViDo = @ViDo, KinhDo = @KinhDo, GiaPhongMin = @GiaPhongMin, 
                     GiaPhongMax = @GiaPhongMax, SoDienThoai = @SoDienThoai, TrangThai = @TrangThai, 
                     NgayCapNhat = NOW()
                 WHERE MaKhachSan = @Id";
@@ -90,7 +90,7 @@ namespace backend.Data
         public async Task<bool> DeleteAsync(int id)
         {
             using var conn = GetConnection();
-            var affected = await conn.ExecuteAsync("DELETE FROM KhachSan WHERE MaKhachSan = @Id", new { Id = id });
+            var affected = await conn.ExecuteAsync("UPDATE KhachSan SET TrangThai=0 WHERE MaKhachSan = @Id", new { Id = id });
             return affected > 0;
         }
     }

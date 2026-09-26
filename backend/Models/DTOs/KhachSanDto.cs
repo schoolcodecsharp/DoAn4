@@ -5,6 +5,7 @@ namespace backend.DTOs
         int IImageOwner.ImageOwnerId => MaKhachSan;
         string IImageOwner.ImageOwnerType => "KhachSan";
         public List<HinhAnhResponseDto> HinhAnh { get; set; } = new();
+        public string? AnhDaiDien { get; set; }
         public int MaKhachSan { get; set; }
         public string TenKhachSan { get; set; } = null!;
         public string LoaiLuuTru { get; set; } = "Hotel";
@@ -15,7 +16,6 @@ namespace backend.DTOs
         public string? TinhThanh { get; set; }
         public decimal? ViDo { get; set; }
         public decimal? KinhDo { get; set; }
-        public string? AnhDaiDien { get; set; }
         public decimal GiaPhongMin { get; set; }
         public decimal GiaPhongMax { get; set; }
         public string? SoDienThoai { get; set; }
@@ -37,7 +37,6 @@ namespace backend.DTOs
         public string? TinhThanh { get; set; }
         public decimal? ViDo { get; set; }
         public decimal? KinhDo { get; set; }
-        public string? AnhDaiDien { get; set; }
         public decimal GiaPhongMin { get; set; }
         public decimal GiaPhongMax { get; set; }
         public string? SoDienThoai { get; set; }
