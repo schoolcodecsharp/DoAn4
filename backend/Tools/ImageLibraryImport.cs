@@ -76,15 +76,6 @@ public static class ImageLibraryImport
             var backup = Path.Combine(backupDir, $"hinhanh-before-{DateTime.UtcNow:yyyyMMdd-HHmmssfff}.json");
             await File.WriteAllTextAsync(backup, JsonSerializer.Serialize(await conn.QueryAsync("SELECT * FROM HinhAnh"), Json));
             Console.WriteLine($"Image-table backup: {backup}");
-            // Additive migration: existing rows and legacy AnhDaiDien columns are retained.
-            foreach (var (column, definition) in new Dictionary<string, string> {
-                ["Nguon"] = "VARCHAR(1000) NULL", ["TacGia"] = "TEXT NULL", ["GiayPhep"] = "VARCHAR(100) NULL", ["UrlGiayPhep"] = "VARCHAR(500) NULL" })
-                if (await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='HinhAnh' AND COLUMN_NAME=@column", new { column }) == 0)
-                    await conn.ExecuteAsync($"ALTER TABLE HinhAnh ADD COLUMN {column} {definition}");
-            var enumType = await conn.ExecuteScalarAsync<string>("SELECT COLUMN_TYPE FROM information_schema.columns WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='HinhAnh' AND COLUMN_NAME='LoaiDoiTuong'");
-            if (enumType != null && !enumType.Contains("'LoaiPhong'"))
-                await conn.ExecuteAsync("ALTER TABLE HinhAnh MODIFY LoaiDoiTuong ENUM('DiaDiem','NhaHang','KhachSan','Tour','LoaiPhong') NOT NULL");
-
             await using var tx = await conn.BeginTransactionAsync();
             var added = 0;
             for (var i = 0; i < entries.Count; i++)
@@ -94,13 +85,14 @@ public static class ImageLibraryImport
                         if (await conn.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {target.Key} WHERE {OwnerKeys[target.Key]}=@id", new { id }, tx) != 1)
                             throw new InvalidOperationException($"Missing image owner: {target.Key}/{id}; import rolled back.");
                         var photo = metadata[i];
-                        var exists = await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM HinhAnh WHERE LoaiDoiTuong=@type AND MaDoiTuong=@id AND DuongDan=@DuongDan", new { type = target.Key, id, photo.DuongDan }, tx);
+                        var ownerColumn = OwnerKeys[target.Key];
+                        var exists = await conn.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM HinhAnh WHERE {ownerColumn}=@id AND DuongDan=@DuongDan", new { id, photo.DuongDan }, tx);
                         if (exists != 0) continue;
-                        var order = await conn.ExecuteScalarAsync<int>("SELECT COALESCE(MAX(ThuTu),-1)+1 FROM HinhAnh WHERE LoaiDoiTuong=@type AND MaDoiTuong=@id", new { type = target.Key, id }, tx);
-                        added += await conn.ExecuteAsync("""
-                            INSERT INTO HinhAnh (LoaiDoiTuong,MaDoiTuong,DuongDan,MoTa,ThuTu,Nguon,TacGia,GiayPhep,UrlGiayPhep)
-                            VALUES (@type,@id,@DuongDan,@MoTa,@order,@Nguon,@TacGia,@GiayPhep,@UrlGiayPhep)
-                            """, new { type = target.Key, id, photo.DuongDan, photo.MoTa, order, photo.Nguon, photo.TacGia, photo.GiayPhep, photo.UrlGiayPhep }, tx);
+                        var order = await conn.ExecuteScalarAsync<int>($"SELECT COALESCE(MAX(ThuTu),-1)+1 FROM HinhAnh WHERE {ownerColumn}=@id", new { id }, tx);
+                        added += await conn.ExecuteAsync($"""
+                            INSERT INTO HinhAnh ({ownerColumn},DuongDan,MoTa,ThuTu,Nguon,TacGia,GiayPhep,UrlGiayPhep)
+                            VALUES (@id,@DuongDan,@MoTa,@order,@Nguon,@TacGia,@GiayPhep,@UrlGiayPhep)
+                            """, new { id, photo.DuongDan, photo.MoTa, order, photo.Nguon, photo.TacGia, photo.GiayPhep, photo.UrlGiayPhep }, tx);
                     }
             await tx.CommitAsync();
             Console.WriteLine($"Imported {added} new HinhAnh rows from {metadata.Count} local photos. Existing rows preserved.");

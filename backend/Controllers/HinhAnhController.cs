@@ -44,6 +44,41 @@ public class HinhAnhController : ControllerBase
     [HttpDelete("{id}")] public async Task<IActionResult> Delete(int id)
     { return await _svc.DeleteAsync(id) ? NoContent() : NotFound(); }
 
+    // Admin authorization is enforced by CustomerAccessFilter, including this upload.
+    [HttpPost("upload")]
+    [RequestSizeLimit(9 * 1024 * 1024)]
+    public async Task<IActionResult> Upload(IFormFile file, [FromForm] string loaiDoiTuong,
+        [FromForm] int maDoiTuong, [FromForm] string? moTa, [FromForm] int thuTu = 0)
+    {
+        if (!Owners.TryGetValue(loaiDoiTuong, out var ownerColumn) || maDoiTuong < 1 || thuTu < 0 || (moTa?.Length ?? 0) > 255)
+            return BadRequest(new { message = "Đối tượng, mô tả hoặc thứ tự ảnh không hợp lệ." });
+        if (file.Length == 0 || file.Length > 8 * 1024 * 1024)
+            return BadRequest(new { message = "Mỗi ảnh phải nhỏ hơn hoặc bằng 8 MB." });
+        var ownerType = Owners.Keys.Single(k => k.Equals(loaiDoiTuong, StringComparison.OrdinalIgnoreCase));
+        await using var conn = new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
+        if (await conn.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {ownerType} WHERE {ownerColumn}=@maDoiTuong", new { maDoiTuong }) != 1)
+            return BadRequest(new { message = "Hãy lưu đối tượng trước khi tải ảnh." });
+        await using var memory = new MemoryStream();
+        await file.CopyToAsync(memory);
+        var bytes = memory.ToArray();
+        string? extension = bytes.Length >= 12 && bytes[0] == 0xff && bytes[1] == 0xd8 && bytes[2] == 0xff ? ".jpg" :
+            bytes.Length >= 24 && bytes.Take(8).SequenceEqual(new byte[] {137,80,78,71,13,10,26,10}) ? ".png" :
+            bytes.Length >= 16 && System.Text.Encoding.ASCII.GetString(bytes,0,4) == "RIFF" && System.Text.Encoding.ASCII.GetString(bytes,8,4) == "WEBP" ? ".webp" : null;
+        if (extension == null) return BadRequest(new { message = "Chỉ nhận file ảnh JPG, PNG hoặc WebP; không nhận SVG." });
+        var folder = Path.Combine(_env.WebRootPath, "media", "uploads");
+        Directory.CreateDirectory(folder);
+        var name = Guid.NewGuid().ToString("N") + extension;
+        var filePath = Path.Combine(folder, name);
+        try
+        {
+            await System.IO.File.WriteAllBytesAsync(filePath, bytes);
+            var id = await _svc.CreateAsync(new CreateHinhAnhDto { LoaiDoiTuong = ownerType, MaDoiTuong = maDoiTuong,
+                DuongDan = "/media/uploads/" + name, MoTa = moTa, ThuTu = thuTu });
+            return CreatedAtAction(nameof(GetById), new { id }, await _svc.GetByIdAsync(id));
+        }
+        catch { if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath); throw; }
+    }
+
     private async Task<string?> Validate(string type, int ownerId, string path)
     {
         if (!Owners.TryGetValue(type, out var key) || ownerId < 1) return "Loại hoặc mã đối tượng ảnh không hợp lệ.";

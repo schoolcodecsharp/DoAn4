@@ -28,7 +28,7 @@ dotnet run -- --download-images
 dotnet run -- --import-images
 ```
 
-Lệnh tải không ghi MySQL. Lệnh nhập sao lưu bảng ảnh vào `backend/backups`, thêm các trường nguồn/giấy phép nếu chưa có rồi nhập liên kết trong transaction. Không chạy lại toàn bộ `CSDL.sql` trên database đang dùng.
+Lệnh tải không ghi MySQL. Lệnh nhập sao lưu bảng ảnh vào `backend/backups`, thêm các trường nguồn/giấy phép nếu chưa có rồi nhập liên kết trong transaction. Không chạy lại toàn bộ `database/CSDL.sql` trên database đang dùng.
 
 Danh sách nguồn và mã đối tượng được duyệt ở `backend/data/vietnam-images.json`. Các mã đang ứng với database WebDuLich hiện tại; kiểm tra lại mã và tên đối tượng trước khi dùng manifest trên database khác.
 
