@@ -32,8 +32,15 @@ namespace backend.DTOs
         public string GhiChu { get; set; }
     }
 
-    public class TourChiTietResponseDto
+    public class TourChiTietResponseDto : IImageOwner
     {
+        int IImageOwner.ImageOwnerId => MaDiaDiem ?? MaNhaHang ?? MaKhachSan ?? 0;
+        string IImageOwner.ImageOwnerType => LoaiDiaDiem;
+        public List<HinhAnhResponseDto> HinhAnh { get; set; } = new();
+        public string? AnhDaiDien { get; set; }
+        public string? TenDiaDiem { get; set; }
+        public string? MoTa { get; set; }
+        public string? DiaChi { get; set; }
         public int MaTourChiTiet { get; set; }
         public int MaTour { get; set; }
         public int NgayThu { get; set; }

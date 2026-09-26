@@ -10,6 +10,15 @@ namespace backend.Data
 {
     public class TourChiTietRepository : ITourChiTietRepository
     {
+        private const string SelectActivities = """
+            SELECT ct.*, COALESCE(d.TenDiaDiem, n.TenNhaHang, k.TenKhachSan) AS TenDiaDiem,
+                COALESCE(d.MoTa, n.MoTa, k.MoTa) AS MoTa,
+                COALESCE(d.DiaChi, n.DiaChi, k.DiaChi) AS DiaChi
+            FROM TourChiTiet ct
+            LEFT JOIN DiaDiem d ON ct.MaDiaDiem = d.MaDiaDiem AND ct.LoaiDiaDiem = 'DiaDiem'
+            LEFT JOIN NhaHang n ON ct.MaNhaHang = n.MaNhaHang AND ct.LoaiDiaDiem = 'NhaHang'
+            LEFT JOIN KhachSan k ON ct.MaKhachSan = k.MaKhachSan AND ct.LoaiDiaDiem = 'KhachSan'
+            """;
         private readonly string _connectionString;
 
         public TourChiTietRepository(IConfiguration config)
@@ -22,21 +31,21 @@ namespace backend.Data
         public async Task<IEnumerable<TourChiTietResponseDto>> GetAllAsync()
         {
             using var conn = GetConnection();
-            var sql = "SELECT * FROM TourChiTiet";
+            var sql = SelectActivities + " ORDER BY ct.MaTour, ct.NgayThu, ct.ThuTu, ct.MaTourChiTiet";
             return await conn.QueryAsync<TourChiTietResponseDto>(sql);
         }
 
         public async Task<TourChiTietResponseDto> GetByIdAsync(int id)
         {
             using var conn = GetConnection();
-            var sql = "SELECT * FROM TourChiTiet WHERE MaTourChiTiet = @Id";
+            var sql = SelectActivities + " WHERE ct.MaTourChiTiet = @Id";
             return await conn.QuerySingleOrDefaultAsync<TourChiTietResponseDto>(sql, new { Id = id });
         }
 
         public async Task<IEnumerable<TourChiTietResponseDto>> GetByTourAsync(int maTour)
         {
             using var conn = GetConnection();
-            var sql = "SELECT * FROM TourChiTiet WHERE MaTour = @MaTour ORDER BY NgayThu, ThuTu";
+            var sql = SelectActivities + " WHERE ct.MaTour = @MaTour ORDER BY ct.NgayThu, ct.ThuTu, ct.MaTourChiTiet";
             return await conn.QueryAsync<TourChiTietResponseDto>(sql, new { MaTour = maTour });
         }
 
