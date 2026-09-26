@@ -42,6 +42,7 @@ namespace backend.Data
 
         public async Task<int> CreateAsync(CreateTourKhoiHanhDto dto)
         {
+            if(dto.SoChoToiDa < 1 || dto.GiaApDung < 0 || dto.SoChoDaDat != 0) throw new backend.Security.RequestRuleException("Lịch mới phải có số chỗ dương, giá không âm và chưa có chỗ đã đặt.");
             using var conn = GetConnection();
             var sql = @"INSERT INTO TourKhoiHanh (MaTour, NgayKhoiHanh, SoChoToiDa, SoChoDaDat, GiaApDung, TrangThai) 
                         VALUES (@MaTour, @NgayKhoiHanh, @SoChoToiDa, @SoChoDaDat, @GiaApDung, @TrangThai);
@@ -51,20 +52,26 @@ namespace backend.Data
 
         public async Task<bool> UpdateAsync(int id, UpdateTourKhoiHanhDto dto)
         {
+            if(dto.SoChoToiDa < 1 || dto.GiaApDung < 0) throw new backend.Security.RequestRuleException("Số chỗ phải dương và giá không âm.");
             using var conn = GetConnection();
-            var sql = @"UPDATE TourKhoiHanh SET MaTour = @MaTour, NgayKhoiHanh = @NgayKhoiHanh, SoChoToiDa = @SoChoToiDa, SoChoDaDat = @SoChoDaDat, 
+            var current = await conn.QuerySingleOrDefaultAsync<TourKhoiHanhResponseDto>("SELECT * FROM TourKhoiHanh WHERE MaKhoiHanh=@id",new{id});
+            if(current == null) return false;
+            if(current.MaTour != dto.MaTour || current.NgayKhoiHanh.Date != dto.NgayKhoiHanh.Date)
+                throw new backend.Security.RequestRuleException("Không đổi tour/ngày của đợt đã tạo. Hãy tạo đợt mới để bảo toàn đơn đặt.");
+            var sql = @"UPDATE TourKhoiHanh SET SoChoToiDa = @SoChoToiDa,
                         GiaApDung = @GiaApDung, TrangThai = @TrangThai 
-                        WHERE MaKhoiHanh = @Id";
+                        WHERE MaKhoiHanh = @Id AND SoChoDaDat <= @SoChoToiDa";
             var parameters = new DynamicParameters(dto);
             parameters.Add("Id", id);
             var affected = await conn.ExecuteAsync(sql, parameters);
-            return affected > 0;
+            if(affected == 0) throw new backend.Security.RequestRuleException("Tổng số chỗ không được thấp hơn số chỗ đã đặt.",409);
+            return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             using var conn = GetConnection();
-            var sql = "DELETE FROM TourKhoiHanh WHERE MaKhoiHanh = @Id";
+            var sql = "UPDATE TourKhoiHanh SET TrangThai='FullyBooked' WHERE MaKhoiHanh = @Id";
             var affected = await conn.ExecuteAsync(sql, new { Id = id });
             return affected > 0;
         }

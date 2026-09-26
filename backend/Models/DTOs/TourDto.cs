@@ -16,7 +16,6 @@ namespace backend.DTOs
         public decimal GiaTourMax { get; set; }
         public int SoNguoiToiDa { get; set; } = 20;
         public int SoNguoiToiThieu { get; set; } = 1;
-        public string AnhDaiDien { get; set; }
         public string TrangThai { get; set; } = "Draft";
     }
 
@@ -34,7 +33,6 @@ namespace backend.DTOs
         public decimal GiaTourMax { get; set; }
         public int SoNguoiToiDa { get; set; }
         public int SoNguoiToiThieu { get; set; }
-        public string AnhDaiDien { get; set; }
         public string TrangThai { get; set; }
     }
 
@@ -43,6 +41,8 @@ namespace backend.DTOs
         int IImageOwner.ImageOwnerId => MaTour;
         string IImageOwner.ImageOwnerType => "Tour";
         public List<HinhAnhResponseDto> HinhAnh { get; set; } = new();
+        // Derived from the destinations in TourChiTiet, not a second stored address.
+        public string? TinhThanh { get; set; }
         public int MaTour { get; set; }
         public int MaNguoiTao { get; set; }
         public string TenTour { get; set; }
