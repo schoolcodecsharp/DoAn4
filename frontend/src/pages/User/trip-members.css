@@ -1,0 +1,14 @@
+.trip-members-section { margin-top: 20px; border-top: 1px solid #dce2d5; padding-top: 18px; }
+.trip-members > p { font-size: 13px; line-height: 1.7; color: #52685b; }
+.member-invite-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.member-invite-controls input { flex: 1 1 200px; min-width: 0; }
+.member-list { list-style: none; padding: 0; margin: 20px 0 0; }
+.member-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid #e2e6dc; overflow-wrap: anywhere; }
+.member-list li > div:first-child { display: grid; gap: 6px; min-width: 0; }
+.member-list small, .member-list span { font-size: 12px; color: #52685b; }
+.member-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.member-actions button { cursor: pointer; }
+.trip-invitations { margin-bottom: 20px; }
+.trip-invitations article { padding: 16px 0; border-top: 1px solid #dce2d5; }
+.trip-invitations h3 { margin: 0; }
+@media (max-width: 520px) { .member-list li { align-items: flex-start; flex-direction: column; } .member-invite-controls { flex-direction: column; } .member-invite-controls input { flex-basis: auto; width: 100%; } }
