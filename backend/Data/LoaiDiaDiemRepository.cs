@@ -58,7 +58,7 @@ namespace backend.Data
         public async Task<bool> DeleteAsync(int id)
         {
             using var conn = GetConnection();
-            var sql = "DELETE FROM LoaiDiaDiem WHERE MaLoai = @Id";
+            var sql = "UPDATE LoaiDiaDiem SET TrangThai=0 WHERE MaLoai = @Id";
             var affected = await conn.ExecuteAsync(sql, new { Id = id });
             return affected > 0;
         }
