@@ -3,6 +3,7 @@ import { useSession } from '../../context/AuthContext';
 import { dateLabel, money, today } from '../../lib/api';
 import { catalogs, itemLocation, itemName, useResource, type CatalogItem, type Departure, type Kind, type Room } from './catalog';
 import { LibraryPhoto, PhotoGallery } from './Photo';
+import TourSchedule from './TourSchedule';
 
 function Departures({ id }: { id: string }) {
   const { data, loading, error, reload } = useResource<Departure[]>(`/tourkhoihanh/bytour/${id}`);
@@ -24,9 +25,9 @@ export default function DetailPage({ kind }: { kind: Kind }) {
     {error && <div className="user-empty" role="alert"><p>{error}</p><button className="user-button" onClick={reload}>Thử lại</button></div>}
     {data && <><div className="detail-heading"><p className="user-kicker">{itemLocation(data)}</p><h1>{itemName(data)}</h1><p>{data.diaChi || (data.diemKhoiHanh ? `Khởi hành từ ${data.diemKhoiHanh}` : 'Khám phá Việt Nam cùng NVT Du lịch')}</p></div>
       <PhotoGallery key={`${kind}/${id}`} images={data.hinhAnh || []} />
-      <div className="detail-layout"><div><section className="user-panel"><h2>Thông tin giới thiệu</h2><p className="preserve-lines">{data.moTa || 'Nội dung giới thiệu đang được cập nhật.'}</p>{kind === 'tours' && <p>Thời gian: {data.soNgay} ngày, {data.soDem} đêm.</p>}{data.soDienThoai && <p>Liên hệ cơ sở lưu trú: {data.soDienThoai}</p>}</section>
-      {kind === 'tours' && <Departures id={id} />}{kind === 'hotels' && <Rooms id={id} />}</div>
-      <aside className="user-panel detail-aside"><p className="user-kicker">CHUYẾN ĐI CỦA BẠN</p><h2>Chọn trước, đặt sau.</h2><p>{user ? 'Bạn đã đăng nhập. Chọn dịch vụ bên dưới để gửi yêu cầu đặt chỗ.' : 'Bạn đang xem với tư cách khách. Đăng nhập khi đặt tour, đặt phòng hoặc tạo lịch trình.'}</p>{kind === 'destinations' && <><p>{data.giaVe ? `Giá vé tham khảo: ${money(data.giaVe)}` : 'Giá vé: liên hệ điểm tham quan để xác nhận.'}</p><Link className="user-button" to={`/planner?destination=${encodeURIComponent(itemName(data))}`}>Lập lịch trình đến đây</Link></>}<Link className="user-text-link" to="/account">Quản lý chuyến đi của tôi</Link></aside></div>
+      <div className="detail-layout"><div><section className="user-panel"><h2>Thông tin giới thiệu</h2><p className="preserve-lines">{data.moTa || 'Nội dung giới thiệu đang được cập nhật.'}</p>{kind === 'tours' && <p>Thời gian: {data.soNgay} ngày, {data.soDem} đêm.</p>}{data.soDienThoai && <p>Liên hệ: {data.soDienThoai}</p>}</section>
+      {kind === 'tours' && <><TourSchedule key={id} id={id} days={data.soNgay || 1} />{data.trangThai==='Active' ? <Departures id={id} /> : <p role="status">Tour hiện ngừng nhận đặt chỗ. Lịch sử và thông tin vẫn được giữ lại.</p>}</>}{kind === 'hotels' && (data.trangThai ? <Rooms id={id} /> : <p role="status">Khách sạn hiện ngừng nhận đặt phòng.</p>)}</div>
+      <aside className="user-panel detail-aside"><p className="user-kicker">CHUYẾN ĐI CỦA BẠN</p><h2>Chọn trước, đặt sau.</h2><p>{user ? 'Bạn đã đăng nhập. Chọn dịch vụ bên dưới để gửi yêu cầu đặt chỗ.' : 'Bạn đang xem với tư cách khách. Đăng nhập khi đặt tour, đặt phòng hoặc tạo lịch trình.'}</p>{kind === 'destinations' && <><p>{data.giaVe ? `Giá vé tham khảo: ${money(data.giaVe)}` : 'Giá vé: liên hệ điểm tham quan để xác nhận.'}</p><Link className="user-button" to={`/planner?destination=${encodeURIComponent(itemName(data))}`}>Lập lịch trình đến đây</Link></>}{kind === 'restaurants' && <><p>Chi phí tham khảo: {money(data.giaMin || 0)} – {money(data.giaMax || 0)}</p><p>Giờ mở cửa: {data.gioMoCua?.slice(0, 5) || 'Chưa cập nhật'} – {data.gioDongCua?.slice(0, 5) || 'Chưa cập nhật'}</p>{data.trangThai ? <Link className="user-button" to={`/planner?destination=${encodeURIComponent(data.tinhThanh || '')}&restaurant=${id}`}>Thêm vào lịch trình</Link> : <p>Nhà hàng hiện ngừng hoạt động trên hệ thống.</p>}<p>Thêm vào kế hoạch không phải đặt bàn. Liên hệ nhà hàng để xác nhận chỗ và giá.</p></>}<Link className="user-text-link" to="/account">Quản lý chuyến đi của tôi</Link></aside></div>
     </>}
   </div></main>;
 }

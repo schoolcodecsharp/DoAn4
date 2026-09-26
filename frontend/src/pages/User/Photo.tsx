@@ -18,11 +18,11 @@ export function LibraryPhoto({ photo, className = '', eager = false }: { photo: 
 }
 
 export function PhotoGallery({ images }: { images: TravelImage[] }) {
-  const photos = images.filter(p => localImageUrl(p.duongDan));
+  const photos = images.filter(p => localImageUrl(p.duongDan)).sort((a, b) => a.thuTu - b.thuTu || a.maHinhAnh - b.maHinhAnh);
   const [index, setIndex] = useState(0);
   if (!photos.length) return null;
   const current = photos[Math.min(index, photos.length - 1)];
-  return <section className="photo-gallery" aria-label="Bộ ảnh dịch vụ"><LibraryPhoto key={current.maHinhAnh} photo={current} className="detail-photo" eager />{photos.length > 1 && <div className="gallery-controls">{photos.map((photo, i) => <button key={photo.maHinhAnh} type="button" aria-pressed={index === i} onClick={() => setIndex(i)}>Ảnh {i + 1}</button>)}</div>}</section>;
+  return <section className="photo-gallery" aria-label="Bộ ảnh dịch vụ"><LibraryPhoto key={current.maHinhAnh} photo={current} className="detail-photo" eager />{photos.length > 1 && <><div className="gallery-pagination"><button type="button" onClick={() => setIndex((index - 1 + photos.length) % photos.length)}>← Ảnh trước</button><span aria-live="polite">Ảnh {Math.min(index + 1, photos.length)} / {photos.length}</span><button type="button" onClick={() => setIndex((index + 1) % photos.length)}>Ảnh tiếp →</button></div><div className="gallery-controls gallery-thumbnails">{photos.map((photo, i) => <button key={photo.maHinhAnh} type="button" aria-label={`Xem ảnh ${i + 1}: ${photo.moTa || ''}`} aria-pressed={current.maHinhAnh === photo.maHinhAnh} onClick={() => setIndex(i)}><img src={localImageUrl(photo.duongDan)!} alt="" loading="lazy"/><span>Ảnh {i + 1}</span></button>)}</div></>}</section>;
 }
 
 export function FeaturedLibraryPhoto({ ownerId, type = 'DiaDiem' }: { ownerId: number; type?: string }) {
