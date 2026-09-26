@@ -7,6 +7,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (Array.IndexOf(args, "--create-admin") is var adminArg && adminArg >= 0)
+{
+    if (adminArg + 1 >= args.Length) throw new ArgumentException("Dùng --create-admin email@example.com");
+    await backend.Tools.AdminBootstrap.RunAsync(builder.Configuration, args[adminArg + 1]);
+    return;
+}
+
 if (args.Contains("--import-images") || args.Contains("--download-images"))
 {
     await backend.Tools.ImageLibraryImport.RunAsync(builder.Configuration, builder.Environment.ContentRootPath, args.Contains("--download-images"));
@@ -18,8 +25,11 @@ if (args.Contains("--import-images") || args.Contains("--download-images"))
 // =============================================
 builder.Services.AddScoped<backend.Security.CustomerAccessFilter>();
 builder.Services.AddScoped<CatalogImageFilter>();
+builder.Services.AddScoped<backend.Security.AdminAuditFilter>();
 builder.Services.AddControllers(o => {
+    o.Filters.Add<backend.Security.DatabaseErrorFilter>();
     o.Filters.AddService<backend.Security.CustomerAccessFilter>();
+    o.Filters.AddService<backend.Security.AdminAuditFilter>();
     o.Filters.AddService<CatalogImageFilter>();
 }).AddJsonOptions(o => {
     o.JsonSerializerOptions.DefaultBufferSize = 50 * 1024 * 1024;
@@ -88,7 +98,6 @@ builder.Services.AddCors(options => {
 // =============================================
 builder.Services.AddScoped<IVaiTroRepository, VaiTroRepository>();
 builder.Services.AddScoped<INguoiDungRepository, NguoiDungRepository>();
-builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ILoaiDiaDiemRepository, LoaiDiaDiemRepository>();
 builder.Services.AddScoped<IDiaDiemRepository, DiaDiemRepository>();
 builder.Services.AddScoped<INhaHangRepository, NhaHangRepository>();
@@ -115,7 +124,6 @@ builder.Services.AddScoped<IYeuThichRepository, YeuThichRepository>();
 // =============================================
 builder.Services.AddScoped<IVaiTroService, VaiTroService>();
 builder.Services.AddScoped<INguoiDungService, NguoiDungService>();
-builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<ILoaiDiaDiemService, LoaiDiaDiemService>();
 builder.Services.AddScoped<IDiaDiemService, DiaDiemService>();
 builder.Services.AddScoped<INhaHangService, NhaHangService>();
