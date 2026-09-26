@@ -19,7 +19,7 @@
 --    AnhDaiDien).
 -- 6. Thêm bảng MaGiamGia + LichSuSuDungMa để hỗ trợ mã khuyến
 --    mãi khi đặt tour/phòng.
--- 7. Thêm bảng RefreshToken để hỗ trợ đăng nhập bằng JWT.
+-- 7. Đăng nhập dùng access JWT; không lưu refresh token khi chưa có luồng gia hạn.
 -- 8. Bổ sung index còn thiếu (DanhGia, YeuThich theo người dùng).
 -- =========================================================
 
@@ -35,6 +35,8 @@
 -- Xoá database cũ (nếu có) để mỗi lần chạy lại file đều sạch,
 -- không bị báo "database exists" khi chạy nhiều lần
 
+
+DROP DATABASE IF EXISTS WebDuLich;
 
 CREATE DATABASE WebDuLich
 CHARACTER SET utf8mb4
@@ -88,23 +90,10 @@ CREATE TABLE NguoiDung (
 
 
 -- =========================================================
--- 4. BẢNG REFRESH TOKEN (đăng nhập JWT)
+-- 4. ĐĂNG NHẬP JWT (không cần bảng token riêng)
 -- =========================================================
 
-CREATE TABLE RefreshToken (
-    MaToken INT AUTO_INCREMENT PRIMARY KEY,
-    MaNguoiDung INT NOT NULL,
-
-    Token VARCHAR(500) NOT NULL,
-
-    NgayTao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    NgayHetHan DATETIME NOT NULL,
-    DaThuHoi BOOLEAN DEFAULT FALSE,
-
-    FOREIGN KEY (MaNguoiDung)
-        REFERENCES NguoiDung(MaNguoiDung)
-        ON DELETE CASCADE
-);
+-- JWT hết hạn thì người dùng đăng nhập lại. Không có API gia hạn token.
 
 
 -- =========================================================
@@ -138,8 +127,6 @@ CREATE TABLE DiaDiem (
 
     ViDo DECIMAL(10,7),
     KinhDo DECIMAL(10,7),
-
-    AnhDaiDien VARCHAR(500),
 
     GiaVe DECIMAL(15,2) DEFAULT 0,
 
@@ -187,8 +174,6 @@ CREATE TABLE NhaHang (
     ViDo DECIMAL(10,7),
     KinhDo DECIMAL(10,7),
 
-    AnhDaiDien VARCHAR(500),
-
     GiaMin DECIMAL(15,2) DEFAULT 0,
     GiaMax DECIMAL(15,2) DEFAULT 0,
 
@@ -235,8 +220,6 @@ CREATE TABLE KhachSan (
     ViDo DECIMAL(10,7),
     KinhDo DECIMAL(10,7),
 
-    AnhDaiDien VARCHAR(500),
-
     -- Giá min/max được TÍNH TỪ bảng LoaiPhong (nên cập nhật
     -- bằng trigger hoặc ở tầng service mỗi khi LoaiPhong đổi giá)
     GiaPhongMin DECIMAL(15,2) DEFAULT 0,
@@ -272,8 +255,6 @@ CREATE TABLE LoaiPhong (
     SoLuongPhong INT NOT NULL DEFAULT 1,
 
     GiaMoiDem DECIMAL(15,2) NOT NULL,
-
-    AnhDaiDien VARCHAR(500),
 
     TrangThai BOOLEAN DEFAULT TRUE,
 
@@ -355,8 +336,6 @@ CREATE TABLE Tour (
 
     SoNguoiToiDa INT DEFAULT 20,
     SoNguoiToiThieu INT DEFAULT 1,
-
-    AnhDaiDien VARCHAR(500),
 
     DiemDanhGia DECIMAL(3,2) DEFAULT 0,
     LuotXem INT DEFAULT 0,
@@ -682,7 +661,7 @@ CREATE TABLE ThanhToan (
     MaDatTour INT NULL,
     MaDatPhong INT NULL,
 
-    SoTien DECIMAL(15,2) NOT NULL,
+    SoTien DECIMAL(15,2) NOT NULL CHECK (SoTien > 0),
 
     PhuongThuc ENUM(
         'TienMat',
@@ -692,7 +671,7 @@ CREATE TABLE ThanhToan (
         'ZaloPay'
     ) NOT NULL,
 
-    MaGiaoDich VARCHAR(150),
+    MaGiaoDich VARCHAR(150) UNIQUE,
 
     TrangThai ENUM(
         'ChoThanhToan',
@@ -751,21 +730,18 @@ CREATE TABLE MaGiamGia (
 -- =========================================================
 -- 21. BẢNG HÌNH ẢNH DÙNG CHUNG (MỚI)
 -- =========================================================
--- Cho phép mỗi Tour/DiaDiem/NhaHang/KhachSan có nhiều ảnh
--- thay vì chỉ 1 AnhDaiDien
+-- Mỗi ảnh thuộc đúng một đối tượng. Dùng khóa ngoại thật để
+-- không thể lưu ảnh mồ côi. Backend suy ra LoaiDoiTuong và
+-- MaDoiTuong khi SELECT để giữ tương thích với API hiện tại.
 
 CREATE TABLE HinhAnh (
     MaHinhAnh INT AUTO_INCREMENT PRIMARY KEY,
 
-    LoaiDoiTuong ENUM(
-        'DiaDiem',
-        'NhaHang',
-        'KhachSan',
-        'Tour',
-        'LoaiPhong'
-    ) NOT NULL,
-
-    MaDoiTuong INT NOT NULL,
+    MaTour INT NULL,
+    MaDiaDiem INT NULL,
+    MaNhaHang INT NULL,
+    MaKhachSan INT NULL,
+    MaLoaiPhong INT NULL,
 
     DuongDan VARCHAR(500) NOT NULL,
     MoTa VARCHAR(255),
@@ -777,7 +753,36 @@ CREATE TABLE HinhAnh (
 
     NgayTao DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    INDEX idx_hinhanh_doituong (LoaiDoiTuong, MaDoiTuong)
+    CONSTRAINT fk_hinhanh_tour FOREIGN KEY (MaTour)
+        REFERENCES Tour(MaTour) ON DELETE CASCADE,
+    CONSTRAINT fk_hinhanh_diadiem FOREIGN KEY (MaDiaDiem)
+        REFERENCES DiaDiem(MaDiaDiem) ON DELETE CASCADE,
+    CONSTRAINT fk_hinhanh_nhahang FOREIGN KEY (MaNhaHang)
+        REFERENCES NhaHang(MaNhaHang) ON DELETE CASCADE,
+    CONSTRAINT fk_hinhanh_khachsan FOREIGN KEY (MaKhachSan)
+        REFERENCES KhachSan(MaKhachSan) ON DELETE CASCADE,
+    CONSTRAINT fk_hinhanh_loaiphong FOREIGN KEY (MaLoaiPhong)
+        REFERENCES LoaiPhong(MaLoaiPhong) ON DELETE CASCADE,
+
+    CONSTRAINT chk_hinhanh_mot_chu_so_huu CHECK (
+        (MaTour IS NOT NULL) +
+        (MaDiaDiem IS NOT NULL) +
+        (MaNhaHang IS NOT NULL) +
+        (MaKhachSan IS NOT NULL) +
+        (MaLoaiPhong IS NOT NULL) = 1
+    ),
+    CONSTRAINT chk_hinhanh_thutu CHECK (ThuTu >= 0),
+
+    UNIQUE KEY uq_hinhanh_tour (MaTour, DuongDan),
+    UNIQUE KEY uq_hinhanh_diadiem (MaDiaDiem, DuongDan),
+    UNIQUE KEY uq_hinhanh_nhahang (MaNhaHang, DuongDan),
+    UNIQUE KEY uq_hinhanh_khachsan (MaKhachSan, DuongDan),
+    UNIQUE KEY uq_hinhanh_loaiphong (MaLoaiPhong, DuongDan),
+    INDEX idx_hinhanh_tour (MaTour, ThuTu),
+    INDEX idx_hinhanh_diadiem (MaDiaDiem, ThuTu),
+    INDEX idx_hinhanh_nhahang (MaNhaHang, ThuTu),
+    INDEX idx_hinhanh_khachsan (MaKhachSan, ThuTu),
+    INDEX idx_hinhanh_loaiphong (MaLoaiPhong, ThuTu)
 );
 
 
@@ -915,7 +920,10 @@ CREATE TABLE YeuThich (
     ),
 
     -- Tránh yêu thích trùng cùng 1 đối tượng
-    UNIQUE (MaNguoiDung, MaTour, MaDiaDiem, MaNhaHang, MaKhachSan)
+    UNIQUE KEY uq_yeuthich_tour (MaNguoiDung, MaTour),
+    UNIQUE KEY uq_yeuthich_diadiem (MaNguoiDung, MaDiaDiem),
+    UNIQUE KEY uq_yeuthich_nhahang (MaNguoiDung, MaNhaHang),
+    UNIQUE KEY uq_yeuthich_khachsan (MaNguoiDung, MaKhachSan)
 );
 
 
@@ -954,6 +962,10 @@ CREATE INDEX idx_yeuthich_user ON YeuThich(MaNguoiDung);
 -- =========================================================
 -- 26. DỮ LIỆU MẪU
 -- =========================================================
+/*
+  DỮ LIỆU MẪU CŨ ĐƯỢC VÔ HIỆU HÓA.
+  Nguồn seed duy nhất của dự án là data_mau.sql.
+  Khối cũ được giữ tạm để đối chiếu lịch sử và có thể xóa ở lần dọn dẹp sau.
 
 -- Vai trò
 INSERT INTO VaiTro (TenVaiTro, MoTa) VALUES
@@ -1079,6 +1091,7 @@ VALUES
 -- =========================================================
 -- 33. TRIGGER TỰ ĐỘNG CẬP NHẬT KHOẢNG GIÁ (MIN/MAX)
 -- =========================================================
+*/
 -- Mục đích: khi người dùng lập kế hoạch, mỗi dịch vụ (Tour,
 -- KhachSan) hiển thị sẵn khoảng giá A-B mà KHÔNG cần tự tính
 -- lại ở tầng ứng dụng. Giá được lấy từ nguồn dữ liệu gốc:
@@ -1159,5 +1172,20 @@ DELIMITER ;
 -- =========================================================
 -- 34. KIỂM TRA DATABASE
 -- =========================================================
+
+-- Additive migration. Run after backup; never resets business data.
+CREATE TABLE IF NOT EXISTS NhatKyAdmin (
+    MaNhatKy BIGINT AUTO_INCREMENT PRIMARY KEY,
+    MaNguoiDung INT NOT NULL,
+    HanhDong VARCHAR(10) NOT NULL,
+    DoiTuong VARCHAR(80) NOT NULL,
+    MaDoiTuong VARCHAR(80) NULL,
+    TraceId VARCHAR(100) NOT NULL,
+    KetQua VARCHAR(20) NOT NULL DEFAULT 'Started',
+    HttpStatus INT NULL,
+    ThoiGian DATETIME(6) NOT NULL DEFAULT (UTC_TIMESTAMP(6)),
+    INDEX idx_nhatky_time (ThoiGian, MaNhatKy),
+    INDEX idx_nhatky_actor (MaNguoiDung, MaNhatKy)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 SHOW TABLES;
