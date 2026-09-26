@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({ baseURL: '/api', timeout: 20000 });
-export type User = { maNguoiDung: number; hoTen: string; email: string; soDienThoai?: string };
+export type User = { maNguoiDung: number; maVaiTro: number; hoTen: string; email: string; soDienThoai?: string };
 export type Session = { token: string; user: User };
 export function readSession(): Session | null {
   try {
@@ -35,5 +35,5 @@ export const money = (amount: number) => new Intl.NumberFormat('vi-VN', { style:
 export const dateLabel = (value: string) => new Date(value).toLocaleDateString('vi-VN');
 export const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 export function safeReturnTo(value: string | null) {
-  return value && /^\/(?:account|my-trips|planner|tours\/\d+\/book|hotels\/\d+\/book)(?:[/?#]|$)/.test(value) && !value.includes('\\') ? value : '/account';
+  return value && /^\/(?:admin|account|my-trips|planner|tours\/\d+\/book|hotels\/\d+\/book)(?:[/?#]|$)/.test(value) && !value.includes('\\') ? value : '/account';
 }

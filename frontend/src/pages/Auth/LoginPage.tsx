@@ -22,11 +22,11 @@ export default function LoginPage() {
     setLoading(true); setError('');
     try {
       const { data } = await api.post<Session>('/auth/login', { email: email.trim(), matKhau: password });
-      login(data); navigate(returnTo, { replace: true });
+      login(data); navigate(!params.get('returnTo') && data.user.maVaiTro === 1 ? '/admin' : returnTo, { replace: true });
     } catch (err) { setError(errorMessage(err)); }
     finally { setLoading(false); }
   };
-  if (user) return <Navigate to={returnTo} replace />;
+  if (user) return <Navigate to={!params.get('returnTo') && user.maVaiTro === 1 ? '/admin' : returnTo} replace />;
   return <main className="auth-page"><AuthBackdrop /><section className="auth-panel">
     <aside className="auth-panel__story"><p className="auth-kicker">NVT DU LỊCH</p><h1>Những chuyến đi<br /><em>đang chờ bạn.</em></h1><p>Đăng nhập để đặt tour, đặt phòng và lưu lịch trình của riêng mình. Bạn vẫn có thể khám phá mọi điểm đến mà không cần tài khoản.</p><div className="auth-panel__quote">Đi để nhìn thấy nhiều hơn.<Link to="/image-credits">Nguồn ảnh</Link></div></aside>
     <div className="auth-form-wrap"><Link className="auth-home" to="/">Về trang chủ</Link><div className="auth-brand">NVT <span>DU LỊCH</span></div><h2>Chào mừng trở lại</h2><p className="auth-lead">Đăng nhập để tiếp tục hành trình của bạn.</p>
