@@ -24,17 +24,28 @@ namespace backend.Services
 
         public async Task<int> CreateAsync(CreateNhaHangDto dto)
         {
+            Validate(dto);
             return await _repository.CreateAsync(dto);
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateNhaHangDto dto)
         {
+            Validate(dto);
             return await _repository.UpdateAsync(id, dto);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             return await _repository.DeleteAsync(id);
+        }
+        private static void Validate(CreateNhaHangDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.TenNhaHang) || dto.TenNhaHang.Trim().Length > 200 ||
+                dto.GiaMin < 0 || dto.GiaMax < dto.GiaMin || dto.GiaMax > 1000000000 ||
+                dto.GioMoCua < TimeSpan.Zero || dto.GioMoCua >= TimeSpan.FromDays(1) ||
+                dto.GioDongCua < TimeSpan.Zero || dto.GioDongCua >= TimeSpan.FromDays(1))
+                throw new backend.Security.RequestRuleException("Nhập tên nhà hàng, khoảng chi phí không âm (thấp nhất ≤ cao nhất) và giờ hợp lệ.");
+            dto.TenNhaHang = dto.TenNhaHang.Trim();
         }
     }
 }
