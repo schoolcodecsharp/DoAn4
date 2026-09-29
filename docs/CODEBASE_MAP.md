@@ -19,7 +19,7 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 
 | Request | Frontend source | Backend starting point / dependency |
 |---|---|---|
-| Home `/` | `frontend/src/pages/Home/HomePage.tsx`, `home.css` | `pages/User/catalog.ts`, image helpers |
+| Home `/` | `frontend/src/pages/Home/HomePage.tsx`, `home.css`; home overrides in `src/experience.css` | `pages/User/catalog.ts`, image helpers |
 | Header/navigation/transitions | `frontend/src/components/Header/ImmersiveHeader.tsx`, `components/PageTransition.tsx`, `src/experience.css` | Session context |
 | Lists `/tours`, `/hotels`, `/destinations`, `/restaurants` | `frontend/src/pages/User/CatalogPage.tsx`, `catalog.ts`, `components/ProvinceSelect.tsx` | Tour, KhachSan, DiaDiem, NhaHang controllers |
 | Detail `/<kind>/:id` | `frontend/src/pages/User/DetailPage.tsx`, `TourSchedule.tsx`, `Photo.tsx` | Tour, TourChiTiet, TourKhoiHanh, KhachSan, LoaiPhong, DiaDiem, HinhAnh controllers |
@@ -35,6 +35,28 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 `/saved` and `/favorites` currently redirect to `/account`. Older directories such as `pages/Tours`, `Hotels`, `Planner`, `Saved`, plus `services/api.ts` and `hooks/useAuth.ts`, are not the route/auth authority shown by App.tsx. Trace live imports before using or deleting them; do not infer all are unused solely from this index.
 
 ## Data and non-source folders
+
+### Verified catalog coverage — verified 2026-09-29
+
+- `database/verified-catalog-20260929.json` stores source URLs/date for 27 new catalog records; `tests/AdminSmoke/VerifiedCatalog.cs` handles backup, transactional idempotent import (`--verified-catalog`, writes) and province coverage (`--verified-coverage`, read-only). Existing demo records remain unverified. No fabricated inventory, photos or departures. See `docs/CATALOG_VERIFICATION_2026-09-29.md` for scope and backup.
+- `CatalogPage.tsx` supplies actual catalog province groups via optional `ProvinceSelect.options`; admin's existing provider mode remains. Unknown prices sort last and are excluded from budget filters. `CatalogDescription.tsx` renders source paragraphs/links on `DetailPage.tsx`; `experience.css` handles wrapping.
+- `backend/Services/TourRules.cs`: paired capacity 0/0 means unconfirmed. `TourRepository.Update` prevents clearing capacity when departures exist; `TourKhoiHanhRepository.Create` rejects unconfirmed capacity. Both lock the parent tour in a transaction. Admin `schema.ts` labels this contract and accepts min 0.
+- Verify read-only public/API/UI coverage: `node tests/catalog-system-audit.mjs` (existing local credentials/services, desktop/mobile). Capacity regression: `dotnet run --project tests/AdminSmoke -- --capacity-checks` uses `CapacityChecks.cs`, writes tagged disposable tour/departure fixtures and cleans only those records. Do not confuse these with a production-safe read-only command.
+
+### Homepage refinement — verified 2026-09-28
+
+- `ImmersiveHeader.tsx` observes `.booking-home` scroll (not nested menu scrolling): transparent hero at top, solid forest-green `is-home-scrolled` after 40px; non-home headers unchanged.
+- Homepage retains existing hero slideshow/hold controls, real library images and public links; service rows include restaurants and planner. Destination links use encoded catalog search; no database changes.
+- Read-only UI regression: `node tests/home-polish.mjs` against running frontend/backend. Checks desktop/tablet/mobile, scrolling, menu keyboard focus, route return, slideshow, image loading and console errors. Captures in ignored `.local/home-after-*.png`.
+
+### Admin database coverage — verified 2026-09-28
+
+- `/admin/coverage` → `AdminCoverageController.cs` (admin-only live table names) + `dataRegistry.ts` / `DataExplorer.tsx`. All 23 current tables mapped; unknown tables are explicitly flagged. See `docs/DATABASE_UI_COVERAGE.md` for each table's route, rights and limits.
+- `schema.ts` / `AdminPage.tsx`: added rooms (hotel lookup + image owner LoaiPhong), coupons and expenses; standalone tour activities/departures select their parent tour. Filtered deep links use `id`, `hotel`, `trip`. `LoaiPhongController` create returns saved DTO/ID; coupon/expense services validate input.
+- `DataExplorer.tsx`: read-only roles, trips, membership, days, events and favorites; review visibility moderation; shared image-library lookup → ImageManager. Trip → days/members/expenses and day → events links retain parent scope.
+- `Payments.tsx`: manual pending transaction creation and confirm-success/failure via ThanhToan API, no editing/deleting terminal transactions or fake refunds. `Operations.tsx` supports exact order ID deep links.
+- Navigation groups and mobile selector live in `AdminPage.tsx`; `coverage.css` extends incumbent admin styles with scrollable/focusable wide tables and legible forms. Public home/design comp remains unchanged.
+- Verify: `dotnet build tests/AdminSmoke`, then `node tests/admin-coverage.mjs` with local services and existing ignored SQL credentials. Uses exact-tag disposable fixtures, no new users; finally cleans its own records. Existing restaurant-planner regression remains applicable.
 
 ### Restaurant and itinerary extension — verified 2026-09-26
 
