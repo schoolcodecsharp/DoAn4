@@ -19,10 +19,15 @@ export default function Header() {
     setScrolled(false);
   }
   useEffect(() => {
-    const scroll = (e: Event) => setScrolled((e.target instanceof Element ? e.target.scrollTop : window.scrollY) > 40);
-    document.addEventListener('scroll', scroll, true);
-    return () => document.removeEventListener('scroll', scroll, true);
-  }, []);
+    if (location.pathname !== '/') return;
+    // The homepage scrolls inside its own main, not the window. Ignore menu scrolls.
+    const home = document.querySelector<HTMLElement>('.booking-home');
+    const update = () => setScrolled((home?.scrollTop ?? window.scrollY) > 40);
+    const surface = home ?? window;
+    surface.addEventListener('scroll', update, { passive: true });
+    update();
+    return () => surface.removeEventListener('scroll', update);
+  }, [location.pathname]);
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -43,7 +48,7 @@ export default function Header() {
     return () => { cancelAnimationFrame(frame); document.body.style.overflow = previous; document.removeEventListener('keydown', keys); };
   }, [open]);
   if (location.pathname.startsWith('/admin')) return null;
-  return <><header className={`travel-header ${location.pathname === '/' && !scrolled ? 'is-hero' : ''}`}>
+  return <><header className={`travel-header ${location.pathname === '/' ? (scrolled ? 'is-home-scrolled' : 'is-hero') : ''}`}>
     <Link className="travel-wordmark" to="/">NVT <span>DU LỊCH</span></Link>
     <span className="header-motto">Mỗi hành trình, một câu chuyện.</span>
     <div className="travel-header-actions"><Link className="travel-account" to={user ? '/account' : '/login'}>{user ? 'Tài khoản' : 'Đăng nhập'} ↗</Link><button ref={toggle} className="travel-menu-button" aria-label="Mở menu" aria-expanded={open} aria-controls="immersive-navigation" onClick={() => setOpen(true)}><span/><span/><span/></button></div>
