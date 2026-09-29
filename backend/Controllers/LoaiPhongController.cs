@@ -42,7 +42,7 @@ namespace backend.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var id = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = id }, dto);
+            return CreatedAtAction(nameof(GetById), new { id }, await _service.GetByIdAsync(id));
         }
 
         [HttpPut("{id}")]
