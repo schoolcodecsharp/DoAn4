@@ -1,0 +1,38 @@
+.admin-nav-group { border-top:1px solid #638173; padding-top:8px; }
+.admin-nav-group summary { padding:12px 8px; cursor:pointer; font-weight:600; color:#fffef8; }
+.admin-sidebar .admin-nav-group a { padding:9px 12px; }
+.admin-record-detail { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin-block:24px; }
+.admin-record-detail dt { font-size:14px; color:#4a6457; margin-bottom:6px; }
+.admin-record-detail dd { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.admin-related { display:flex; gap:24px; flex-wrap:wrap; margin-block:24px; }
+.admin-panel a { text-decoration:underline; text-underline-offset:4px; }
+.admin-library-preview { max-width:500px; }
+.admin-library-preview img { width:100%; max-height:320px; object-fit:cover; }
+.admin-panel h1 { font-size:clamp(25px,3vw,36px); letter-spacing:-.025em; font-weight:500; margin:0; }
+.admin-panel td { max-width:320px; overflow-wrap:anywhere; }
+.admin-shell .admin-table-wrap table { min-width:680px; }
+.admin-shell .admin-table-wrap th { white-space:nowrap; }
+.admin-shell .admin-table-wrap td { min-width:90px; }
+.admin-shell .admin-mobile-switcher { display:none; }
+.admin-panel fieldset legend { font-weight:600; margin-bottom:16px; }
+.admin-shell input,.admin-shell select,.admin-shell textarea { caret-color:#284b41; }
+.admin-shell ::selection { background:#284b41; color:#fffef8; }
+.admin-main,.admin-sidebar,.admin-table-wrap { scrollbar-color:#6b8476 #eef1e7; }
+.admin-shell :focus-visible { outline-color:#326657; }
+.admin-sidebar :focus-visible { outline-color:#fffef8; }
+.admin-count,.admin-shell td small,.admin-stat small,.admin-upload span { color:#4a6457; }
+@media(max-width:650px) {
+  .admin-record-detail { grid-template-columns:1fr; }
+  .admin-shell input,.admin-shell select,.admin-shell textarea { font-size:16px; }
+  .admin-sidebar nav { display:block; max-height:240px; overflow:auto; }
+  .admin-sidebar { gap:12px; }
+  .admin-nav-group { width:100%; }
+  .admin-section-title { flex-wrap:wrap; }
+}
+@media(max-width:600px) {
+  .admin-shell .admin-mobile-switcher { display:flex; color:#fffef8; }
+  .admin-sidebar nav { display:none; }
+  .admin-sidebar { max-height:none; flex-shrink:0; }
+  .admin-sidebar-bottom { margin-top:0; gap:16px; }
+  .admin-sidebar-bottom button { padding:6px 12px; }
+}
