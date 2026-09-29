@@ -12,6 +12,9 @@ var root = Path.GetFullPath(args.Length > 0 ? args[0] : "../../backend");
 var config = new ConfigurationBuilder().SetBasePath(root).AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", true).AddEnvironmentVariables().Build();
 await using var db = new MySqlConnection(config.GetConnectionString("DefaultConnection"));
 await db.OpenAsync();
+if(args.Contains("--capacity-checks")) { await CapacityChecks.Run(db,root); return; }
+if(args.Contains("--verified-catalog") || args.Contains("--verified-coverage")) { await VerifiedCatalog.Run(db,config,root,args.Contains("--verified-catalog")); return; }
+if(args.Contains("--coverage-fixtures")) { await CoverageFixtures.Run(db,args); return; }
 if(args.Contains("--expand-catalog")) { await CatalogExpansion.Run(db,config,root); return; }
 if(args.Contains("--browser")) { await BrowserAudit.Run(db,root); return; }
 if(args.Contains("--upgrade-workflow")) { await WorkflowUpgrade.Run(db,config,root); return; }
