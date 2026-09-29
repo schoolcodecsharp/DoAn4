@@ -44,10 +44,16 @@ namespace backend.Data
         {
             if(dto.SoChoToiDa < 1 || dto.GiaApDung < 0 || dto.SoChoDaDat != 0) throw new backend.Security.RequestRuleException("Lịch mới phải có số chỗ dương, giá không âm và chưa có chỗ đã đặt.");
             using var conn = GetConnection();
+            await conn.OpenAsync();
+            await using var tx = await conn.BeginTransactionAsync();
+            var capacity = await conn.ExecuteScalarAsync<int>("SELECT SoNguoiToiDa FROM Tour WHERE MaTour=@MaTour FOR UPDATE", new { dto.MaTour }, tx);
+            if (capacity < 1) throw new backend.Security.RequestRuleException("Cần xác nhận sức chứa của tour trước khi tạo lịch khởi hành.");
             var sql = @"INSERT INTO TourKhoiHanh (MaTour, NgayKhoiHanh, SoChoToiDa, SoChoDaDat, GiaApDung, TrangThai) 
                         VALUES (@MaTour, @NgayKhoiHanh, @SoChoToiDa, @SoChoDaDat, @GiaApDung, @TrangThai);
                         SELECT LAST_INSERT_ID();";
-            return await conn.ExecuteScalarAsync<int>(sql, dto);
+            var id = await conn.ExecuteScalarAsync<int>(sql, dto, tx);
+            await tx.CommitAsync();
+            return id;
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateTourKhoiHanhDto dto)

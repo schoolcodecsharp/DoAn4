@@ -82,15 +82,20 @@ namespace backend.Data
             backend.Services.TourRules.Validate(dto.TenTour, dto.DiemKhoiHanh, dto.DiemDen, dto.SoNgay, dto.SoDem,
                 dto.GiaTour, dto.GiaTourMin, dto.GiaTourMax, dto.SoNguoiToiThieu, dto.SoNguoiToiDa, dto.TrangThai);
             using var conn = GetConnection();
-            if(dto.SoNgay < 1 || dto.SoDem < 0 || dto.GiaTour < 0 || dto.SoNguoiToiThieu < 1 || dto.SoNguoiToiDa < dto.SoNguoiToiThieu ||
-                await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM TourChiTiet WHERE MaTour=@id AND NgayThu>@SoNgay",new{id,dto.SoNgay}) > 0)
+            await conn.OpenAsync();
+            await using var tx = await conn.BeginTransactionAsync();
+            if (await conn.ExecuteScalarAsync<int>("SELECT MaTour FROM Tour WHERE MaTour=@id FOR UPDATE", new { id }, tx) == 0) return false;
+            if (dto.SoNguoiToiDa == 0 && await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM TourKhoiHanh WHERE MaTour=@id", new { id }, tx) > 0)
+                throw new backend.Security.RequestRuleException("Tour đã có lịch khởi hành; không thể chuyển sức chứa thành chưa xác nhận.",409);
+            if(await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM TourChiTiet WHERE MaTour=@id AND NgayThu>@SoNgay",new{id,dto.SoNgay},tx) > 0)
                 throw new backend.Security.RequestRuleException("Thời lượng, giá hoặc số khách không hợp lệ. Không thể giảm số ngày làm mất ngày đang có hoạt động.");
             var sql = @"UPDATE Tour SET MaNguoiTao = @MaNguoiTao, TenTour = @TenTour, MoTa = @MoTa, DiemKhoiHanh = @DiemKhoiHanh, DiemDen = @DiemDen, SoNgay = @SoNgay, SoDem = @SoDem, 
                         GiaTour = @GiaTour, GiaTourMin = @GiaTourMin, GiaTourMax = @GiaTourMax, SoNguoiToiDa = @SoNguoiToiDa, SoNguoiToiThieu = @SoNguoiToiThieu, TrangThai = @TrangThai, NgayCapNhat = NOW() 
                         WHERE MaTour = @Id";
             var parameters = new DynamicParameters(dto);
             parameters.Add("Id", id);
-            var affected = await conn.ExecuteAsync(sql, parameters);
+            var affected = await conn.ExecuteAsync(sql, parameters, tx);
+            await tx.CommitAsync();
             return affected > 0;
         }
 
