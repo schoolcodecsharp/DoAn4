@@ -6,15 +6,15 @@ import { localImageUrl } from '../User/Photo';
 import { useSession } from '../../context/AuthContext';
 
 const destinationContent = [
-  { name: 'Hạ Long', detail: '2 ngày 1 đêm', ownerId: 1, tag: 'Biển & vịnh' },
-  { name: 'Hội An', detail: '3 ngày 2 đêm', ownerId: 4, tag: 'Di sản' },
-  { name: 'Đà Nẵng', detail: '3 ngày 2 đêm', ownerId: 3, tag: 'Nghỉ dưỡng' },
+  { name: 'Hạ Long', ownerId: 1, tag: 'Biển & vịnh' },
+  { name: 'Hội An', ownerId: 4, tag: 'Phố cổ & di sản' },
+  { name: 'Đà Nẵng', ownerId: 3, tag: 'Biển & thành phố' },
 ];
 
 const slideContent = [
-  { ownerId: 1, alt: 'Vịnh Hạ Long', eyebrow: 'NVT DU LỊCH · KHÁM PHÁ VIỆT NAM', title: <>Đi xa một chút,<br /><em>gần nhau hơn.</em></>, copy: 'Chọn tour, khách sạn và hành trình phù hợp cho chuyến đi đáng nhớ tiếp theo của bạn.' },
-  { ownerId: 4, alt: 'Phố cổ Hội An', eyebrow: 'NVT DU LỊCH · HÀNH TRÌNH DI SẢN', title: <>Chạm vào nhịp sống<br /><em>rất Việt Nam.</em></>, copy: 'Từ phố cổ rực đèn đến những bãi biển bình yên — mọi kỷ niệm đều có một nơi để bắt đầu.' },
-  { ownerId: 3, alt: 'Cầu Vàng, Đà Nẵng', eyebrow: 'NVT DU LỊCH · KỲ NGHỈ TRONG MƠ', title: <>Thức dậy ở nơi<br /><em>bạn muốn đến.</em></>, copy: 'Khám phá những chuyến đi đầy nắng, những căn phòng ấm áp và trải nghiệm dành riêng cho bạn.' },
+  { ownerId: 1, alt: 'Vịnh Hạ Long', title: <>Đi xa một chút,<br /><em>gần nhau hơn.</em></>, copy: 'Chọn tour, khách sạn và hành trình phù hợp cho chuyến đi đáng nhớ tiếp theo của bạn.' },
+  { ownerId: 4, alt: 'Phố cổ Hội An', title: <>Chạm vào nhịp sống<br /><em>rất Việt Nam.</em></>, copy: 'Từ phố cổ rực đèn đến những bãi biển bình yên — mọi kỷ niệm đều có một nơi để bắt đầu.' },
+  { ownerId: 3, alt: 'Cầu Vàng, Đà Nẵng', title: <>Thức dậy ở nơi<br /><em>bạn muốn đến.</em></>, copy: 'Khám phá những chuyến đi đầy nắng, những căn phòng ấm áp và trải nghiệm dành riêng cho bạn.' },
 ];
 
 const HomePage: React.FC = () => {
@@ -80,9 +80,7 @@ const HomePage: React.FC = () => {
       onPointerLeave={cancelHold}>
       {heroSlides.map((slide, i) => slide.image && <img className={`booking-hero__image ${i === activeSlide ? 'is-active' : ''}`} key={slide.ownerId} src={slide.image} alt={i === activeSlide ? slide.alt : ''} aria-hidden={i !== activeSlide} />)}
       <div className="booking-hero__shade" />
-      <p className="banner-hold-hint">Nhấn giữ chuột trái để đổi điểm đến <span>↗</span></p>
       <div className="booking-hero__content" key={activeSlide}>
-        <p className="booking-eyebrow">{hero.eyebrow}</p>
         <h1>{hero.title}</h1>
         <p className="booking-hero__copy">{hero.copy}</p>
         <div className="booking-hero__actions"><button className="booking-button booking-button--light" onClick={() => navigate('/tours')}>Khám phá tour</button><button className="booking-button booking-button--ghost" onClick={() => navigate('/hotels')}>Tìm khách sạn</button></div>
@@ -96,25 +94,26 @@ const HomePage: React.FC = () => {
       </div>
     </section>
     <section className="booking-search" aria-label="Khám phá dịch vụ du lịch">
-      <div className="booking-search__title"><span>CHUYẾN ĐI TIẾP THEO</span><strong>Bạn muốn bắt đầu từ đâu?</strong></div>
-      <button className="booking-search__field" onClick={() => navigate('/destinations')}><small>01 · KHÁM PHÁ</small><b>Tìm điểm đến</b></button>
-      <button className="booking-search__field" onClick={() => navigate('/hotels')}><small>02 · NGHỈ NGƠI</small><b>Tìm khách sạn</b></button>
+      <div className="booking-search__title"><strong>Bạn muốn đi đâu?</strong></div>
+      <button className="booking-search__field" onClick={() => navigate('/destinations')}><b>Tìm điểm đến</b><small>Biển, núi hay một phố nhỏ</small></button>
+      <button className="booking-search__field" onClick={() => navigate('/hotels')}><b>Tìm khách sạn</b><small>Chọn nơi nghỉ cho chuyến đi</small></button>
       <button className="booking-search__go" onClick={() => navigate('/tours')}>Xem tour</button>
     </section>
-    <section className="home-story" id="gioi-thieu"><div><p className="user-kicker">01 / VỀ NVT DU LỊCH</p><h2>Đi để thấy.<br/>Ở lại để <em>cảm nhận.</em></h2></div><div><p className="story-lead">Có những nơi ta đến một lần,<br/>nhưng nhớ về rất lâu.</p><p>Tiếng sóng buổi sớm, một con phố nhỏ, bữa cơm đậm vị địa phương. Chúng mình tin rằng một chuyến đi đáng nhớ bắt đầu từ những điều giản dị như thế.</p><p>NVT đồng hành cùng bạn tìm điểm đến, chọn nơi nghỉ và sắp xếp từng ngày — để mỗi hành trình mang một dấu ấn riêng.</p><Link to="/destinations" className="editorial-link">Tìm cảm hứng cho chuyến đi <span>↗</span></Link></div></section>
+    <section className="home-story" id="gioi-thieu"><h2>Đi để thấy.<br/>Ở lại để <em>cảm nhận.</em></h2><div><p className="story-lead">Một buổi sớm bên vịnh.<br/>Một chiều đi bộ trong phố cổ.</p><p>Không cần đi thật xa hay xếp kín mỗi ngày. Chọn một nơi bạn thích, tìm chỗ nghỉ vừa ý và để dành thời gian cho cả những điều chưa có trong kế hoạch.</p><p>Ở NVT, bạn có thể tìm tour, khách sạn và tự sắp xếp lịch trình theo từng ngày.</p><Link to="/destinations" className="editorial-link">Tìm điểm đến cho chuyến đi</Link></div></section>
     <section className="booking-section booking-services">
-      <div className="booking-section__heading"><div><p className="booking-eyebrow booking-eyebrow--dark">MỌI THỨ CHO CHUYẾN ĐI CỦA BẠN</p><h2>Một điểm dừng,<br /><em>vạn trải nghiệm.</em></h2></div><p className="booking-section__description">Từ một ý tưởng nhỏ đến một hành trình đáng nhớ.<br />Tìm mọi điều bạn cần, ở cùng một nơi.</p></div>
-      <div className="booking-services__grid">
-        <button onClick={() => navigate('/tours')}><span className="service-number">01</span><b>Tour du lịch</b><p>Lịch trình rõ ràng, mức giá minh bạch và nhiều lựa chọn hấp dẫn.</p><i>Khám phá</i></button>
-        <button onClick={() => navigate('/hotels')}><span className="service-number">02</span><b>Khách sạn & phòng</b><p>Không gian nghỉ ngơi vừa vặn với sở thích và ngân sách của bạn.</p><i>Tìm phòng</i></button>
-        <button onClick={() => navigate('/planner')}><span className="service-number">03</span><b>Lập lịch trình</b><p>Đăng nhập để tự sắp xếp điểm đến và lưu kế hoạch theo từng ngày.</p><i>Tạo lịch trình</i></button>
+      <div className="booking-section__heading"><h2>Chuyến đi của bạn,<br /><em>theo cách bạn muốn.</em></h2><p className="booking-section__description">Đi theo tour hoặc tự lên kế hoạch.<br />Bắt đầu từ điều bạn cần.</p></div>
+      <div className="home-service-links">
+        <Link to="/tours"><h3>Tour du lịch</h3><p>Xem lịch trình, giá tour và ngày khởi hành.</p><span>Xem tour</span></Link>
+        <Link to="/hotels"><h3>Khách sạn & phòng</h3><p>Tìm nơi nghỉ phù hợp với chuyến đi và ngân sách.</p><span>Tìm phòng</span></Link>
+        <Link to="/restaurants"><h3>Nhà hàng</h3><p>Tìm địa chỉ ăn uống ở nơi bạn sắp đến.</p><span>Xem nhà hàng</span></Link>
+        <Link to="/planner"><h3>Lịch trình riêng</h3><p>Đăng nhập để sắp xếp và lưu kế hoạch từng ngày.</p><span>Tạo lịch trình</span></Link>
       </div>
     </section>
     <section className="booking-featured">
-      <div className="booking-featured__intro"><p className="booking-eyebrow">ĐIỂM ĐẾN ĐƯỢC YÊU THÍCH</p><h2>Mở bản đồ,<br />chạm vào <em>mùa vui.</em></h2><button className="booking-text-button" onClick={() => navigate('/destinations')}>Xem tất cả địa điểm</button></div>
-      <div className="booking-destinations">{destinations.map((d, index) => <button className={`booking-card booking-card--${index + 1}`} key={d.name} onClick={() => navigate(`/destinations?keyword=${d.name}`)}>{d.image && <img src={d.image} alt={d.name} loading="lazy" />}<span>{d.tag}</span><b>{d.name}</b><small>Khám phá điểm đến</small></button>)}</div>
+      <div className="booking-featured__intro"><h2>Vài nơi để<br /><em>bắt đầu.</em></h2><button className="booking-text-button" onClick={() => navigate('/destinations')}>Xem tất cả địa điểm</button></div>
+      <div className="booking-destinations">{destinations.map((d, index) => <Link className={`home-destination home-destination--${index + 1}`} key={d.name} to={`/destinations?keyword=${encodeURIComponent(d.name)}`}><div>{d.image && <img src={d.image} alt={d.name} loading="lazy" />}</div><h3>{d.name}</h3><p>{d.tag}</p></Link>)}</div>
     </section>
-    <section className="booking-cta"><div><p className="booking-eyebrow">SẴN SÀNG LÊN ĐƯỜNG?</p><h2>Một chuyến đi mới.<br /><em>Thêm một câu chuyện.</em></h2><p className="booking-cta__copy">Chọn hành trình phù hợp và bắt đầu lên kế hoạch hôm nay.</p></div><button className="booking-button booking-button--dark" onClick={() => navigate('/tours')}>Khám phá tour</button></section>
+    <section className="booking-cta"><div><h2>Đã có nơi muốn đến?</h2><p className="booking-cta__copy">Xem lịch trình và chọn tour phù hợp với thời gian của bạn.</p></div><button className="booking-button booking-button--dark" onClick={() => navigate('/tours')}>Khám phá tour</button></section>
     <footer className="booking-footer"><b>NVT <span>DU LỊCH</span></b><p>Đi để nhìn thấy nhiều hơn.</p><Link to="/image-credits">Nguồn ảnh</Link><button onClick={() => navigate(user ? '/account' : '/login')}>{user ? 'Tài khoản của tôi' : 'Đăng nhập'}</button></footer>
   </main>;
 };
