@@ -17,19 +17,26 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
   const province = params.get('province') || '';
   const { data, loading, error, reload } = useResource<CatalogItem[]>(`/${config.endpoint}`);
   const heroPhoto = data?.flatMap(item => item.hinhAnh || [])[0];
+  const provinceOptions = (data || []).filter(item => item.trangThai === true || item.trangThai === 'Active').flatMap(item => (item.tinhThanh || item.diemDen || '').split(',').map(name => name.trim()));
   const items = (data || []).filter(item => item.trangThai !== false && item.trangThai !== 'Draft' && item.trangThai !== 'Cancelled' && item.trangThai !== 'Inactive').filter(item => normalize(`${itemName(item)} ${itemLocation(item)}`).includes(normalize(keyword))).filter(item => !province || normalize(`${itemLocation(item)} ${item.tinhThanh || ''}`).includes(normalize(province)));
   const priceOf = (item: CatalogItem) => (kind === 'tours' ? item.giaTour : kind === 'hotels' ? item.giaPhongMin : kind === 'restaurants' ? item.giaMin : item.giaVe) ?? 0;
   const numeric = (key:string) => { const v=Number(params.get(key)); return Number.isFinite(v) && v>=0 ? v : 0; };
   const minPrice=numeric('minPrice'), maxPrice=numeric('maxPrice'), days=numeric('days'), sort=params.get('sort') || '';
   const invalidPrice=maxPrice>0 && minPrice>maxPrice;
-  const filtered=items.filter(item=>!invalidPrice && priceOf(item)>=minPrice && (!maxPrice || priceOf(item)<=maxPrice) && (!days || item.soNgay===days))
-    .sort((a,b)=>sort==='price-asc' ? priceOf(a)-priceOf(b) : sort==='price-desc' ? priceOf(b)-priceOf(a) : sort==='name' ? itemName(a).localeCompare(itemName(b),'vi') : 0);
+  const filtered=items.filter(item=>!invalidPrice && (!(minPrice || maxPrice) || priceOf(item)>0) && priceOf(item)>=minPrice && (!maxPrice || priceOf(item)<=maxPrice) && (!days || item.soNgay===days))
+    .sort((a,b)=> {
+      if (sort === 'price-asc' || sort === 'price-desc') {
+        if (!priceOf(a) || !priceOf(b)) return Number(!priceOf(a)) - Number(!priceOf(b));
+        return sort === 'price-asc' ? priceOf(a)-priceOf(b) : priceOf(b)-priceOf(a);
+      }
+      return sort === 'name' ? itemName(a).localeCompare(itemName(b),'vi') : 0;
+    });
   const pages=Math.max(1,Math.ceil(filtered.length/6)), page=Math.min(pages,Math.max(1,Math.floor(numeric('page'))));
   const update=(key:string,value:string) => { const next=new URLSearchParams(pendingParams.current); if(value) next.set(key,value); else next.delete(key); if(key!=='page')next.delete('page'); commit(next); };
   const submit = (e: FormEvent) => { e.preventDefault(); const next = new URLSearchParams(pendingParams.current); if (input.trim()) next.set('keyword', input.trim()); else next.delete('keyword'); next.delete('page'); commit(next); };
   return <main className="user-page"><div className="user-container">
     <section className="catalog-intro"><div><p className="user-kicker">NVT DU LỊCH / {config.title}</p><h1>{config.heading}</h1><p>{config.description}</p><span className="guest-note">Xem tự do. Chỉ cần đăng nhập khi đặt chỗ hoặc lập lịch trình.</span></div>{heroPhoto && <LibraryPhoto key={heroPhoto.maHinhAnh} photo={heroPhoto} eager />}</section>
-    <form className="catalog-search catalog-search--provinces" onSubmit={submit}><div className="catalog-keyword-filter"><label htmlFor="catalog-keyword">Bạn muốn đến đâu?</label><input id="catalog-keyword" value={input} onChange={e => setInput(e.target.value)} placeholder="Tên dịch vụ hoặc điểm đến tại Việt Nam" /></div><ProvinceSelect value={province} onChange={value => { const next = new URLSearchParams(pendingParams.current); if (value) next.set('province', value); else next.delete('province'); next.delete('page'); commit(next); }} /><button className="user-button" type="submit">Tìm kiếm</button></form>
+    <form className="catalog-search catalog-search--provinces" onSubmit={submit}><div className="catalog-keyword-filter"><label htmlFor="catalog-keyword">Bạn muốn đến đâu?</label><input id="catalog-keyword" value={input} onChange={e => setInput(e.target.value)} placeholder="Tên dịch vụ hoặc điểm đến tại Việt Nam" /></div><ProvinceSelect options={provinceOptions} value={province} onChange={value => { const next = new URLSearchParams(pendingParams.current); if (value) next.set('province', value); else next.delete('province'); next.delete('page'); commit(next); }} /><button className="user-button" type="submit">Tìm kiếm</button></form>
     <section className="catalog-advanced" aria-label="Bộ lọc nâng cao">
       <label>Giá từ (đ)<input type="number" min="0" step="100000" value={params.get('minPrice') || ''} onChange={e=>update('minPrice',e.target.value)} placeholder="0"/></label>
       <label>Giá đến (đ)<input type="number" min="0" step="100000" value={params.get('maxPrice') || ''} onChange={e=>update('maxPrice',e.target.value)} placeholder="Không giới hạn"/></label>

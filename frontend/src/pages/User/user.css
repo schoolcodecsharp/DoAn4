@@ -170,7 +170,6 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
   .account-welcome img { height: 200px; }
   .account-layout { grid-template-columns: 1fr; }
   .account-profile { order: 2; }
-  .booking-services__grid > button { padding-left: 25px; }
   .booking-hero__controls { gap: 6px; }
   .auth-page { padding-top: 20px; }
 }
@@ -198,6 +197,5 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
   .planner-day { padding: 16px; }
   .user-footer { flex-direction: column; }
   .booking-hero__controls > button { padding: 0 10px; }
-  .booking-services__grid > button { padding-left: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { .catalog-card { transition: none; } }
