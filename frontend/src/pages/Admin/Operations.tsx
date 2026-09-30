@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api, dateLabel, errorMessage, money } from '../../lib/api';
 import { useResource } from '../User/catalog';
+import CancellationPanel from './CancellationPanel';
 
 const statusNames: Record<string,string> = { Pending:'Chờ xác nhận', Confirmed:'Đã xác nhận', Cancelled:'Đã hủy', Completed:'Hoàn thành', CheckedIn:'Đã nhận phòng', CheckedOut:'Đã trả phòng' };
 const nextStates = (state: string, room: boolean): string[] => state === 'Pending' ? ['Confirmed','Cancelled'] : state === 'Confirmed' ? [room ? 'CheckedIn' : 'Completed','Cancelled'] : room && state === 'CheckedIn' ? ['CheckedOut'] : [];
-type Order = { maDatTour?: number; maDatPhong?: number; maNguoiDung: number; maTour?: number; maLoaiPhong?: number; ngayKhoiHanh?: string; ngayNhanPhong?: string; ngayTraPhong?: string; tongTien: number; soNguoi: number; trangThai: string; ghiChu?: string };
+type Order = { maDatTour?: number; maDatPhong?: number; maNguoiDung: number; maTour?: number; maLoaiPhong?: number; ngayKhoiHanh?: string; ngayNhanPhong?: string; ngayTraPhong?: string; tongTien: number; soNguoi: number; trangThai: string; ghiChu?: string; yeuCauHuy?: string; lyDoHuy?: string };
 export function Orders({ room = false }: { room?: boolean }) {
   const endpoint = room ? 'datphong' : 'dattour';
   const [params,setParams] = useSearchParams();
@@ -16,12 +17,14 @@ export function Orders({ room = false }: { room?: boolean }) {
   const rows = (data || []).filter(o => (!params.get('id') || String(id(o)) === params.get('id')) && (!status || o.trangThai === status) && `${id(o)} ${o.maNguoiDung}`.includes(query.trim()));
   const pages = Math.max(1,Math.ceil(rows.length/10)), current = Math.min(page,pages);
   async function change(o: Order, next: string) {
+    if (o.yeuCauHuy === 'Pending') { setNotice('Hãy duyệt hoặc từ chối tại mục Yêu cầu hủy phía trên trước khi chuyển trạng thái.'); return; }
     if (!window.confirm(`Chuyển đơn #${id(o)} sang “${statusNames[next]}”? Đơn đã hủy/hoàn tất không được mở lại.`)) return;
     setBusy(id(o)); setNotice('');
     try { await api.put(`/${endpoint}/${id(o)}`,{ trangThai:next }); setNotice('Đã cập nhật trạng thái và giữ nguyên lịch sử đơn.'); reload(); }
     catch(e) { setNotice(errorMessage(e)); } finally { setBusy(null); }
   }
-  return <section className="admin-panel"><h1>{room ? 'Đơn đặt phòng' : 'Đơn đặt tour'}</h1><p>Giá được tính tại server. Đơn mới chờ xác nhận; không xóa hoặc sửa giá/khách của đơn đã tạo. Đơn đã thu tiền cần xử lý hoàn tiền trước khi hủy.</p>
+  return <section className="admin-panel"><h1>{room ? 'Đơn đặt phòng' : 'Đơn đặt tour'}</h1><p>Giá được tính tại server. Không xóa hoặc sửa giá/khách của đơn đã tạo. Hệ thống chưa hỗ trợ hoàn tiền nên không cho duyệt hủy đơn đã có giao dịch thành công.</p>
+    {!loading && !error && <section aria-label="Yêu cầu hủy"><h2>Yêu cầu hủy đang chờ ({data?.filter(o => o.yeuCauHuy === 'Pending').length || 0})</h2>{data?.filter(o => o.yeuCauHuy === 'Pending').map(o => <CancellationPanel key={id(o)} endpoint={endpoint} id={id(o)} reason={o.lyDoHuy} onChanged={() => { setNotice('Đã xử lý yêu cầu hủy.'); reload(); }} />)}</section>}
     <div className="admin-filter-row"><label>Tìm mã đơn / khách<input value={query} onChange={e=>{setQuery(e.target.value);setPage(1);}}/></label><label>Trạng thái<select value={status} onChange={e=>{setStatus(e.target.value);setPage(1);}}><option value="">Tất cả</option>{Object.entries(statusNames).filter(([v])=>room ? v!=='Completed' : !['CheckedIn','CheckedOut'].includes(v)).map(([v,label])=><option key={v} value={v}>{label}</option>)}</select></label><button className="secondary" onClick={reload}>Làm mới</button></div>
     <p><Link to="/admin/payments">Quản lý thanh toán của các đơn</Link></p>{params.get('id') && <button className="secondary" onClick={()=>setParams({})}>Bỏ lọc mã đơn</button>}
     {notice && <p role="status" className="admin-notice">{notice}</p>}{loading && <p role="status">Đang tải đơn…</p>}{error && <p role="alert">{error} <button onClick={reload}>Thử lại</button></p>}

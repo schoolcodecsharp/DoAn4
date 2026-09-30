@@ -73,3 +73,6 @@
 .admin-lookup-photo .library-photo { margin: 0; }
 .admin-lookup-photo img { width: 100%; height: 160px; object-fit: cover; }
 .admin-lookup-photo figcaption { position: static; background: none; color: inherit; }
+.cancellation-review { border-block-end: 1px solid #d8dbcb; padding-block: 16px; overflow-wrap: anywhere; }
+.cancellation-review textarea { min-height: 88px; max-width: 100%; font-size: 16px; }
+.cancellation-review .admin-filter-row { align-items: end; }
