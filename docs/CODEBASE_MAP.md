@@ -23,6 +23,7 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 | Header/navigation/transitions | `frontend/src/components/Header/ImmersiveHeader.tsx`, `components/PageTransition.tsx`, `src/experience.css` | Session context |
 | Lists `/tours`, `/hotels`, `/destinations`, `/restaurants` | `frontend/src/pages/User/CatalogPage.tsx`, `catalog.ts`, `components/ProvinceSelect.tsx` | Tour, KhachSan, DiaDiem, NhaHang controllers |
 | Detail `/<kind>/:id` | `frontend/src/pages/User/DetailPage.tsx`, `TourSchedule.tsx`, `Photo.tsx` | Tour, TourChiTiet, TourKhoiHanh, KhachSan, LoaiPhong, DiaDiem, HinhAnh controllers |
+| Public reviews/comments on tour/hotel/destination detail | `frontend/src/pages/User/Feedback.tsx`, `feedback.css`; default rating sort in `CatalogPage.tsx` | `FeedbackController.cs`, `FeedbackRules.cs`, `CatalogImageFilter.cs`; admin `BinhLuanController.cs` / `DanhGiaController.cs` |
 | Booking `/tours/:id/book`, `/hotels/:id/book` | `frontend/src/pages/User/BookingPage.tsx` | DatTour, DatPhong, MaGiamGia controllers; `backend/Services/BookingRules.cs`, `TourRules.cs` |
 | Account `/account`, `/my-trips` | `frontend/src/pages/User/AccountPage.tsx` | Account controller; inspect page endpoints for the affected section |
 | Trip members | `frontend/src/pages/User/TripMembers.tsx`, `trip-members.css` | ThanhVienChuyenDi controller/service/repository |
@@ -35,6 +36,21 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 `/saved` and `/favorites` currently redirect to `/account`. Older directories such as `pages/Tours`, `Hotels`, `Planner`, `Saved`, plus `services/api.ts` and `hooks/useAuth.ts`, are not the route/auth authority shown by App.tsx. Trace live imports before using or deleting them; do not infer all are unused solely from this index.
 
 ## Data and non-source folders
+
+### Reviews and comments — verified 2026-09-30
+
+- `GET /api/feedback/{kind}/{id}` is anonymous, with independent `reviewPage`/`commentPage` (10 each). Kinds: `tours`, `hotels`, `destinations`. Public entries expose author name, not account/order identifiers. `/eligibility` and POST `/reviews` / `/comments` require an active JWT account. Comment body `{content}`; review body `{stars,content}`. Author and proof are server-derived.
+- `FeedbackRules.Proof` requires an owned past Completed tour or CheckedOut hotel booking. A destination requires a stop in that user's completed tour. Self-planned itineraries and invitations are not experience evidence. One verified review per user/target, including hidden reviews; author-row locks serialize duplicate submissions. Comments only require login; 2,000-character limit and one-minute identical-submit guard.
+- `database/migrations/20260930_feedback.sql` adds `BinhLuan` and nullable proof-order FKs to `DanhGia`. `FeedbackUpgrade.cs` / `--upgrade-feedback` backs up before applying, resumes after completed ALTER and skips an already installed schema. Do not rerun raw ALTER or reset with CSDL.sql. Four legacy reviews remain unverified; no fabricated proofs. Catalog statistics use only visible verified reviews, overriding historical cached scores.
+- Admin `/admin/comments` and `/admin/reviews` only hide/show customer content; no star/text rewriting or admin-created ratings. `dataRegistry.ts` now maps 24 tables. `BinhLuanController` uses typed camelCase DTOs with boolean status. `safeReturnTo` accepts numeric public detail routes so login returns to `#feedback`.
+- `node tests/feedback.mjs` uses existing SQL accounts, isolated `FeedbackFixtures.cs` records and cleanup in finally. Tests live APIs and Chromium 1440/390 px, concurrency, moderation, catalog order and text escaping. See `docs/FEEDBACK_2026-09-30.md`; build test runner first. All test writes are tagged fixtures, not production-safe read-only checks.
+
+### Completion review — verified 2026-09-30
+
+- `AccountPage.tsx` derives the selected tab from `?tab=tours|hotels|trips`, including Back/Forward. `BookingPage.tsx` remounts the inner form on service/option navigation and returns successful bookings to the corresponding account tab. `lib/api.ts` distinguishes validation/conflict/rate-limit responses from connection failures.
+- `backend/Services/StorageRules.cs` validates SQL date and DECIMAL(15,2) bounds. Used by room/departure writes, computed booking totals, coupon thresholds and expense dates. `LoaiPhongRepository` locks the room and prevents changing its hotel when any booking history exists, including cancelled/completed stays. Admin editor mirrors room text limits and new-departure states.
+- `TourKhoiHanhRepository.Update` locks the departure before checking orders/state. Cancellation requires all bookings cancelled; completion requires the tour end and no pending/confirmed bookings; terminal departures cannot reopen. DELETE closes sales without replacing a terminal status. New departures must be today/future, OpenForBooking/FullyBooked.
+- `tests/AdminSmoke/Program.cs` now resolves omitted backend path from its build directory, not the first mode switch/cwd. `--completion-checks` uses existing local SQL accounts and exact-tag fixtures, including booking/payment concurrency; it runs `ReviewRegression.cs` too. `node tests/completion-ui.mjs` verifies real booking/account navigation on desktop/mobile and one simulated validation error. Both create and clean only their fixtures; logs remain. See `docs/COMPLETION_REVIEW_2026-09-30.md`.
 
 ### Verified catalog coverage — verified 2026-09-29
 
@@ -51,7 +67,7 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 
 ### Admin database coverage — verified 2026-09-28
 
-- `/admin/coverage` → `AdminCoverageController.cs` (admin-only live table names) + `dataRegistry.ts` / `DataExplorer.tsx`. All 23 current tables mapped; unknown tables are explicitly flagged. See `docs/DATABASE_UI_COVERAGE.md` for each table's route, rights and limits.
+- `/admin/coverage` → `AdminCoverageController.cs` (admin-only live table names) + `dataRegistry.ts` / `DataExplorer.tsx`. Originally 23 tables, now 24 after the 30/09 feedback extension; unknown tables are explicitly flagged. See `docs/DATABASE_UI_COVERAGE.md` for each table's route, rights and limits.
 - `schema.ts` / `AdminPage.tsx`: added rooms (hotel lookup + image owner LoaiPhong), coupons and expenses; standalone tour activities/departures select their parent tour. Filtered deep links use `id`, `hotel`, `trip`. `LoaiPhongController` create returns saved DTO/ID; coupon/expense services validate input.
 - `DataExplorer.tsx`: read-only roles, trips, membership, days, events and favorites; review visibility moderation; shared image-library lookup → ImageManager. Trip → days/members/expenses and day → events links retain parent scope.
 - `Payments.tsx`: manual pending transaction creation and confirm-success/failure via ThanhToan API, no editing/deleting terminal transactions or fake refunds. `Operations.tsx` supports exact order ID deep links.

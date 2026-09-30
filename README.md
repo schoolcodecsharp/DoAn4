@@ -24,6 +24,7 @@ Backend chia thành `Controllers` (API), `Services` (nghiệp vụ), `Data` (rep
 `bin`, `obj`, `node_modules`, `dist` và `test-results` là đầu ra tự sinh, không phải mã cần chỉnh sửa.
 
 Tài liệu: [Quản trị](docs/ADMIN.md), [Nghiệp vụ](docs/WORKFLOW_UPGRADE.md), [Đánh giá trước đây](docs/AUDIT_2026-09-16.md).
+Rà soát hiện tại: [Hoàn thiện và kiểm thử 30/09/2026](docs/COMPLETION_REVIEW_2026-09-30.md), [Độ phủ database](docs/DATABASE_UI_COVERAGE.md), [Đánh giá và bình luận](docs/FEEDBACK_2026-09-30.md), [Danh mục có nguồn đối chiếu](docs/CATALOG_VERIFICATION_2026-09-29.md).
 Các đường dẫn trong tài liệu được tính từ thư mục gốc dự án, trừ khi có ghi khác.
 Thư mục `frontend_original` đã được chuyển vào Thùng rác ngày 22/09/2026; ứng dụng hiện tại chỉ dùng `frontend/`.
 Không chạy các script trong `archive/` để cài đặt hoặc khởi động ứng dụng.
@@ -37,6 +38,8 @@ Không chạy các script trong `archive/` để cài đặt hoặc khởi độ
 5. Tạo tài khoản quản trị: trong `backend` chạy `dotnet run -- --create-admin email@example.com`. Lệnh in mật khẩu ngẫu nhiên một lần. Mật khẩu plaintext từ seed không dùng để đăng nhập được.
 
 ## Chạy demo
+
+Database đã có từ phiên bản trước: build `tests/AdminSmoke`, chạy `dotnet run --no-build --project tests/AdminSmoke -- --upgrade-feedback` **trước khi chạy backend mới**. Lệnh sao lưu trước khi thêm bảng bình luận và khóa xác minh đánh giá; chạy lại sẽ bỏ qua schema đã cài. Không nhập lại `CSDL.sql`. Database mới tạo bằng schema hiện tại đã có phần này.
 
 Hai terminal: `dotnet run --project backend` và trong `frontend`: `npm run dev -- --host 127.0.0.1 --port 5173`.
 
@@ -53,6 +56,27 @@ dotnet run --no-build --project tests/AdminSmoke -- D:\DoAn4\backend --functiona
 ```
 
 Thay đường dẫn backend theo máy. Hai chế độ đầu chỉ đọc; functional tạo fixture riêng rồi dọn trong `finally`. Test trình duyệt: cài Chromium bằng `npx playwright install chromium` trong frontend, khởi động frontend rồi chạy chế độ `--browser`. Frontend kiểm tra bằng `npm run build` và `npm run lint`.
+
+Các bài kiểm tra dùng **tài khoản SQL có sẵn** (không tạo tài khoản): đặt thông tin đăng nhập của tài khoản admin/user đang hoạt động vào `.local/test-accounts.json`, khóa `admin` và `user`, mỗi khóa chứa `email`/`password`. File được gitignore, không đưa lên GitHub. Khởi động hai dịch vụ rồi chạy từ root:
+
+```powershell
+dotnet run --no-build --project tests/AdminSmoke -- --audit
+dotnet run --no-build --project tests/AdminSmoke -- --verified-coverage
+dotnet run --no-build --project tests/AdminSmoke -- --completion-checks
+dotnet run --no-build --project tests/AdminSmoke -- --capacity-checks
+node tests/completion-ui.mjs
+node tests/feedback.mjs
+node tests/admin-coverage.mjs
+node tests/restaurant-planner.mjs
+node tests/home-polish.mjs
+node tests/catalog-system-audit.mjs
+```
+
+Build `tests/AdminSmoke` trước khi dùng `--no-build`. `--audit`, `--verified-coverage`, home và catalog audit chỉ đọc dữ liệu ứng dụng. Các test completion/feedback/capacity/admin/planner có tạo dữ liệu thử riêng rồi dọn trong `finally`; nhật ký admin được giữ. Chạy tuần tự để fixture không xuất hiện trong bài audit danh mục. Các chế độ cũ `--functional`/`--browser` vẫn tạo tài khoản thử riêng; không dùng chúng khi cần kiểm thử chỉ với tài khoản sẵn có.
+
+## Đánh giá và bình luận
+
+Trang chi tiết điểm đến, tour và khách sạn cho mọi người đọc đánh giá/bình luận không cần đăng nhập. Đăng nhập là có thể bình luận; chấm sao cần đơn của chính tài khoản đã hoàn thành trải nghiệm: tour `Completed`, phòng `CheckedOut`, đã qua ngày kết thúc tương ứng. Điểm đến phải nằm trong tour đã hoàn thành của người đó; lịch trình tự lập không tự xác nhận đã tham quan. Mỗi tài khoản chấm sao một lần cho mỗi dịch vụ. Admin chỉ ẩn/hiện tại `/admin/reviews` và `/admin/comments`. Điểm trung bình và sắp xếp danh mục chỉ tính đánh giá đã xác minh, đang công khai; đánh giá cũ chưa có bằng chứng vẫn được giữ trong database để tra cứu.
 
 ## Ảnh và dữ liệu mẫu mở rộng
 
