@@ -19,6 +19,11 @@ public class MaGiamGiaService : IMaGiamGiaService
         return await _repo.UpdateAsync(id,dto);
     }
     private static void Validate(string code,string? note,string type,decimal value,decimal? cap,decimal minimum,int quantity,int used,DateTime start,DateTime end) {
+        StorageRules.Date(start,"Ngày bắt đầu");
+        StorageRules.Date(end,"Ngày kết thúc");
+        StorageRules.Money(value,"Giá trị giảm");
+        StorageRules.Money(minimum,"Đơn tối thiểu");
+        if (cap.HasValue) StorageRules.Money(cap.Value,"Giảm tối đa");
         if(string.IsNullOrWhiteSpace(code)||code.Length>50||note?.Length>255||type is not ("PhanTram" or "SoTien")||
             value<=0||value>1000000000||type=="PhanTram"&&value>100||cap<0||minimum<0||quantity<0||quantity>0&&quantity<used||end<=start)
             throw new backend.Security.RequestRuleException("Kiểm tra mã (tối đa 50 ký tự), mức giảm, số lượng và ngày hiệu lực. Phần trăm không vượt 100; số lượng không thấp hơn lượt đã dùng.");
