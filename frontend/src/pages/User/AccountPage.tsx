@@ -18,8 +18,14 @@ export default function AccountPage() {
   const { user, logout } = useSession();
   const navigate = useNavigate();
   const { data, loading, error, reload } = useResource<AccountData>('/account');
-  const [params] = useSearchParams();
-  const [tab, setTab] = useState<'tours' | 'hotels' | 'trips'>(params.get('tab') === 'trips' ? 'trips' : 'tours');
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') === 'hotels' ? 'hotels' : params.get('tab') === 'trips' ? 'trips' : 'tours';
+  const setTab = (value: 'tours' | 'hotels' | 'trips') => {
+    const next = new URLSearchParams(params);
+    next.set('tab', value);
+    if (value !== 'trips') next.delete('trip');
+    setParams(next);
+  };
   const [notice, setNotice] = useState('');
   const [actionError, setActionError] = useState('');
   const [responding, setResponding] = useState(false);
