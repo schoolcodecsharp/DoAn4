@@ -1,7 +1,8 @@
 namespace backend.DTOs
 {
-    public class DiaDiemDto : IImageOwner
+    public class DiaDiemDto : IImageOwner, IReviewSummary
     {
+        public int SoLuotDanhGia { get; set; }
         int IImageOwner.ImageOwnerId => MaDiaDiem;
         string IImageOwner.ImageOwnerType => "DiaDiem";
         public List<HinhAnhResponseDto> HinhAnh { get; set; } = new();

@@ -36,8 +36,9 @@ namespace backend.DTOs
         public string TrangThai { get; set; }
     }
 
-    public class TourResponseDto : IImageOwner
+    public class TourResponseDto : IImageOwner, IReviewSummary
     {
+        public int SoLuotDanhGia { get; set; }
         int IImageOwner.ImageOwnerId => MaTour;
         string IImageOwner.ImageOwnerType => "Tour";
         public List<HinhAnhResponseDto> HinhAnh { get; set; } = new();

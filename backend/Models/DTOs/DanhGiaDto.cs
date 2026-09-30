@@ -20,6 +20,9 @@ public class UpdateDanhGiaDto
 
 public class DanhGiaResponseDto
 {
+    public int? MaDatTourXacMinh { get; set; }
+    public int? MaDatPhongXacMinh { get; set; }
+    public bool DaXacMinh => MaDatTourXacMinh.HasValue || MaDatPhongXacMinh.HasValue;
     public int MaDanhGia { get; set; }
     public int MaNguoiDung { get; set; }
     public int? MaTour { get; set; }
