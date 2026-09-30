@@ -269,6 +269,10 @@ CREATE TABLE LoaiPhong (
 -- =========================================================
 
 CREATE TABLE DatPhong (
+    YeuCauHuy ENUM('Pending','Approved','Rejected') NULL,
+    LyDoHuy VARCHAR(1000) NULL,
+    PhanHoiHuy VARCHAR(1000) NULL,
+    NgayYeuCauHuy DATETIME NULL,
     MaDatPhong INT AUTO_INCREMENT PRIMARY KEY,
 
     MaNguoiDung INT NOT NULL,
@@ -450,6 +454,7 @@ CREATE TABLE TourChiTiet (
 -- =========================================================
 
 CREATE TABLE ChuyenDi (
+    Revision INT NOT NULL DEFAULT 0,
     MaChuyenDi INT AUTO_INCREMENT PRIMARY KEY,
 
     MaNguoiDung INT NOT NULL,
@@ -605,6 +610,10 @@ CREATE TABLE LichTrinhChiTiet (
 -- =========================================================
 
 CREATE TABLE DatTour (
+    YeuCauHuy ENUM('Pending','Approved','Rejected') NULL,
+    LyDoHuy VARCHAR(1000) NULL,
+    PhanHoiHuy VARCHAR(1000) NULL,
+    NgayYeuCauHuy DATETIME NULL,
     MaDatTour INT AUTO_INCREMENT PRIMARY KEY,
 
     MaNguoiDung INT NOT NULL,

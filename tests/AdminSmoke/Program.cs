@@ -16,6 +16,7 @@ var config = new ConfigurationBuilder().SetBasePath(root).AddJsonFile("appsettin
 await using var db = new MySqlConnection(config.GetConnectionString("DefaultConnection"));
 await db.OpenAsync();
 if(args.Contains("--upgrade-feedback")) { await FeedbackUpgrade.Run(db,config,root); return; }
+if(args.Contains("--upgrade-account")) { await AccountUpgrade.Run(db,config,root); return; }
 if(args.Contains("--feedback-fixtures")) { await FeedbackFixtures.Run(db,root,args); return; }
 if(args.Contains("--completion-checks")) { await CompletionChecks.Run(db,root); return; }
 if(args.Contains("--capacity-checks")) { await CapacityChecks.Run(db,root); return; }
