@@ -25,6 +25,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("login")]
+        [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("auth")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.MatKhau))
@@ -74,6 +75,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("register")]
+        [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("auth")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.HoTen) || request.HoTen.Trim().Length > 100 ||

@@ -39,6 +39,7 @@ public sealed class FeedbackController(IConfiguration config) : ControllerBase
     }
 
     [HttpPost("comments")]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("feedback")]
     public async Task<IActionResult> Comment(string kind,int id,CommentRequest request)
     {
         var content=FeedbackRules.Content(request.Content,true);
@@ -53,6 +54,7 @@ public sealed class FeedbackController(IConfiguration config) : ControllerBase
     }
 
     [HttpPost("reviews")]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("feedback")]
     public async Task<IActionResult> Review(string kind,int id,ReviewRequest request)
     {
         if(request.Stars is <1 or >5)return BadRequest(new{message="Chọn từ 1 đến 5 sao."});

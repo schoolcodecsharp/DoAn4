@@ -4,6 +4,9 @@ using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
+using System.Security.Claims;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,10 +90,25 @@ builder.Services.AddAuthorization();
 // =============================================
 // CORS
 // =============================================
-builder.Services.AddCors(options => {
-    options.AddPolicy("AllowAll", policy => {
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    });
+builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => {
+    var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+        ?? (builder.Environment.IsDevelopment() ? new[] { "http://localhost:5173", "http://127.0.0.1:5173" } : Array.Empty<string>());
+    if (origins.Length > 0) policy.WithOrigins(origins).AllowAnyMethod().AllowAnyHeader();
+}));
+builder.Services.AddRateLimiter(options => {
+    options.RejectionStatusCode = 429;
+    options.OnRejected = async (context, token) => {
+        var seconds = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retry) ? Math.Max(1, (int)Math.Ceiling(retry.TotalSeconds)) : 60;
+        context.HttpContext.Response.Headers.RetryAfter = seconds.ToString();
+        await context.HttpContext.Response.WriteAsJsonAsync(new { message = $"Bạn thao tác quá nhanh. Vui lòng thử lại sau {seconds} giây." }, token);
+    };
+    options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions {
+            PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0
+        }));
+    options.AddPolicy("feedback", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 20, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 
 // =============================================
@@ -158,7 +176,7 @@ if (app.Environment.IsDevelopment()) {
     });
 }
 
-app.UseCors("AllowAll");
+app.UseCors("Frontend");
 app.UseStaticFiles(new StaticFileOptions {
     OnPrepareResponse = context => {
         context.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";
@@ -167,6 +185,7 @@ app.UseStaticFiles(new StaticFileOptions {
 });
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 app.MapControllers();
 
 app.MapGet("/api/health", () => Results.Json(new {
