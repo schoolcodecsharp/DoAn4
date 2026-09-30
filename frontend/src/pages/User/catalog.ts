@@ -9,6 +9,7 @@ export const catalogs = {
   destinations: { endpoint: 'diadiem', title: 'Điểm đến', heading: 'Việt Nam, còn nhiều điều để khám phá.', description: 'Từ những miền di sản đến cảnh sắc thiên nhiên. Tìm cảm hứng cho hành trình của bạn.' },
 };
 export type CatalogItem = {
+  diemDanhGia?: number; soLuotDanhGia?: number;
   anhDaiDien?: string | null; hinhAnh?: TravelImage[];
   maTour?: number; maKhachSan?: number; maDiaDiem?: number; maNhaHang?: number;
   tenTour?: string; tenKhachSan?: string; tenDiaDiem?: string; tenNhaHang?: string;

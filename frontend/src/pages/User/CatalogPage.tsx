@@ -29,7 +29,7 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
         if (!priceOf(a) || !priceOf(b)) return Number(!priceOf(a)) - Number(!priceOf(b));
         return sort === 'price-asc' ? priceOf(a)-priceOf(b) : priceOf(b)-priceOf(a);
       }
-      return sort === 'name' ? itemName(a).localeCompare(itemName(b),'vi') : 0;
+      return sort === 'name' ? itemName(a).localeCompare(itemName(b),'vi') : (b.diemDanhGia || 0)-(a.diemDanhGia || 0) || (b.soLuotDanhGia || 0)-(a.soLuotDanhGia || 0);
     });
   const pages=Math.max(1,Math.ceil(filtered.length/6)), page=Math.min(pages,Math.max(1,Math.floor(numeric('page'))));
   const update=(key:string,value:string) => { const next=new URLSearchParams(pendingParams.current); if(value) next.set(key,value); else next.delete(key); if(key!=='page')next.delete('page'); commit(next); };
@@ -41,7 +41,7 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
       <label>Giá từ (đ)<input type="number" min="0" step="100000" value={params.get('minPrice') || ''} onChange={e=>update('minPrice',e.target.value)} placeholder="0"/></label>
       <label>Giá đến (đ)<input type="number" min="0" step="100000" value={params.get('maxPrice') || ''} onChange={e=>update('maxPrice',e.target.value)} placeholder="Không giới hạn"/></label>
       {kind==='tours' && <label>Số ngày<select aria-label="Số ngày" value={days || ''} onChange={e=>update('days',e.target.value)}><option value="">Tất cả</option>{[...new Set((data || []).map(t=>t.soNgay).filter(Boolean))].sort((a,b)=>a!-b!).map(d=><option key={d} value={d}>{d} ngày</option>)}</select></label>}
-      <label>Sắp xếp<select aria-label="Sắp xếp" value={sort} onChange={e=>update('sort',e.target.value)}><option value="">Mặc định</option><option value="price-asc">Giá tăng dần</option><option value="price-desc">Giá giảm dần</option><option value="name">Tên A–Z</option></select></label>
+      <label>Sắp xếp<select aria-label="Sắp xếp" value={sort} onChange={e=>update('sort',e.target.value)}><option value="">{kind === 'restaurants' ? 'Mặc định' : 'Đánh giá cao nhất'}</option><option value="price-asc">Giá tăng dần</option><option value="price-desc">Giá giảm dần</option><option value="name">Tên A–Z</option></select></label>
     </section>{invalidPrice && <p role="alert">Giá đến phải lớn hơn hoặc bằng giá từ.</p>}
     <div className="section-line"><h2>{config.title} dành cho bạn</h2>{!loading && !error && <span>{filtered.length} kết quả{keyword ? ` cho “${keyword}”` : ''}{province ? ` tại ${province}` : ''}</span>}{(keyword || province || minPrice || maxPrice || days || sort) && <button className="user-text-link" onClick={clear}>Xóa bộ lọc</button>}</div>
     {loading && <div className="user-empty" role="status">Đang tải {config.title.toLowerCase()}...</div>}
@@ -51,6 +51,7 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
       const photo = item.hinhAnh?.[0];
       const price = kind === 'tours' ? item.giaTour : kind === 'hotels' ? item.giaPhongMin : kind === 'restaurants' ? item.giaMin : item.giaVe;
       return <article className="catalog-card" key={itemId(item, kind)}>
+        {!!item.soLuotDanhGia && <p className="catalog-rating" aria-label={`${item.diemDanhGia} trên 5 sao, ${item.soLuotDanhGia} đánh giá đã xác minh`}>{item.diemDanhGia?.toLocaleString('vi-VN')}/5 sao · {item.soLuotDanhGia} đánh giá đã xác minh</p>}
         {photo ? <LibraryPhoto key={photo.maHinhAnh} photo={photo} /> : <div className="catalog-placeholder"><span>{kind === 'hotels' ? 'NƠI LƯU TRÚ' : 'KHÁM PHÁ VIỆT NAM'}</span><strong>{itemLocation(item)}</strong><small>Hình ảnh đang được cập nhật</small></div>}
         <div className="catalog-card-body"><p className="user-kicker">{itemLocation(item)}</p><h3><Link to={`/${kind}/${itemId(item, kind)}`}>{itemName(item)}</Link></h3><p className="card-description">{item.moTa || 'Xem thông tin chi tiết để tìm hiểu thêm về dịch vụ.'}</p><p className="card-meta">{kind === 'tours' ? `${item.soNgay || 1} ngày / ${item.soDem || 0} đêm` : kind === 'hotels' ? (item.loaiLuuTru || 'Lưu trú') : (item.diaChi || 'Điểm tham quan tại Việt Nam')}</p><div className="card-bottom"><div><small>{kind === 'tours' ? 'Giá tham khảo / người' : kind === 'hotels' ? 'Giá từ / đêm' : kind === 'restaurants' ? 'Chi phí tham khảo từ' : 'Giá vé tham khảo'}</small><strong>{price !== undefined && price > 0 ? money(price) : 'Xem chi tiết'}</strong></div><Link className="user-text-link" to={`/${kind}/${itemId(item, kind)}`}>Xem chi tiết</Link></div></div>
       </article>;
