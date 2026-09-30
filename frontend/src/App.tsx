@@ -8,6 +8,7 @@ import CatalogPage from './pages/User/CatalogPage';
 import DetailPage from './pages/User/DetailPage';
 import BookingPage from './pages/User/BookingPage';
 import AccountPage from './pages/User/AccountPage';
+import RoomDetailPage from './pages/User/RoomDetailPage';
 import ItineraryPage from './pages/User/ItineraryPage';
 import ImageCreditsPage from './pages/User/ImageCreditsPage';
 import './index.css';
@@ -26,6 +27,8 @@ export default function App() {
     {(['tours', 'hotels'] as const).map(kind => <Route key={kind} path={`/${kind}/:id/book`} element={<RequireLogin><BookingPage key={kind} kind={kind} /></RequireLogin>} />)}
     <Route path="/planner" element={<RequireLogin><ItineraryPage /></RequireLogin>} />
     <Route path="/account" element={<RequireLogin><AccountPage /></RequireLogin>} />
+    <Route path="/account/trips/:tripId" element={<RequireLogin><AccountPage /></RequireLogin>} />
+    <Route path="/hotels/:id/rooms/:roomId" element={<RoomDetailPage />} />
     <Route path="/my-trips" element={<RequireLogin><AccountPage /></RequireLogin>} />
     <Route path="/saved" element={<Navigate to="/account" replace />} />
     <Route path="/favorites" element={<Navigate to="/account" replace />} />
