@@ -31,6 +31,8 @@ static class CoverageFixtures
         await db.ExecuteAsync("DELETE d FROM DanhGia d JOIN Tour t ON t.MaTour=d.MaTour WHERE t.TenTour=@tag AND d.NoiDung=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE d FROM DatTour d JOIN Tour t ON t.MaTour=d.MaTour WHERE t.TenTour=@tag AND d.GhiChu=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE FROM Tour WHERE TenTour=@tag",new{tag},tx);
+        await db.ExecuteAsync("DELETE p FROM ThanhToan p JOIN DatPhong d ON d.MaDatPhong=p.MaDatPhong JOIN LoaiPhong r ON r.MaLoaiPhong=d.MaLoaiPhong JOIN KhachSan h ON h.MaKhachSan=r.MaKhachSan WHERE h.TenKhachSan=@tag",new{tag},tx);
+        await db.ExecuteAsync("DELETE d FROM DatPhong d JOIN LoaiPhong r ON r.MaLoaiPhong=d.MaLoaiPhong JOIN KhachSan h ON h.MaKhachSan=r.MaKhachSan WHERE h.TenKhachSan=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE FROM KhachSan WHERE TenKhachSan=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE FROM ChuyenDi WHERE TenChuyenDi=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE FROM MaGiamGia WHERE Code=@code",new{code=tag.ToUpperInvariant()},tx);
