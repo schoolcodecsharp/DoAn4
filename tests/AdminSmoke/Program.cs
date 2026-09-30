@@ -8,10 +8,16 @@ using MySqlConnector;
 
 // Integration smoke test: creates only uniquely named test records and removes
 // exactly those records/files in finally. Never resets or re-seeds the database.
-var root = Path.GetFullPath(args.Length > 0 ? args[0] : "../../backend");
+// A leading switch is a mode, not a path. Resolve from the built project so
+// documented commands also work from the repository root or another cwd.
+var root = Path.GetFullPath(args.Length > 0 && !args[0].StartsWith("--")
+    ? args[0] : Path.Combine(AppContext.BaseDirectory,"../../../../../backend"));
 var config = new ConfigurationBuilder().SetBasePath(root).AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", true).AddEnvironmentVariables().Build();
 await using var db = new MySqlConnection(config.GetConnectionString("DefaultConnection"));
 await db.OpenAsync();
+if(args.Contains("--upgrade-feedback")) { await FeedbackUpgrade.Run(db,config,root); return; }
+if(args.Contains("--feedback-fixtures")) { await FeedbackFixtures.Run(db,root,args); return; }
+if(args.Contains("--completion-checks")) { await CompletionChecks.Run(db,root); return; }
 if(args.Contains("--capacity-checks")) { await CapacityChecks.Run(db,root); return; }
 if(args.Contains("--verified-catalog") || args.Contains("--verified-coverage")) { await VerifiedCatalog.Run(db,config,root,args.Contains("--verified-catalog")); return; }
 if(args.Contains("--coverage-fixtures")) { await CoverageFixtures.Run(db,args); return; }
