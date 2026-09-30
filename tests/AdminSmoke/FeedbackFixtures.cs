@@ -41,6 +41,7 @@ static class FeedbackFixtures
         }
         if(action!="cleanup")throw new Exception("Unknown action");
         // Reviews must be removed before their proof orders (foreign keys).
+        await db.ExecuteAsync("DELETE p FROM ThanhToan p LEFT JOIN DatTour d ON d.MaDatTour=p.MaDatTour LEFT JOIN Tour t ON t.MaTour=d.MaTour LEFT JOIN DatPhong b ON b.MaDatPhong=p.MaDatPhong LEFT JOIN LoaiPhong r ON r.MaLoaiPhong=b.MaLoaiPhong LEFT JOIN KhachSan h ON h.MaKhachSan=r.MaKhachSan WHERE (t.TenTour=@tag AND d.GhiChu=@tag) OR (h.TenKhachSan=@tag AND b.GhiChu=@tag)",new{tag},tx);
         await db.ExecuteAsync("DELETE d FROM DanhGia d LEFT JOIN Tour t ON t.MaTour=d.MaTour LEFT JOIN DiaDiem p ON p.MaDiaDiem=d.MaDiaDiem LEFT JOIN KhachSan h ON h.MaKhachSan=d.MaKhachSan WHERE t.TenTour=@tag OR p.TenDiaDiem=@tag OR h.TenKhachSan=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE d FROM DatTour d JOIN Tour t ON t.MaTour=d.MaTour WHERE t.TenTour=@tag AND d.GhiChu=@tag",new{tag},tx);
         await db.ExecuteAsync("DELETE d FROM DatPhong d JOIN LoaiPhong r ON r.MaLoaiPhong=d.MaLoaiPhong JOIN KhachSan h ON h.MaKhachSan=r.MaKhachSan WHERE h.TenKhachSan=@tag AND d.GhiChu=@tag",new{tag},tx);

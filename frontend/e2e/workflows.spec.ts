@@ -124,10 +124,10 @@ test('customer saves itinerary, invites a member, and revokes shared access',asy
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   await page.screenshot({path:testInfo.outputPath('planner-recommendations-mobile.png'),fullPage:true,animations:'disabled'});
   await page.getByRole('button',{name:'Lưu lịch trình',exact:true}).click();
-  await expect(page).toHaveURL(/\/account$/);
+  await expect(page).toHaveURL(/\/account\?tab=trips&trip=\d+$/);
   await page.getByRole('button',{name:'Lịch trình của tôi',exact:true}).click();
+  await page.getByRole('link',{name:'Xem lịch trình: '+env.E2E_TAG+' trip',exact:true}).click();
   const trip=page.locator('article').filter({hasText:env.E2E_TAG+' trip'});
-  await trip.getByText('Xem kế hoạch từng ngày',{exact:true}).click();
   await expect(trip).toContainText('Ngày 2: Trở về');
   await expect(trip).toContainText('Tham quan Vịnh Hạ Long');
   await expect(trip).toContainText('Tham quan Đại Nội Huế');
@@ -144,13 +144,14 @@ test('customer saves itinerary, invites a member, and revokes shared access',asy
     await recipient.goto('/account');
     const invitation=recipient.locator('.trip-invitations article').filter({hasText:env.E2E_TAG+' trip'});
     await invitation.getByRole('button',{name:'Chấp nhận',exact:true}).click();
+    await recipient.getByRole('link',{name:'Xem lịch trình: '+env.E2E_TAG+' trip',exact:true}).click();
     const shared=recipient.locator('article.user-panel').filter({hasText:env.E2E_TAG+' trip'});
     await expect(shared).toContainText('Chuyến đi bạn đã tham gia');
     await expect(shared.getByRole('button',{name:'Quản lý thành viên',exact:true})).toHaveCount(0);
-    await shared.getByText('Xem kế hoạch từng ngày',{exact:true}).click();
     await expect(shared).toContainText('Tham quan Đại Nội Huế');
     await page.reload();
     await page.getByRole('button',{name:'Lịch trình của tôi',exact:true}).click();
+    await page.getByRole('link',{name:'Xem lịch trình: '+env.E2E_TAG+' trip',exact:true}).click();
     await trip.getByRole('button',{name:'Quản lý thành viên',exact:true}).click();
     await expect(trip.locator('.member-list')).toContainText('Đã tham gia');
     await page.screenshot({path:testInfo.outputPath('trip-members-mobile.png'),fullPage:true,animations:'disabled'});

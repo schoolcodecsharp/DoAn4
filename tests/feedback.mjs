@@ -8,8 +8,19 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const require=createRequire(path.join(root,'frontend/package.json'));
 const {chromium,request,expect}=require('@playwright/test');
 const api=await request.newContext({baseURL:'http://127.0.0.1:5173'});
+// Respect production throttling; retry only explicit 429 responses, never duplicate successful writes.
+const post = async (url, options) => {
+  let response = await api.post(url, options);
+  if (response.status() === 429) {
+    const seconds = Math.min(65, Math.max(1, Number(response.headers()['retry-after']) || 60));
+    console.log('Rate limit reached in regression; waiting', seconds, 'seconds.');
+    await new Promise(resolve => setTimeout(resolve, seconds * 1000 + 250));
+    response = await api.post(url, options);
+  }
+  return response;
+};
 const accounts=JSON.parse(fs.readFileSync(path.join(root,'.local/test-accounts.json'),'utf8'));
-const login=async role=>{const r=await api.post('/api/auth/login',{data:{email:accounts[role].email,matKhau:accounts[role].password}});assert.equal(r.status(),200);return r.json();};
+const login=async role=>{const r=await post('/api/auth/login',{data:{email:accounts[role].email,matKhau:accounts[role].password}});assert.equal(r.status(),200);return r.json();};
 const admin=await login('admin'),user=await login('user');
 const auth={Authorization:'Bearer '+user.token},adminAuth={Authorization:'Bearer '+admin.token};
 const tag='feedback-'+Date.now();
@@ -25,33 +36,33 @@ try {
     const url=base(kind,id);
     const initial=await read(kind,id);
     check(`${kind}: public empty feedback excludes unverified legacy`,initial.summary.count===0&&initial.comments.length===0);
-    check(`${kind}: anonymous comment blocked`,(await api.post(url+'/comments',{data:{content:'guest'}})).status()===401);
-    check(`${kind}: anonymous rating blocked`,(await api.post(url+'/reviews',{data:{stars:5}})).status()===401);
+    check(`${kind}: anonymous comment blocked`,(await post(url+'/comments',{data:{content:'guest'}})).status()===401);
+    check(`${kind}: anonymous rating blocked`,(await post(url+'/reviews',{data:{stars:5}})).status()===401);
     check(`${kind}: eligibility requires login`,(await api.get(url+'/eligibility')).status()===401);
-    check(`${kind}: pending booking cannot rate`,(await api.post(url+'/reviews',{headers:auth,data:{stars:5,maNguoiDung:f.admin,maDatTourXacMinh:f.tourOrder}})).status()===403);
-    const comment=await api.post(url+'/comments',{headers:auth,data:{content:tag+' '+kind,maNguoiDung:f.admin}});
+    check(`${kind}: pending booking cannot rate`,(await post(url+'/reviews',{headers:auth,data:{stars:5,maNguoiDung:f.admin,maDatTourXacMinh:f.tourOrder}})).status()===403);
+    const comment=await post(url+'/comments',{headers:auth,data:{content:tag+' '+kind,maNguoiDung:f.admin}});
     check(`${kind}: logged-in account comments before experience`,comment.status()===201);
     const listed=await read(kind,id);
     check(`${kind}: public comments identify JWT author only`,listed.comments[0].author===user.user.hoTen&&!('maNguoiDung' in listed.comments[0])&&!('email' in listed.comments[0]));
-    check(`${kind}: blank comment rejected`,(await api.post(url+'/comments',{headers:auth,data:{content:'   '}})).status()===400);
-    check(`${kind}: long comment rejected`,(await api.post(url+'/comments',{headers:auth,data:{content:'a'.repeat(2001)}})).status()===400);
+    check(`${kind}: blank comment rejected`,(await post(url+'/comments',{headers:auth,data:{content:'   '}})).status()===400);
+    check(`${kind}: long comment rejected`,(await post(url+'/comments',{headers:auth,data:{content:'a'.repeat(2001)}})).status()===400);
   }
   const tourUrl=base('tours',f.tour);
-  check('Admin legacy create cannot bypass experience',(await api.post('/api/danhgia',{headers:adminAuth,data:{maNguoiDung:f.admin,maTour:f.tour,soSao:5}})).status()===409);
-  check('Cannot forge experience using another account',(await api.post(tourUrl+'/reviews',{headers:adminAuth,data:{stars:5,maNguoiDung:f.owner}})).status()===403);
+  check('Admin legacy create cannot bypass experience',(await post('/api/danhgia',{headers:adminAuth,data:{maNguoiDung:f.admin,maTour:f.tour,soSao:5}})).status()===409);
+  check('Cannot forge experience using another account',(await post(tourUrl+'/reviews',{headers:adminAuth,data:{stars:5,maNguoiDung:f.owner}})).status()===403);
   await api.put(`/api/dattour/${f.tourOrder}`,{headers:adminAuth,data:{trangThai:'Confirmed'}});
-  check('Confirmed tour is not completed',(await api.post(tourUrl+'/reviews',{headers:auth,data:{stars:5}})).status()===403);
+  check('Confirmed tour is not completed',(await post(tourUrl+'/reviews',{headers:auth,data:{stars:5}})).status()===403);
   assert.equal((await api.put(`/api/dattour/${f.tourOrder}`,{headers:adminAuth,data:{trangThai:'Completed'}})).status(),204);
   for(const state of ['Confirmed','CheckedIn','CheckedOut']) {
     const r=await api.put(`/api/datphong/${f.roomOrder}`,{headers:adminAuth,data:{trangThai:state}});assert(r.ok(),await r.text());
-    if(state==='CheckedIn')check('Checked-in hotel is not completed',(await api.post(base('hotels',f.hotel)+'/reviews',{headers:auth,data:{stars:5}})).status()===403);
+    if(state==='CheckedIn')check('Checked-in hotel is not completed',(await post(base('hotels',f.hotel)+'/reviews',{headers:auth,data:{stars:5}})).status()===403);
   }
   fixture('future');
-  for(const [kind,id] of targets)check(`${kind}: future completion date blocks rating`,(await api.post(base(kind,id)+'/reviews',{headers:auth,data:{stars:5}})).status()===403);
+  for(const [kind,id] of targets)check(`${kind}: future completion date blocks rating`,(await post(base(kind,id)+'/reviews',{headers:auth,data:{stars:5}})).status()===403);
   fixture('past');
   for(const [kind,id] of targets)check(`${kind}: completed past booking allows rating`,(await (await api.get(base(kind,id)+'/eligibility',{headers:auth})).json()).canReview===true);
-  check('Stars outside 1–5 rejected',(await api.post(tourUrl+'/reviews',{headers:auth,data:{stars:6}})).status()===400);
-  const race=await Promise.all([4,5].map(stars=>api.post(tourUrl+'/reviews',{headers:auth,data:{stars,content:tag+' verified'}})));
+  check('Stars outside 1–5 rejected',(await post(tourUrl+'/reviews',{headers:auth,data:{stars:6}})).status()===400);
+  const race=await Promise.all([4,5].map(stars=>post(tourUrl+'/reviews',{headers:auth,data:{stars,content:tag+' verified'}})));
   check('Concurrent duplicate rating limited to one',race.filter(r=>r.status()===201).length===1&&race.filter(r=>r.status()===409).length===1);
   const reviewId=(await race.find(r=>r.status()===201).json()).id;
   check('Own completed review blocks resubmission',(await (await api.get(tourUrl+'/eligibility',{headers:auth})).json()).alreadyReviewed===true);
@@ -61,7 +72,7 @@ try {
   check('Public average uses verified reviews only',before.summary.count===1&&before.summary.average===before.reviews[0].stars);
   assert.equal((await api.put('/api/danhgia/'+reviewId,{headers:adminAuth,data:{trangThai:false}})).status(),204);
   check('Hidden review removed from count and average',(await read('tours',f.tour)).summary.count===0);
-  check('Cannot resubmit hidden review',(await api.post(tourUrl+'/reviews',{headers:auth,data:{stars:5}})).status()===409);
+  check('Cannot resubmit hidden review',(await post(tourUrl+'/reviews',{headers:auth,data:{stars:5}})).status()===409);
   await api.put('/api/danhgia/'+reviewId,{headers:adminAuth,data:{trangThai:true}});
   const catalog=await (await api.get('/api/tour/'+f.tour)).json();
   check('Catalog uses same verified summary',catalog.soLuotDanhGia===1&&catalog.diemDanhGia===before.summary.average);
@@ -75,9 +86,9 @@ try {
   check('Unknown target gives 404',(await api.get(base('tours',2147483647))).status()===404);
   check('Invalid kind gives 404',(await api.get(base('invalid',f.tour))).status()===404);
   check('Invalid page gives 400',(await api.get(tourUrl+'?commentPage=0')).status()===400);
-  for(let i=0;i<11;i++)assert.equal((await api.post(tourUrl+'/comments',{headers:auth,data:{content:tag+' paging '+i}})).status(),201);
+  for(let i=0;i<11;i++)assert.equal((await post(tourUrl+'/comments',{headers:auth,data:{content:tag+' paging '+i}})).status(),201);
   check('Public comments paginated', (await read('tours',f.tour)).comments.length===10&&(await (await api.get(tourUrl+'?commentPage=2')).json()).comments.length===2);
-  const duplicate=await Promise.all([1,2].map(()=>api.post(tourUrl+'/comments',{headers:auth,data:{content:tag+' identical'}})));
+  const duplicate=await Promise.all([1,2].map(()=>post(tourUrl+'/comments',{headers:auth,data:{content:tag+' identical'}})));
   check('Duplicate comment submission blocked',duplicate.filter(r=>r.status()===201).length===1&&duplicate.filter(r=>r.status()===409).length===1);
   browser=await chromium.launch();
   for(const [width,kind,id] of [[1440,'hotels',f.hotel],[390,'destinations',f.destination]]) {

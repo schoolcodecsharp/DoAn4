@@ -112,7 +112,9 @@ try {
   await expect(adminPage.getByText('Bộ ảnh', { exact: false }).first()).toBeVisible();
   check('Admin restaurant image manager available', true);
   const tours = await (await api.get('/api/tour', { headers: adminHeaders })).json();
-  const tour = tours.find(t => t.trangThai === 'Active');
+  const orders = await (await api.get('/api/dattour', { headers: adminHeaders })).json();
+  const tour = tours.find(t => t.trangThai === 'Active' && !orders.some(o => o.maTour === t.maTour));
+  assert(tour, 'Restaurant editor test requires a tour without booking history');
   await adminPage.goto('/admin/tours');
   await adminPage.getByLabel('Tìm trong danh sách', { exact: true }).fill(tour.tenTour);
   await adminPage.getByRole('row').filter({ hasText: tour.tenTour }).getByRole('button', { name: 'Chỉnh sửa' }).first().click();
