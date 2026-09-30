@@ -12,13 +12,13 @@ public class CreateDatTourDto
     public string? GhiChu { get; set; }
 }
 
-public class UpdateDatTourDto
+public class UpdateDatTourDto : backend.Services.CancellationDecision
 {
     public string? TrangThai { get; set; }
     public string? GhiChu { get; set; }
 }
 
-public class DatTourResponseDto
+public class DatTourResponseDto : backend.Services.CancellationRecord
 {
     public int MaDatTour { get; set; }
     public int MaNguoiDung { get; set; }

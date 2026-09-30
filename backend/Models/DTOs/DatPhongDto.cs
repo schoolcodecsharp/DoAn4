@@ -16,7 +16,7 @@ namespace backend.DTOs
         public string? GhiChu { get; set; }
     }
 
-    public class UpdateDatPhongDto
+    public class UpdateDatPhongDto : backend.Services.CancellationDecision
     {
         public int? MaNguoiDung { get; set; }
         public int? MaLoaiPhong { get; set; }
@@ -30,7 +30,7 @@ namespace backend.DTOs
         public string? GhiChu { get; set; }
     }
 
-    public class DatPhongResponseDto
+    public class DatPhongResponseDto : backend.Services.CancellationRecord
     {
         public int MaDatPhong { get; set; }
         public int MaNguoiDung { get; set; }

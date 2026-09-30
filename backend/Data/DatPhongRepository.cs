@@ -55,6 +55,7 @@ public class DatPhongRepository(IConfiguration config) : IDatPhongRepository
            (dto.GiaMoiDem.HasValue && dto.GiaMoiDem!=b.GiaMoiDem) || (dto.TongTien.HasValue && dto.TongTien!=b.TongTien))
             throw new RequestRuleException("Không sửa khách, ngày, phòng hoặc giá đơn đã tạo. Hãy hủy và đặt lại.",409);
         var next=dto.TrangThai??b.TrangThai;
+        next=await CancellationRules.Decide(db,tx,true,id,b,dto,b.TrangThai,next,b.NgayNhanPhong);
         BookingRules.Transition(b.TrangThai,next,true);
         if(next!=b.TrangThai) {
             if(next=="CheckedIn" && BookingRules.Today<b.NgayNhanPhong.Date) throw new RequestRuleException("Chưa đến ngày nhận phòng.",409);

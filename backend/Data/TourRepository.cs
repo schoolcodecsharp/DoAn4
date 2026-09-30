@@ -84,7 +84,11 @@ namespace backend.Data
             using var conn = GetConnection();
             await conn.OpenAsync();
             await using var tx = await conn.BeginTransactionAsync();
-            if (await conn.ExecuteScalarAsync<int>("SELECT MaTour FROM Tour WHERE MaTour=@id FOR UPDATE", new { id }, tx) == 0) return false;
+            var previous = await conn.QuerySingleOrDefaultAsync<TourResponseDto>("SELECT * FROM Tour WHERE MaTour=@id FOR UPDATE", new { id }, tx);
+            if (previous == null) return false;
+            if ((previous.SoNgay != dto.SoNgay || previous.SoDem != dto.SoDem) &&
+                await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM DatTour WHERE MaTour=@id", new { id }, tx) > 0)
+                throw new backend.Security.RequestRuleException("Tour đã có đơn đặt; giữ nguyên thời lượng để bảo toàn lịch sử trải nghiệm. Hãy tạo tour mới nếu đổi lịch trình.", 409);
             if (dto.SoNguoiToiDa == 0 && await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM TourKhoiHanh WHERE MaTour=@id", new { id }, tx) > 0)
                 throw new backend.Security.RequestRuleException("Tour đã có lịch khởi hành; không thể chuyển sức chứa thành chưa xác nhận.",409);
             if(await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM TourChiTiet WHERE MaTour=@id AND NgayThu>@SoNgay",new{id,dto.SoNgay},tx) > 0)
