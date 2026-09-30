@@ -64,7 +64,7 @@ namespace backend.Data
                     NganSach = @NganSach, 
                     MoTa = @MoTa, 
                     TrangThai = @TrangThai,
-                    NgayCapNhat = NOW()
+                    NgayCapNhat = NOW(), Revision = Revision + 1
                 WHERE MaChuyenDi = @Id";
             
             var parameters = new DynamicParameters(dto);

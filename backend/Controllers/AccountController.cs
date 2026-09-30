@@ -23,15 +23,20 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
         await using var conn = Connection();
         var owner = new { Owner };
         var tours = await conn.QueryAsync("""
-            SELECT d.MaDatTour AS id, t.TenTour AS name, d.NgayKhoiHanh AS startDate,
-                   d.SoNguoi AS people, d.TongTien AS total, d.TrangThai AS status
+            SELECT d.MaDatTour AS id, t.MaTour AS tourId, t.TenTour AS name, d.NgayKhoiHanh AS startDate,
+                   d.SoNguoi AS people, d.TongTien AS total, d.TrangThai AS status,
+                   d.YeuCauHuy AS cancellationStatus,d.LyDoHuy AS cancellationReason,d.PhanHoiHuy AS cancellationReply,
+                   COALESCE((SELECT SUM(p.SoTien) FROM ThanhToan p WHERE p.MaDatTour=d.MaDatTour AND p.TrangThai='ThanhCong'),0) AS paid
             FROM DatTour d JOIN Tour t ON t.MaTour=d.MaTour
             WHERE d.MaNguoiDung=@Owner ORDER BY d.NgayDat DESC
             """, owner);
         var hotels = await conn.QueryAsync("""
-            SELECT d.MaDatPhong AS id, CONCAT(k.TenKhachSan, ' / ', p.TenLoaiPhong) AS name,
+            SELECT d.MaDatPhong AS id, k.MaKhachSan AS hotelId, p.MaLoaiPhong AS roomId,
+                   CONCAT(k.TenKhachSan, ' / ', p.TenLoaiPhong) AS name,
                    d.NgayNhanPhong AS startDate, d.NgayTraPhong AS endDate, d.SoNguoi AS people,
-                   d.SoLuongPhong AS rooms, d.TongTien AS total, d.TrangThai AS status
+                   d.SoLuongPhong AS rooms, d.TongTien AS total, d.TrangThai AS status,
+                   d.YeuCauHuy AS cancellationStatus,d.LyDoHuy AS cancellationReason,d.PhanHoiHuy AS cancellationReply,
+                   COALESCE((SELECT SUM(p.SoTien) FROM ThanhToan p WHERE p.MaDatPhong=d.MaDatPhong AND p.TrangThai='ThanhCong'),0) AS paid
             FROM DatPhong d JOIN LoaiPhong p ON p.MaLoaiPhong=d.MaLoaiPhong
             JOIN KhachSan k ON k.MaKhachSan=p.MaKhachSan
             WHERE d.MaNguoiDung=@Owner ORDER BY d.NgayDat DESC
@@ -52,7 +57,8 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
         var activities = await ReadActivities(conn, days.Select(d => d.MaLichTrinh).ToArray());
         return Ok(new { tours, hotels, invitations, trips = trips.Select(t => new {
             isOwner = t.MaNguoiDung == Owner,
-            t.MaChuyenDi, t.TenChuyenDi, t.DiemDen, t.NgayBatDau, t.NgayKetThuc, t.SoNguoi, t.NganSach, t.MoTa,
+            canEdit = t.MaNguoiDung == Owner && t.TrangThai == "Planning" && t.NgayBatDau.Date >= VietnamToday,
+            t.Revision, t.DiemKhoiHanh, t.MaChuyenDi, t.TenChuyenDi, t.DiemDen, t.NgayBatDau, t.NgayKetThuc, t.SoNguoi, t.NganSach, t.MoTa,
             days = days.Where(d => d.MaChuyenDi == t.MaChuyenDi).Select(d => new { d.NgayThu, d.Ngay, d.TieuDe, d.GhiChu, activities = activities.Where(a => a.MaLichTrinh == d.MaLichTrinh) })
         }) });
     }
@@ -79,7 +85,8 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
     }
 
     [HttpPost("itineraries")]
-    public async Task<IActionResult> SaveItinerary(ItineraryRequest request)
+    [HttpPut("itineraries/{tripId:int}")]
+    public async Task<IActionResult> SaveItinerary(ItineraryRequest request, [FromRoute] int? tripId = null)
     {
         static bool ValidName(string? name) => !string.IsNullOrWhiteSpace(name) && name.Trim().Length <= 200;
         if (!ValidName(request.TenChuyenDi) || !ValidName(request.DiemKhoiHanh) || !ValidName(request.DiemDen) ||
@@ -90,15 +97,35 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
         await using var conn = Connection();
         await conn.OpenAsync();
         await using var tx = await conn.BeginTransactionAsync();
+        if (tripId.HasValue)
+        {
+            var current = await conn.QuerySingleOrDefaultAsync<ChuyenDiDto>("SELECT * FROM ChuyenDi WHERE MaChuyenDi=@tripId AND MaNguoiDung=@Owner FOR UPDATE", new { tripId, Owner }, tx);
+            if (current == null) return NotFound(new { message = "Không tìm thấy lịch trình của bạn." });
+            if (current.TrangThai != "Planning" || current.NgayBatDau.Date < VietnamToday)
+                return Conflict(new { message = "Chỉ sửa lịch trình đang lên kế hoạch và chưa qua ngày bắt đầu." });
+            if (request.Revision != current.Revision) return Conflict(new { message = "Lịch trình đã được sửa ở cửa sổ khác. Hãy tải lại trang trước khi lưu." });
+            var members = await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM ThanhVienChuyenDi WHERE MaChuyenDi=@tripId AND MaNguoiDung<>@Owner AND TrangThai IN ('Pending','Accepted')", new { tripId, Owner }, tx);
+            if (request.SoNguoi < members + 1) return Conflict(new { message = "Số người phải bao gồm chủ chuyến đi và các thành viên/lời mời đang có." });
+        }
         var activityError = await ValidateActivities(conn, tx, request.Days);
         if (activityError != null) return BadRequest(new { message = activityError });
         var start = request.NgayBatDau.Date;
-        var id = await conn.ExecuteScalarAsync<int>("""
+        var id = tripId ?? await conn.ExecuteScalarAsync<int>("""
             INSERT INTO ChuyenDi (MaNguoiDung, TenChuyenDi, DiemKhoiHanh, DiemDen, NgayBatDau, NgayKetThuc, SoNguoi, NganSach, MoTa, TrangThai)
             VALUES (@Owner, @TenChuyenDi, @DiemKhoiHanh, @DiemDen, @start, @end, @SoNguoi, @NganSach, @MoTa, 'Planning');
             SELECT LAST_INSERT_ID();
             """, new { Owner, TenChuyenDi = request.TenChuyenDi.Trim(), DiemKhoiHanh = request.DiemKhoiHanh.Trim(),
                 DiemDen = request.DiemDen.Trim(), start, end = start.AddDays(request.Days.Count - 1), request.SoNguoi, request.NganSach, request.MoTa }, tx);
+        if (tripId.HasValue)
+        {
+            await conn.ExecuteAsync("""
+                UPDATE ChuyenDi SET TenChuyenDi=@name,DiemKhoiHanh=@origin,DiemDen=@destination,
+                    NgayBatDau=@start,NgayKetThuc=@end,SoNguoi=@SoNguoi,NganSach=@NganSach,MoTa=@MoTa,
+                    Revision=Revision+1,NgayCapNhat=NOW() WHERE MaChuyenDi=@id;
+                DELETE FROM LichTrinh WHERE MaChuyenDi=@id;
+                """, new { id, name = request.TenChuyenDi.Trim(), origin = request.DiemKhoiHanh.Trim(), destination = request.DiemDen.Trim(),
+                    start, end = start.AddDays(request.Days.Count - 1), request.SoNguoi, request.NganSach, request.MoTa }, tx);
+        }
         for (var i = 0; i < request.Days.Count; i++)
         {
             var dayId = await conn.ExecuteScalarAsync<int>("INSERT INTO LichTrinh (MaChuyenDi, NgayThu, Ngay, TieuDe, GhiChu) VALUES (@id,@number,@date,@title,@note); SELECT LAST_INSERT_ID();",
@@ -115,7 +142,7 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
                         activity.ThoiGianBatDau, activity.ThoiGianKetThuc, activity.GhiChu }, tx);
         }
         await tx.CommitAsync();
-        return StatusCode(201, new { id });
+        return StatusCode(tripId.HasValue ? 200 : 201, new { id });
     }
 
     [HttpGet("itineraries/{tripId:int}/members")]
@@ -212,6 +239,7 @@ public sealed class RoomBookingRequest
 }
 public sealed class ItineraryRequest
 {
+    public int? Revision { get; set; }
     public string TenChuyenDi { get; set; } = "";
     public string DiemKhoiHanh { get; set; } = "";
     public string DiemDen { get; set; } = "";

@@ -4,6 +4,7 @@ namespace backend.DTOs
 {
     public class ChuyenDiDto
     {
+        public int Revision { get; set; }
         public int MaChuyenDi { get; set; }
         public int MaNguoiDung { get; set; }
         public string TenChuyenDi { get; set; }
