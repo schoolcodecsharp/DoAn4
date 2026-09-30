@@ -9,11 +9,13 @@ public class ChiPhiService : IChiPhiService
     public Task<IEnumerable<ChiPhiResponseDto>> GetByChuyenDiAsync(int id) => _repo.GetByChuyenDiAsync(id);
     public Task<int> CreateAsync(CreateChiPhiDto dto) {
         Validate(dto.TenChiPhi,dto.LoaiChiPhi,dto.SoTien,dto.GhiChu);
+        if (dto.NgayChi.HasValue) StorageRules.Date(dto.NgayChi.Value,"Ngày chi");
         if(dto.MaChuyenDi<1||dto.MaNguoiDung<1)throw new backend.Security.RequestRuleException("Chọn chuyến đi và người chi hợp lệ.");
         return _repo.CreateAsync(dto);
     }
     public async Task<bool> UpdateAsync(int id, UpdateChiPhiDto dto) {
         var old=await _repo.GetByIdAsync(id);if(old==null)return false;
+        if (dto.NgayChi.HasValue) StorageRules.Date(dto.NgayChi.Value,"Ngày chi");
         Validate(dto.TenChiPhi??old.TenChiPhi,dto.LoaiChiPhi??old.LoaiChiPhi,dto.SoTien??old.SoTien,dto.GhiChu??old.GhiChu);
         return await _repo.UpdateAsync(id,dto);
     }
