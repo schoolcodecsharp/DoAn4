@@ -2,6 +2,8 @@
 
 Đối chiếu database đang chạy ngày 28/09/2026: **23 bảng**, 41 khóa ngoại, không có bản ghi mồ côi. Trang `/admin/coverage` đọc danh sách bảng thực tế từ API admin `/api/admin/coverage`, so với registry giao diện và cảnh báo nếu xuất hiện bảng chưa được ánh xạ. Không dùng số lượng cố định để tự tuyên bố đủ.
 
+Cập nhật 30/09/2026: bổ sung bảng `BinhLuan` và hai khóa bằng chứng trong `DanhGia`; schema mới có 24 bảng, 47 khóa ngoại. Xem [đánh giá/bình luận](FEEDBACK_2026-09-30.md). Số liệu kiểm thử 28/09 bên dưới được giữ làm lịch sử.
+
 ## Các màn hình và quyền thao tác
 
 | Bảng | Trang / luồng | Phạm vi |
@@ -27,10 +29,11 @@
 | HinhAnh | `/admin/images`, bộ ảnh từng dịch vụ | Tra cứu, xem nguồn/giấy phép; mở bộ ảnh để tải/sắp xếp/gỡ ảnh. |
 | ChiPhi | `/admin/expenses?trip=ID` | Tạo/sửa khoản chi theo chuyến đi; không sửa người chi/chuyến đi của khoản đã tạo. |
 | DanhGia | `/admin/reviews` | Tra cứu và ẩn/hiện; không sửa sao/nội dung thay khách. |
+| BinhLuan | `/admin/comments` | Tra cứu, liên kết dịch vụ/người viết, ẩn/hiện; khách gửi tại trang chi tiết sau đăng nhập. |
 | YeuThich | `/admin/favorites` | Tra cứu; không tạo/xóa sở thích thay khách. |
 | NhatKyAdmin | `/admin/audit` | Chỉ đọc, giữ lịch sử. |
 
-Ánh xạ đủ bảng không có nghĩa là mọi bảng được mở CRUD hoặc cho khách truy cập. Những luồng phía khách chưa tồn tại (áp mã vào đơn, thêm/xóa yêu thích, gửi đánh giá mới) không được giả lập bằng màn hình admin. Lần này hoàn thiện độ phủ giao diện **quản trị/tra cứu**, giữ nguyên các luồng khách đang hoạt động; không thêm bảng bình luận hay cổng thanh toán/hoàn tiền.
+Ánh xạ đủ bảng không có nghĩa là mọi bảng được mở CRUD hoặc cho khách truy cập. Những luồng phía khách chưa tồn tại (áp mã vào đơn, thêm/xóa yêu thích) không được giả lập bằng màn hình admin. Đợt 28/09 chỉ mở rộng quản trị/tra cứu; đợt 30/09 đã bổ sung đánh giá xác minh và bình luận công khai phía khách. Chưa có cổng thanh toán/hoàn tiền.
 
 ## Kiểm thử
 
