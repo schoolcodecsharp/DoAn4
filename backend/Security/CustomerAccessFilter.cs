@@ -19,6 +19,7 @@ public sealed class CustomerAccessFilter(INguoiDungRepository users) : IAsyncAut
         var controller = context.RouteData.Values["controller"]?.ToString() ?? "";
         var action = context.RouteData.Values["action"]?.ToString() ?? "";
         if (controller.Equals("Auth", StringComparison.OrdinalIgnoreCase) && (action is "Login" or "Register")) return;
+        if (controller == "Feedback" && action == "Read" && HttpMethods.IsGet(context.HttpContext.Request.Method)) return;
         if (HttpMethods.IsGet(context.HttpContext.Request.Method) && PublicCatalogs.Contains(controller))
         {
             var reader = context.HttpContext.User;
@@ -35,7 +36,7 @@ public sealed class CustomerAccessFilter(INguoiDungRepository users) : IAsyncAut
         var user = await users.GetByIdAsync(id);
         if (user == null || !user.TrangThai)
         { context.Result = new UnauthorizedObjectResult(new { message = "Tài khoản không còn hoạt động. Vui lòng đăng nhập lại." }); return; }
-        if (controller.Equals("Account", StringComparison.OrdinalIgnoreCase) || (controller.Equals("Auth", StringComparison.OrdinalIgnoreCase) && action == "Me")) return;
+        if (controller is "Account" or "Feedback" || (controller.Equals("Auth", StringComparison.OrdinalIgnoreCase) && action == "Me")) return;
         if (!principal.IsInRole("1") || user.MaVaiTro != 1) context.Result = new ForbidResult();
     }
 }
