@@ -31,12 +31,13 @@ public class DatPhongRepository(IConfiguration config) : IDatPhongRepository
         if(room==null) throw new RequestRuleException("Không có loại phòng này.",404);
         if(!room.TrangThai || room.GiaMoiDem<0 || await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM KhachSan WHERE MaKhachSan=@MaKhachSan AND TrangThai=1",room,tx)!=1)
             throw new RequestRuleException("Loại phòng hiện không nhận đặt.",409);
-        if(dto.SoNguoi>room.SucChua*dto.SoLuongPhong) throw new RequestRuleException("Số khách vượt sức chứa.");
+        if(dto.SoNguoi>(long)room.SucChua*dto.SoLuongPhong) throw new RequestRuleException("Số khách vượt sức chứa.");
         if(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM NguoiDung WHERE MaNguoiDung=@MaNguoiDung AND TrangThai=1",dto,tx)!=1) throw new RequestRuleException("Người đặt không tồn tại hoặc đã khóa.");
         var stays=await db.QueryAsync<DatPhongResponseDto>("SELECT * FROM DatPhong WHERE MaLoaiPhong=@MaLoaiPhong AND TrangThai IN ('Pending','Confirmed','CheckedIn') AND NgayNhanPhong<@NgayTraPhong AND NgayTraPhong>@NgayNhanPhong",dto,tx);
         for(var day=dto.NgayNhanPhong;day<dto.NgayTraPhong;day=day.AddDays(1))
             if(stays.Where(s=>s.NgayNhanPhong.Date<=day && s.NgayTraPhong.Date>day).Sum(s=>s.SoLuongPhong)+dto.SoLuongPhong>room.SoLuongPhong) throw new RequestRuleException("Không đủ phòng trong khoảng ngày đã chọn.",409);
         dto.GiaMoiDem=room.GiaMoiDem; dto.TongTien=room.GiaMoiDem*nights*dto.SoLuongPhong;
+        StorageRules.Money(dto.TongTien,"Tổng tiền đặt phòng");
         var id=await db.ExecuteScalarAsync<int>("INSERT INTO DatPhong(MaNguoiDung,MaLoaiPhong,NgayNhanPhong,NgayTraPhong,SoLuongPhong,SoNguoi,GiaMoiDem,TongTien,TrangThai,GhiChu) VALUES(@MaNguoiDung,@MaLoaiPhong,@NgayNhanPhong,@NgayTraPhong,@SoLuongPhong,@SoNguoi,@GiaMoiDem,@TongTien,'Pending',@GhiChu); SELECT LAST_INSERT_ID();",dto,tx);
         await tx.CommitAsync(); return id;
     }

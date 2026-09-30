@@ -50,6 +50,7 @@ public class DatTourRepository : IDatTourRepository
         if (active != 1 || departure.NgayKhoiHanh.Date < BookingRules.Today || departure.GiaApDung < 0 || departure.TrangThai != "OpenForBooking" || departure.SoChoDaDat + dto.SoNguoi > departure.SoChoToiDa)
             throw new RequestRuleException("Không đủ chỗ hoặc lịch đã đóng.",409);
         dto.GiaMoiNguoi = departure.GiaApDung; dto.TongTien = departure.GiaApDung * dto.SoNguoi;
+        StorageRules.Money(dto.TongTien,"Tổng tiền đặt tour");
         var sql = @"INSERT INTO DatTour (MaNguoiDung,MaTour,MaKhoiHanh,NgayKhoiHanh,SoNguoi,GiaMoiNguoi,TongTien,GhiChu)
                     VALUES (@MaNguoiDung,@MaTour,@MaKhoiHanh,@NgayKhoiHanh,@SoNguoi,@GiaMoiNguoi,@TongTien,@GhiChu);
                     SELECT LAST_INSERT_ID();";
