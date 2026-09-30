@@ -1,0 +1,26 @@
+.feedback-section { margin-block: 3rem; max-width: 850px; scroll-margin-top: 110px; }
+.feedback-section > h2 { margin-bottom: .75rem; }
+.feedback-section > p { max-width: 70ch; }
+.feedback-panel { margin-top: 1.5rem; }
+.feedback-panel h3 { margin: 0 0 1rem; font-size: 1.35rem; }
+.feedback-summary { font-weight: 600; font-variant-numeric: tabular-nums; }
+.catalog-rating { margin: 0; padding: .7rem 1.25rem; background: #e4e9d8; color: #284b41; font-size: .875rem; }
+.feedback-entries article { padding-block: 1.25rem; border-bottom: 1px solid var(--line, #d8dbcb); }
+.feedback-entry-heading { display: flex; flex-wrap: wrap; gap: .5rem 1rem; justify-content: space-between; }
+.feedback-entry-heading strong, .feedback-content { overflow-wrap: anywhere; }
+.feedback-entry-heading time { font-size: .875rem; }
+.feedback-content { white-space: pre-wrap; max-width: 70ch; }
+.feedback-score { display: flex; align-items: center; gap: .5rem; }
+.feedback-form { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.feedback-form label { display: grid; gap: .5rem; }
+.feedback-form textarea { width: 100%; box-sizing: border-box; resize: vertical; border: 1px solid #78877b; border-radius: 8px; padding: .8rem; font: inherit; font-size: 1rem; color: inherit; background: var(--surface, #fffef8); caret-color: var(--ink, #284b41); }
+.feedback-form fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.feedback-form legend { margin-bottom: .75rem; }
+.feedback-form > button { justify-self: start; }
+.feedback-stars { display: flex; flex-wrap: wrap; gap: .5rem; }
+.feedback-stars label { display: flex; align-items: center; min-height: 44px; gap: .4rem; padding: .25rem .5rem; cursor: pointer; border: 1px solid #78877b; border-radius: 8px; }
+.feedback-stars label:has(:checked) { background: #284b41; color: #fffef8; }
+.feedback-stars input { accent-color: #284b41; }
+.feedback-form textarea:focus-visible, .feedback-stars label:has(:focus-visible) { outline: 2px solid #284b41; outline-offset: 3px; }
+.feedback-pages { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-block: 1rem; }
+@media (max-width: 560px) { .feedback-panel { padding: 1.1rem; } .feedback-stars { gap: .4rem; } .feedback-stars label { padding-inline: .4rem; } }
