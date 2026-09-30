@@ -57,6 +57,10 @@ function Editor({ config, row, onSaved, onCancel, maxDays }: { config: Module; r
     } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
   return <form ref={editor} className="admin-panel" onSubmit={save}><div className="admin-section-title"><h2>{editing ? 'Chỉnh sửa' : 'Thêm mới'} {config.title.toLowerCase()}</h2><button type="button" className="secondary" onClick={onCancel} disabled={busy}>Đóng</button></div><fieldset disabled={busy} className="admin-form-grid">{config.fields.filter(field => !(editing && field.type === 'password')).filter(field => !['maDiaDiem','maNhaHang','maKhachSan'].includes(field.key) || config.endpoint !== 'tourchitiet' || field.key === ({ DiaDiem:'maDiaDiem', NhaHang:'maNhaHang', KhachSan:'maKhachSan' }[text(values.loaiDiaDiem)])).map(field => {
+    if (config.endpoint === 'loaiphong' && ['tenLoaiPhong','moTa'].includes(field.key))
+      field = { ...field, maxLength: field.key === 'tenLoaiPhong' ? 150 : 500 };
+    if (config.endpoint === 'tourkhoihanh' && !editing && field.key === 'trangThai')
+      field = { ...field, options: field.options?.filter(([value]) => value === 'OpenForBooking' || value === 'FullyBooked') };
     const value = values[field.key];
     if (field.type === 'province') return <ProvinceSelect key={field.key} value={text(value)} onChange={v => change(field.key,v)}/>;
     return <label key={field.key} className={field.type === 'textarea' ? 'wide' : ''}>{field.label}{field.required ? ' *' : ''}
@@ -107,7 +111,7 @@ export default function AdminPage() {
     {label:'Danh mục dịch vụ',keys:['destinations','categories','restaurants','hotels','rooms','tours','activities','departures','images']},
     {label:'Đặt chỗ và tài chính',keys:['tour-orders','room-orders','payments','coupons']},
     {label:'Chuyến đi của khách',keys:['trips','days','events','members','expenses']},
-    {label:'Khách hàng',keys:['users','roles','reviews','favorites']},
+    {label:'Khách hàng',keys:['users','roles','reviews','comments','favorites']},
     {label:'Hệ thống',keys:['coverage','audit']}
   ].map(group=><details className="admin-nav-group" key={group.label} open={group.keys.includes(section) || !section}><summary>{group.label}</summary>{group.keys.map(key=><NavLink key={key} to={`/admin/${key}`}>{modules[key]?.title || operations[key]}</NavLink>)}</details>)}</nav><div className="admin-sidebar-bottom"><Link to="/">← Xem website</Link><button className="secondary" onClick={logout}>Đăng xuất</button></div></aside><main className="admin-main"><header className="admin-topbar"><span>Không gian quản trị / {modules[section]?.title || operations[section] || 'Tổng quan'}</span><span>{user.hoTen} <b>Admin</b></span></header><div className="admin-content">{navigation.includes(section) ? <Manager key={section} moduleKey={section}/> : section === 'tour-orders' ? <Orders/> : section === 'room-orders' ? <Orders key="rooms" room/> : section === 'audit' ? <AuditLog/> : section === 'payments' ? <Payments/> : section === 'coverage' ? <Coverage/> : dataSections[section] ? <DataExplorer key={`${section}-${location.search}`} section={section}/> : !section ? <Overview/> : <section className="admin-panel"><h1>Không tìm thấy mục quản lý</h1><Link to="/admin/coverage">Xem danh mục chức năng</Link></section>}</div></main></div>;
 }

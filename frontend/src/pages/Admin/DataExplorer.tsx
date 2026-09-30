@@ -11,6 +11,7 @@ import type { Row } from './schema';
 const labels: Record<string,string> = {Planning:'Đang lập kế hoạch',Draft:'Bản nháp',Ongoing:'Đang đi',Completed:'Hoàn thành',Cancelled:'Đã hủy',Pending:'Chờ phản hồi',Accepted:'Đã tham gia',Rejected:'Đã từ chối',Owner:'Chủ chuyến đi',Member:'Thành viên',DiaDiem:'Điểm tham quan',NhaHang:'Nhà hàng',KhachSan:'Khách sạn',Tour:'Tour',LoaiPhong:'Loại phòng'};
 const refRoutes: Record<string,string> = {maNguoiDung:'users',maChuyenDi:'trips',maLichTrinh:'days',maTour:'tours',maDiaDiem:'destinations',maNhaHang:'restaurants',maKhachSan:'hotels'};
 function valueOf(key:string,value:unknown) {
+  if(key==='daXacMinh')return value?'Đã xác minh':'Chưa xác minh';
   if(value===null||value===undefined||value==='')return 'Chưa cập nhật';
   if(typeof value==='boolean')return value?'Hiển thị / hoạt động':'Đã ẩn / khóa';
   if(['nganSach','chiPhi','soTien'].includes(key))return money(Number(value));
@@ -37,9 +38,10 @@ export default function DataExplorer({section}:{section:string}) {
   const rows=(data||[]).filter(r=>(!idFilter||String(r[config.id])===idFilter)&&(!trip||String(r.maChuyenDi)===trip)&&(!day||String(r.maLichTrinh)===day)&&normalize(config.fields.map(([key])=>String(r[key]??'')).join(' ')).includes(normalize(query)));
   const pages=Math.max(1,Math.ceil(rows.length/10)),current=Math.min(page,pages);
   async function moderate(row:Row) {
-    if(!window.confirm(`${row.trangThai?'Ẩn':'Hiện lại'} đánh giá #${row.maDanhGia}? Nội dung và số sao được giữ nguyên.`))return;
+    const label=section==='comments'?'bình luận':'đánh giá';
+    if(!window.confirm(`${row.trangThai?'Ẩn':'Hiện lại'} ${label} #${row[config.id]}? Nội dung của khách được giữ nguyên.`))return;
     setBusy(true);setNotice('');
-    try {await api.put(`/danhgia/${row.maDanhGia}`,{trangThai:!row.trangThai});setSelected(null);setNotice('Đã cập nhật trạng thái đánh giá.');reload();}catch(e){setNotice(errorMessage(e));}finally{setBusy(false);}
+    try {await api.put(`/${config.endpoint}/${row[config.id]}`,{trangThai:!row.trangThai});setSelected(null);setNotice(`Đã cập nhật trạng thái ${label}.`);reload();}catch(e){setNotice(errorMessage(e));}finally{setBusy(false);}
   }
   function cell(key:string,value:unknown) {
     return refRoutes[key]&&value ? <Link to={`/admin/${refRoutes[key]}?id=${value}`}>#{String(value)}</Link> : valueOf(key,value);
@@ -49,6 +51,7 @@ export default function DataExplorer({section}:{section:string}) {
       {section==='trips'&&<nav className="admin-related" aria-label="Dữ liệu chuyến đi"><Link to={`/admin/days?trip=${selected.maChuyenDi}`}>Xem từng ngày</Link><Link to={`/admin/members?trip=${selected.maChuyenDi}`}>Thành viên</Link><Link to={`/admin/expenses?trip=${selected.maChuyenDi}`}>Các khoản chi</Link></nav>}
       {section==='days'&&<Link to={`/admin/events?day=${selected.maLichTrinh}`}>Xem hoạt động trong ngày</Link>}
       {section==='reviews'&&<button disabled={busy} onClick={()=>moderate(selected)}>{selected.trangThai?'Ẩn đánh giá':'Hiện đánh giá'}</button>}
+      {section==='comments'&&<button disabled={busy} onClick={()=>moderate(selected)}>{selected.trangThai?'Ẩn bình luận':'Hiện bình luận'}</button>}
       {section==='events'&&<FeaturedLibraryPhoto ownerId={Number(selected.maDiaDiem||selected.maNhaHang||selected.maKhachSan)} type={String(selected.loaiDiaDiem)}/>}
       {section==='images'&&<><LibraryPhoto photo={selected as unknown as TravelImage} className="admin-library-preview"/><button onClick={()=>setAlbum({type:String(selected.loaiDoiTuong),id:Number(selected.maDoiTuong)})}>Quản lý bộ ảnh dịch vụ này</button></>}
     </section>}{album&&<ImageManager key={`${album.type}/${album.id}`} owner={album.type} id={album.id}/>}</>;
