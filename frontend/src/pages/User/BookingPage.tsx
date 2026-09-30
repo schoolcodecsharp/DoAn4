@@ -7,6 +7,14 @@ import { catalogs, itemName, useResource, type CatalogItem, type Departure, type
 export default function BookingPage({ kind }: { kind: 'tours' | 'hotels' }) {
   const { id = '' } = useParams();
   const [params] = useSearchParams();
+  // Reset form and success state when a different service/option is selected
+  // through client-side navigation (including browser Back/Forward).
+  return <BookingForm key={`${kind}/${id}/${params.get(kind === 'tours' ? 'departure' : 'room') || ''}`} kind={kind} />;
+}
+
+function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
+  const { id = '' } = useParams();
+  const [params] = useSearchParams();
   const { user } = useSession();
   const item = useResource<CatalogItem>(`/${catalogs[kind].endpoint}/${id}`);
   const options = useResource<(Omit<Departure, 'trangThai'> & Omit<Room, 'trangThai'> & { trangThai: string | boolean })[]>(kind === 'tours' ? `/tourkhoihanh/bytour/${id}` : `/loaiphong/bykhachsan/${id}`);
@@ -39,7 +47,7 @@ export default function BookingPage({ kind }: { kind: 'tours' | 'hotels' }) {
     } catch (err) { setError(errorMessage(err)); }
     finally { submitting.current = false; setBusy(false); }
   };
-  if (success) return <main className="user-page"><section className="user-container booking-success user-panel"><p className="user-kicker">YÊU CẦU ĐÃ ĐƯỢC LƯU</p><h1>Hẹn bạn trên hành trình mới.</h1><p>Đơn {kind === 'tours' ? 'tour' : 'phòng'} số <strong>{success.id}</strong> đang chờ xác nhận.</p><p>Tổng tiền: <strong>{money(success.total)}</strong>. Bạn chưa bị trừ tiền; đây chưa phải xác nhận thanh toán.</p><Link className="user-button" to="/account">Xem đơn đặt của tôi</Link></section></main>;
+  if (success) return <main className="user-page"><section className="user-container booking-success user-panel"><h1>Yêu cầu đặt chỗ đã được lưu.</h1><p>Đơn {kind === 'tours' ? 'tour' : 'phòng'} số <strong>{success.id}</strong> đang chờ xác nhận.</p><p>Tổng tiền: <strong>{money(success.total)}</strong>. Bạn chưa bị trừ tiền; đây chưa phải xác nhận thanh toán.</p><Link className="user-button" to={`/account?tab=${kind}`}>Xem đơn đặt của tôi</Link></section></main>;
   return <main className="user-page"><div className="user-container"><Link className="user-text-link" to={`/${kind}/${id}`}>Trở lại thông tin chi tiết</Link><div className="detail-heading"><p className="user-kicker">ĐẶT DỊCH VỤ</p><h1>{kind === 'tours' ? 'Sẵn sàng cho chuyến đi.' : 'Chọn ngày nghỉ của bạn.'}</h1><p>{item.data && itemName(item.data)}</p></div>
     {(item.loading || options.loading) && <p role="status">Đang tải thông tin đặt chỗ...</p>}
     {(item.error || options.error) && <div className="user-empty" role="alert"><p>{item.error || options.error}</p><button className="user-button" onClick={() => { item.reload(); options.reload(); }}>Thử lại</button></div>}
@@ -53,6 +61,6 @@ export default function BookingPage({ kind }: { kind: 'tours' | 'hotels' }) {
       <label>Ghi chú (không bắt buộc)<textarea maxLength={500} value={note} onChange={e => setNote(e.target.value)} placeholder="Yêu cầu của bạn cho chuyến đi" /></label>
       {error && <p className="user-alert" role="alert">{error}</p>}
       <button className="user-button" disabled={busy || !choice} type="submit">{busy ? 'Đang gửi yêu cầu...' : 'Xác nhận yêu cầu đặt chỗ'}</button>
-    </form><aside className="user-panel detail-aside"><p className="user-kicker">TÓM TẮT ĐẶT CHỖ</p><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><p>{people} khách{kind === 'hotels' ? ` / ${rooms} phòng / ${nights} đêm` : ''}</p><small>Tổng tiền dự kiến</small><strong className="summary-total">{money(total)}</strong><p>Giá và tình trạng chỗ sẽ được backend kiểm tra khi gửi. Đơn được tạo ở trạng thái chờ xác nhận, chưa thanh toán.</p></aside></div>}
+    </form><aside className="user-panel detail-aside"><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><p>{people} khách{kind === 'hotels' ? ` / ${rooms} phòng / ${nights} đêm` : ''}</p><small>Tổng tiền dự kiến</small><strong className="summary-total">{money(total)}</strong><p>Giá và tình trạng chỗ sẽ được kiểm tra lại khi gửi yêu cầu. Đơn đang chờ xác nhận, chưa thanh toán.</p></aside></div>}
   </div></main>;
 }
