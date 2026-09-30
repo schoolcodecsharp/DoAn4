@@ -17,10 +17,13 @@ public class DanhGiaController : ControllerBase
     [HttpGet("bytour/{maTour}")] public async Task<IActionResult> GetByTour(int maTour) => Ok(await _svc.GetByTourAsync(maTour));
     [HttpGet("bydiadiem/{maDiaDiem}")] public async Task<IActionResult> GetByDiaDiem(int maDiaDiem) => Ok(await _svc.GetByDiaDiemAsync(maDiaDiem));
     [HttpGet("bynguoidung/{maNguoiDung}")] public async Task<IActionResult> GetByNguoiDung(int maNguoiDung) => Ok(await _svc.GetByNguoiDungAsync(maNguoiDung));
-    [HttpPost] public async Task<IActionResult> Create([FromBody] CreateDanhGiaDto dto)
-    { var id = await _svc.CreateAsync(dto); return CreatedAtAction(nameof(GetById), new { id }, new { id }); }
+    [HttpPost] public IActionResult Create([FromBody] CreateDanhGiaDto dto)
+    { return Conflict(new { message = "Đánh giá mới phải gửi từ trang dịch vụ để xác minh trải nghiệm của chính người đăng nhập." }); }
     [HttpPut("{id}")] public async Task<IActionResult> Update(int id, [FromBody] UpdateDanhGiaDto dto)
-    { return await _svc.UpdateAsync(id, dto) ? NoContent() : NotFound(); }
+    {
+        if(dto.SoSao!=null || dto.NoiDung!=null || dto.TrangThai==null)return BadRequest(new {message="Quản trị viên chỉ được ẩn/hiện đánh giá, không sửa số sao hoặc nội dung của khách."});
+        return await _svc.UpdateAsync(id, dto) ? NoContent() : NotFound();
+    }
     [HttpDelete("{id}")] public async Task<IActionResult> Delete(int id)
-    { return await _svc.DeleteAsync(id) ? NoContent() : NotFound(); }
+    { return await _svc.UpdateAsync(id, new UpdateDanhGiaDto { TrangThai=false }) ? NoContent() : NotFound(); }
 }
