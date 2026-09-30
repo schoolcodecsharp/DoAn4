@@ -11,7 +11,7 @@ const api = await request.newContext({ baseURL: 'http://127.0.0.1:5173' });
 const accounts = JSON.parse(fs.readFileSync(path.join(root, '.local/test-accounts.json'), 'utf8'));
 const sessions = {};
 const httpChecks = [], uiChecks = [], failures = [], browserErrors = [];
-const collections = ['diadiem','khachsan','nhahang','tour','tourchitiet','tourkhoihanh','hinhanh','loaiphong','loaidiadiem','vaitro','nguoidung','dattour','datphong','chuyendi','thanhvienchuyendi','lichtrinh','lichtrinhchitiet','thanhtoan','magiamgia','chiphi','danhgia','yeuthich'];
+const collections = ['diadiem','khachsan','nhahang','tour','tourchitiet','tourkhoihanh','hinhanh','loaiphong','loaidiadiem','vaitro','nguoidung','dattour','datphong','chuyendi','thanhvienchuyendi','lichtrinh','lichtrinhchitiet','thanhtoan','magiamgia','chiphi','danhgia','yeuthich','binhluan'];
 const publicNames = new Set(collections.slice(0,9));
 const data = {};
 const browser = await chromium.launch();
