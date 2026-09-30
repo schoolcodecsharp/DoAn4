@@ -62,9 +62,21 @@ public sealed class CatalogImageFilter(IConfiguration config) : IAsyncResultFilt
                         owner.HinhAnh = images[owner.ImageOwnerId].ToList();
                         owner.AnhDaiDien = owner.HinhAnh.FirstOrDefault()?.DuongDan;
                     }
+                    if (group.Any(o => o is IReviewSummary))
+                    {
+                        var ratings=(await conn.QueryAsync<RatingSummary>($"SELECT {ownerColumn} AS Id,ROUND(AVG(SoSao),2) AS Average,COUNT(*) AS Count FROM DanhGia WHERE {ownerColumn} IN @ids AND TrangThai=1 AND {FeedbackRules.Verified} GROUP BY {ownerColumn}",new{ids=group.Select(o=>o.ImageOwnerId).ToArray()})).ToDictionary(r=>r.Id);
+                        foreach(var owner in group)
+                            if(owner is IReviewSummary summary)
+                            {
+                                ratings.TryGetValue(owner.ImageOwnerId,out var rating);
+                                summary.DiemDanhGia=rating?.Average??0;
+                                summary.SoLuotDanhGia=rating?.Count??0;
+                            }
+                    }
                 }
             }
         }
         await next();
     }
+    private sealed class RatingSummary { public int Id {get;set;} public decimal Average {get;set;} public int Count {get;set;} }
 }
