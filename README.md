@@ -65,6 +65,7 @@ dotnet run --no-build --project tests/AdminSmoke -- --verified-coverage
 dotnet run --no-build --project tests/AdminSmoke -- --completion-checks
 dotnet run --no-build --project tests/AdminSmoke -- --capacity-checks
 node tests/completion-ui.mjs
+node tests/account-details.mjs
 node tests/feedback.mjs
 node tests/admin-coverage.mjs
 node tests/restaurant-planner.mjs
@@ -75,6 +76,8 @@ node tests/catalog-system-audit.mjs
 Build `tests/AdminSmoke` trước khi dùng `--no-build`. `--audit`, `--verified-coverage`, home và catalog audit chỉ đọc dữ liệu ứng dụng. Các test completion/feedback/capacity/admin/planner có tạo dữ liệu thử riêng rồi dọn trong `finally`; nhật ký admin được giữ. Chạy tuần tự để fixture không xuất hiện trong bài audit danh mục. Các chế độ cũ `--functional`/`--browser` vẫn tạo tài khoản thử riêng; không dùng chúng khi cần kiểm thử chỉ với tài khoản sẵn có.
 
 ## Đánh giá và bình luận
+
+Trong trang tài khoản, bấm trực tiếp thẻ tour/phòng đã đặt để xem thông tin dịch vụ; bấm thẻ lịch trình để xem từng ngày và hoạt động. Không cần nút chi tiết riêng. `account-details.mjs` kiểm tra chỉ đọc bằng đơn và tài khoản hiện có.
 
 Trang chi tiết điểm đến, tour và khách sạn cho mọi người đọc đánh giá/bình luận không cần đăng nhập. Đăng nhập là có thể bình luận; chấm sao cần đơn của chính tài khoản đã hoàn thành trải nghiệm: tour `Completed`, phòng `CheckedOut`, đã qua ngày kết thúc tương ứng. Điểm đến phải nằm trong tour đã hoàn thành của người đó; lịch trình tự lập không tự xác nhận đã tham quan. Mỗi tài khoản chấm sao một lần cho mỗi dịch vụ. Admin chỉ ẩn/hiện tại `/admin/reviews` và `/admin/comments`. Điểm trung bình và sắp xếp danh mục chỉ tính đánh giá đã xác minh, đang công khai; đánh giá cũ chưa có bằng chứng vẫn được giữ trong database để tra cứu.
 
@@ -104,3 +107,15 @@ Chỉ admin ghi nhận thanh toán thủ công. API không tích hợp cổng th
 Migration mới: `database/migrations/20260921_payment_integrity.sql`. Công cụ `--expand-catalog` tự kiểm tra dữ liệu cũ và áp dụng nếu chưa có; không chạy SQL migration nhiều lần thủ công.
 
 Backup trong `backend/backups/` (không commit). Để khôi phục database dùng bản SQL trước thay đổi; sao lưu cả `wwwroot/media` khi triển khai. Dữ liệu người dùng và đơn cũ không bị reset khi mở rộng catalog.
+### Bổ sung luồng tài khoản (30/09/2026)
+
+- Đăng nhập admin: nút **Quản trị** hiện trên header trang chủ và các trang công khai; tài khoản thường/khách không thấy nút này.
+- Tại **Tài khoản → Tour đã đặt / Phòng đã đặt**, bấm thẻ để xem dịch vụ. Mục **Yêu cầu hủy đơn** nằm riêng dưới thẻ, không lồng nút trong liên kết. Mỗi đơn gửi một yêu cầu, trước ngày sử dụng dịch vụ, khi đang chờ/đã xác nhận. Admin xử lý tại **Đơn tour / Đơn phòng → Yêu cầu hủy đang chờ**. Đơn vẫn giữ chỗ đến khi được duyệt. Từ chối cần ghi lý do; không tự hoàn tiền, không duyệt hủy đơn đã thu tiền khi chưa có quy trình hoàn tiền.
+- Tại chi tiết lịch trình: **Sửa lịch trình** dành cho chủ kế hoạch đang ở trạng thái Planning và chưa qua ngày bắt đầu. Có kiểm tra trùng giờ, số thành viên và xung đột chỉnh sửa. Người được mời chỉ xem.
+- Tour đã có bất kỳ đơn đặt nào được khóa thời lượng/điểm dừng để giữ lịch sử trải nghiệm. Tạo tour mới khi cần thay đổi lịch trình; vẫn có thể sửa thông tin mô tả không thuộc phần bị khóa.
+
+Database đang dùng: sao lưu và bổ sung schema bằng `dotnet run --project tests/AdminSmoke -- --upgrade-account`. Lệnh này thêm cột còn thiếu, không reset database. **Không chạy CSDL.sql trên database đang có dữ liệu.** Bản sao lưu lần cài tại máy này: `backend/backups/before-account-20260930-210401753.sql` (local/ignored).
+
+CORS sử dụng cấu hình `Cors:AllowedOrigins` (mảng URL đầy đủ, không dấu `/` cuối), hoặc biến môi trường `Cors__AllowedOrigins__0`. Development mặc định cho phép localhost/127.0.0.1 cổng 5173; Production không mặc định mở cho mọi origin. Giới hạn API: đăng nhập/đăng ký chung 10 lần/phút/IP; gửi đánh giá/bình luận chung 20 lần/phút/tài khoản. Khi trả 429, đợi số giây trong `Retry-After`. Khi deploy nhiều instance/proxy cần cấu hình proxy tin cậy và giới hạn dùng chung; không tin trực tiếp X-Forwarded-For từ khách.
+
+Kiểm tra bổ sung (dịch vụ 5000/5173 đang chạy, tài khoản SQL có sẵn trong `.local/test-accounts.json`): `node tests/account-workflows.mjs`, `node tests/account-details.mjs`, `node tests/feedback.mjs`, `node tests/restaurant-planner.mjs`; cuối cùng `node tests/rate-limits.mjs`. Trừ account-details và rate-limits, các suite này có tạo/xóa dữ liệu fixture riêng, không chạy trên production. Khi build trên Windows, dừng đúng tiến trình backend của dự án nếu DLL/exe đang bị khóa rồi chạy lại sau build.
