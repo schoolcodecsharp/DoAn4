@@ -25,6 +25,9 @@ export function errorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const message = error.response?.data?.message;
     if (typeof message === 'string') return message;
+    if (error.response?.status === 400) return 'Dữ liệu chưa hợp lệ. Kiểm tra các trường bắt buộc, ngày, số lượng và định dạng đã nhập.';
+    if (error.response?.status === 409) return 'Dữ liệu đã thay đổi hoặc trùng bản ghi. Vui lòng tải lại thông tin và thử lại.';
+    if (error.response?.status === 429) return 'Bạn thao tác quá nhanh. Vui lòng chờ một lát rồi thử lại.';
     if (error.response?.status === 401) return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
     if (error.response?.status === 404) return 'Thông tin này không còn tồn tại.';
     if (error.response?.status === 403) return 'Bạn không có quyền thực hiện thao tác này.';
@@ -35,5 +38,5 @@ export const money = (amount: number) => new Intl.NumberFormat('vi-VN', { style:
 export const dateLabel = (value: string) => new Date(value).toLocaleDateString('vi-VN');
 export const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 export function safeReturnTo(value: string | null) {
-  return value && /^\/(?:admin|account|my-trips|planner|tours\/\d+\/book|hotels\/\d+\/book)(?:[/?#]|$)/.test(value) && !value.includes('\\') ? value : '/account';
+  return value && /^\/(?:admin|account|my-trips|planner|(?:tours|hotels)\/\d+(?:\/book)?|destinations\/\d+)(?:[/?#]|$)/.test(value) && !value.includes('\\') ? value : '/account';
 }
