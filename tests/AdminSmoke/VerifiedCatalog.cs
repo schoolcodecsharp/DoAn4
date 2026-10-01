@@ -3,6 +3,7 @@ using System.Text.Json;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using MySqlConnector;
+using backend.Services;
 
 // Explicit opt-in import. Never executes the destructive bootstrap SQL.
 static class VerifiedCatalog
@@ -15,6 +16,12 @@ static class VerifiedCatalog
     {
         var file = Path.GetFullPath(Path.Combine(root, "../database/verified-catalog-20260929.json"));
         var manifest = JsonSerializer.Deserialize<Manifest>(await File.ReadAllTextAsync(file), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+        // Re-running this older import must not reintroduce pre-merger province names.
+        manifest = manifest with {
+            Stays = manifest.Stays.Select(s => s with { Province = ProvinceCatalog.Require(s.Province)! }).ToArray(),
+            Destinations = manifest.Destinations.Select(d => d with { Province = ProvinceCatalog.Require(d.Province)! }).ToArray(),
+            Tours = manifest.Tours.Select(t => t with { Province = ProvinceCatalog.Require(t.Province)! }).ToArray()
+        };
         foreach (var url in manifest.Stays.Select(x => x.Source).Concat(manifest.Destinations.Select(x => x.Source)).Concat(manifest.Tours.Select(x => x.Source)))
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || uri.Scheme != "https") throw new Exception("Invalid provenance URL");
         if (apply)

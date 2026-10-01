@@ -15,8 +15,12 @@ var root = Path.GetFullPath(args.Length > 0 && !args[0].StartsWith("--")
 var config = new ConfigurationBuilder().SetBasePath(root).AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", true).AddEnvironmentVariables().Build();
 await using var db = new MySqlConnection(config.GetConnectionString("DefaultConnection"));
 await db.OpenAsync();
+if(args.Contains("--enrich-catalog") || args.Contains("--check-enrichment")) { await CatalogEnrichment.Run(db,config,root,args.Contains("--enrich-catalog")); return; }
+if(args.Contains("--upgrade-provinces") || args.Contains("--province-coverage")) { await ProvinceUpgrade.Run(db,config,root,args.Contains("--upgrade-provinces")); return; }
 if(args.Contains("--upgrade-feedback")) { await FeedbackUpgrade.Run(db,config,root); return; }
 if(args.Contains("--upgrade-account")) { await AccountUpgrade.Run(db,config,root); return; }
+if(args.Contains("--upgrade-planner")) { await AccountUpgrade.Run(db,config,root,true); return; }
+if(args.Contains("--planner-checks")) { await PlannerChecks.Run(db,root); return; }
 if(args.Contains("--feedback-fixtures")) { await FeedbackFixtures.Run(db,root,args); return; }
 if(args.Contains("--completion-checks")) { await CompletionChecks.Run(db,root); return; }
 if(args.Contains("--capacity-checks")) { await CapacityChecks.Run(db,root); return; }

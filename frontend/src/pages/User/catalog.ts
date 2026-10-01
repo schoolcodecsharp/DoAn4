@@ -16,6 +16,7 @@ export type CatalogItem = {
   giaMin?: number; giaMax?: number; gioMoCua?: string; gioDongCua?: string;
   moTa?: string; diemKhoiHanh?: string; diemDen?: string; tinhThanh?: string; diaChi?: string;
   soNgay?: number; soDem?: number; giaTour?: number; giaPhongMin?: number; giaVe?: number;
+  mienPhi?: boolean;
   loaiLuuTru?: string; soDienThoai?: string; trangThai?: string | boolean;
 };
 export type Departure = { maKhoiHanh: number; maTour: number; ngayKhoiHanh: string; soChoToiDa: number; soChoDaDat: number; giaApDung: number; trangThai: string };

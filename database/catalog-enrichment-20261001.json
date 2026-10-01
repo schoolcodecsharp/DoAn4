@@ -1,0 +1,262 @@
+{
+  "verifiedOn": "2026-10-01",
+  "policy": "Gợi ý tham quan một ngày do NVT biên soạn, không phải chương trình mở bán hay lịch trình chính thức của đơn vị nguồn. Thứ tự chỉ mang tính tham khảo; chưa ấn định giờ, vé, xe, bữa ăn, lưu trú hoặc ngày khởi hành.",
+  "destinations": [
+    {
+      "key": "van-mieu",
+      "name": "Văn Miếu - Quốc Tử Giám",
+      "province": "Hà Nội",
+      "category": "Di tích lịch sử",
+      "description": "Quần thể gắn với lịch sử giáo dục Việt Nam, có các sân vườn, Khuê Văn Các và bia tiến sĩ. Phù hợp cho hành trình tìm hiểu văn hóa Thăng Long.",
+      "source": "https://vietnam.travel/node/1463",
+      "query": "Temple of Literature Hanoi"
+    },
+    {
+      "key": "hoang-thanh",
+      "name": "Hoàng thành Thăng Long",
+      "province": "Hà Nội",
+      "category": "Di tích lịch sử",
+      "description": "Di sản lịch sử giữa Hà Nội với dấu tích kiến trúc và khảo cổ qua nhiều triều đại. Có thể kết hợp tìm hiểu khu di tích và các trưng bày tại chỗ.",
+      "source": "https://vietnam.travel/things-to-do/decode-imperial-citadel-of-thang-long",
+      "query": "Imperial Citadel Thang Long"
+    },
+    {
+      "key": "tran-quoc",
+      "name": "Chùa Trấn Quốc",
+      "province": "Hà Nội",
+      "category": "Di tích lịch sử",
+      "description": "Điểm đến văn hóa và tâm linh thuộc hành trình di sản Hà Nội, có thể kết hợp với khu vực hồ Trúc Bạch. Khi tham quan cần tuân thủ hướng dẫn tại nơi thờ tự.",
+      "source": "https://vietnam.travel/node/1771",
+      "query": "Tran Quoc pagoda"
+    },
+    {
+      "key": "thien-mu",
+      "name": "Chùa Thiên Mụ",
+      "province": "Huế",
+      "category": "Di tích lịch sử",
+      "description": "Ngôi chùa nổi bật với tháp bảy tầng, là một điểm tìm hiểu không gian văn hóa Huế. Giữ yên tĩnh và ăn mặc phù hợp khi vào khu vực thờ tự.",
+      "source": "https://vietnam.travel/places-to-go/central-vietnam/hue",
+      "query": "Thien Mu pagoda"
+    },
+    {
+      "key": "minh-mang",
+      "name": "Lăng Minh Mạng",
+      "province": "Huế",
+      "category": "Di tích lịch sử",
+      "description": "Khu lăng tẩm triều Nguyễn trong hành trình tìm hiểu di sản Huế. Có thể kết hợp ngắm kiến trúc, cảnh quan và tìm hiểu lịch sử tại khu di tích.",
+      "source": "https://vietnam.travel/node/1666",
+      "query": "Tomb Minh Mang"
+    },
+    {
+      "key": "khai-dinh",
+      "name": "Lăng Khải Định",
+      "province": "Huế",
+      "category": "Di tích lịch sử",
+      "description": "Một trong những lăng vua Nguyễn được giới thiệu trong hành trình di sản Huế. Điểm tham quan dành cho người quan tâm tới kiến trúc và lịch sử cung đình.",
+      "source": "https://vietnam.travel/node/1666",
+      "query": "Tomb Khai Dinh"
+    },
+    {
+      "key": "po-nagar",
+      "name": "Tháp Bà Ponagar",
+      "province": "Khánh Hòa",
+      "category": "Di tích lịch sử",
+      "description": "Quần thể tháp Chăm tại Nha Trang, gắn với tín ngưỡng thờ nữ thần Po Nagar. Không gian còn có hoạt động tín ngưỡng; cần tôn trọng khu vực hành lễ.",
+      "source": "https://vietnam.travel/things-to-do/experience-nha-trang-like-a-local",
+      "query": "Po Nagar Nha Trang"
+    },
+    {
+      "key": "long-son",
+      "name": "Chùa Long Sơn",
+      "province": "Khánh Hòa",
+      "category": "Di tích lịch sử",
+      "description": "Điểm tham quan Phật giáo tại Nha Trang, nổi bật với tượng Phật trắng trên đồi. Có thể tìm hiểu kiến trúc chùa và quan sát cảnh quan thành phố.",
+      "source": "https://www.vietnam.travel/things-to-do/7-reasons-visit-nha-trang",
+      "query": "Long Son pagoda Nha Trang"
+    },
+    {
+      "key": "my-son",
+      "name": "Thánh địa Mỹ Sơn",
+      "province": "Đà Nẵng",
+      "category": "Di tích lịch sử",
+      "description": "Quần thể đền tháp Chăm trong thung lũng, phù hợp với hành trình tìm hiểu kiến trúc và di sản miền Trung. Đi theo lối tham quan và hướng dẫn bảo tồn tại di tích.",
+      "source": "https://vietnam.travel/things-to-do/mystic-my-son",
+      "query": "My Son sanctuary"
+    },
+    {
+      "key": "ngu-hanh-son",
+      "name": "Danh thắng Ngũ Hành Sơn",
+      "province": "Đà Nẵng",
+      "category": "Danh lam thắng cảnh",
+      "description": "Quần thể núi đá, hang động và các công trình tâm linh tại Đà Nẵng. Hành trình có bậc thang; lựa chọn tuyến tham quan phù hợp thể lực và thời tiết.",
+      "source": "https://vietnam.travel/things-to-do/must-do-da-nang-an-insider-list",
+      "query": "Marble Mountains Da Nang"
+    },
+    {
+      "key": "ben-thanh",
+      "name": "Chợ Bến Thành",
+      "province": "Hồ Chí Minh",
+      "category": "Làng nghề - Phố cổ",
+      "description": "Khu chợ nổi tiếng trong các điểm tham quan trung tâm Thành phố Hồ Chí Minh. Có thể tìm hiểu hoạt động buôn bán và chọn mua hàng; chi tiêu mua sắm không phải vé tham quan.",
+      "source": "https://vietnam.travel/node/146",
+      "query": "Ben Thanh Market"
+    },
+    {
+      "key": "buu-dien",
+      "name": "Bưu điện Trung tâm Sài Gòn",
+      "province": "Hồ Chí Minh",
+      "category": "Di tích lịch sử",
+      "description": "Công trình kiến trúc được giới thiệu trong tuyến tham quan trung tâm Thành phố Hồ Chí Minh, cùng khu vực Đồng Khởi và Nhà hát Thành phố.",
+      "source": "https://vietnam.travel/node/146",
+      "query": "Saigon Central Post Office"
+    }
+  ],
+  "hotels": [
+    {
+      "key": "rex",
+      "name": "Rex Hotel Saigon",
+      "province": "Hồ Chí Minh",
+      "address": "141 Nguyễn Huệ, phường Sài Gòn",
+      "description": "Khách sạn tại khu trung tâm, có phòng lưu trú, nhà hàng và không gian hội họp. Danh mục giới thiệu cơ sở, không đại diện lượng phòng đang bán.",
+      "source": "https://www.rexhotelsaigon.com/",
+      "query": "Rex Hotel Saigon"
+    },
+    {
+      "key": "majestic",
+      "name": "Hotel Majestic Saigon",
+      "province": "Hồ Chí Minh",
+      "address": "01 Đồng Khởi, phường Sài Gòn",
+      "description": "Khách sạn mang kiến trúc cổ điển tại góc Đồng Khởi - Tôn Đức Thắng, hướng về sông Sài Gòn. Có không gian lưu trú và dịch vụ ẩm thực.",
+      "source": "https://www.majesticsaigon.com/our-hotel/",
+      "query": "Hotel Majestic Saigon"
+    },
+    {
+      "key": "continental",
+      "name": "Hotel Continental Saigon",
+      "province": "Hồ Chí Minh",
+      "address": "132–134 Đồng Khởi, phường Sài Gòn",
+      "description": "Khách sạn lịch sử trên đường Đồng Khởi, có sân trong và kiến trúc gắn với khu trung tâm Sài Gòn. Thông tin phòng và dịch vụ cần xác nhận trực tiếp.",
+      "source": "https://www.continentalsaigon.com/",
+      "query": "Hotel Continental Saigon"
+    },
+    {
+      "key": "caravelle",
+      "name": "Caravelle Saigon",
+      "province": "Hồ Chí Minh",
+      "address": "19–23 Công trường Lam Sơn, phường Sài Gòn",
+      "description": "Khách sạn ở khu vực Nhà hát Thành phố, gần đường Đồng Khởi và phố đi bộ Nguyễn Huệ. Phù hợp để tham khảo nơi lưu trú cho hành trình khám phá trung tâm.",
+      "source": "https://www.caravellehotel.com/",
+      "query": "Caravelle hotel Saigon"
+    },
+    {
+      "key": "grand-saigon",
+      "name": "Hotel Grand Saigon",
+      "province": "Hồ Chí Minh",
+      "address": "08 Đồng Khởi, phường Sài Gòn",
+      "description": "Cơ sở lưu trú trên đường Đồng Khởi, có các hạng phòng, nhà hàng và không gian hội họp được giới thiệu trên website chính thức.",
+      "source": "https://www.hotelgrandsaigon.com/",
+      "query": "Grand Hotel Saigon"
+    },
+    {
+      "key": "la-residence",
+      "name": "Azerai La Residence Huế",
+      "province": "Huế",
+      "address": "05 Lê Lợi, Huế",
+      "description": "Cơ sở lưu trú bên sông Hương, nổi bật với kiến trúc art déco, sân vườn và hồ bơi. Các hạng phòng được giới thiệu để tham khảo, không phải cam kết phòng trống.",
+      "source": "https://azerai.com/azerai-la-residence-hue/",
+      "query": "La Residence Hue hotel"
+    },
+    {
+      "key": "melia-hanoi",
+      "name": "Meliá Hanoi",
+      "province": "Hà Nội",
+      "address": "44B Lý Thường Kiệt, phường Cửa Nam",
+      "description": "Khách sạn ở trung tâm Hà Nội, có cơ sở lưu trú và nhà hàng. Giá phụ thuộc thời gian và điều kiện đặt phòng; cần xác nhận với đơn vị cung cấp.",
+      "source": "https://www.melia.com/en/hotels/vietnam/hanoi/melia-hanoi",
+      "query": "Melia Hanoi hotel"
+    },
+    {
+      "key": "furama",
+      "name": "Furama Resort Danang",
+      "province": "Đà Nẵng",
+      "address": "103–105 Võ Nguyên Giáp, phường Ngũ Hành Sơn",
+      "description": "Khu nghỉ dưỡng tại Đà Nẵng với dịch vụ lưu trú, ẩm thực và hội họp. Danh mục chưa tích hợp kho phòng của cơ sở.",
+      "source": "https://furamavietnam.com/",
+      "query": "Furama Resort Danang"
+    }
+  ],
+  "tours": [
+    {
+      "name": "Hà Nội: dấu xưa Thăng Long (tham khảo)",
+      "province": "Hà Nội",
+      "stops": [
+        "van-mieu",
+        "hoang-thanh"
+      ],
+      "description": "Tìm hiểu lịch sử giáo dục và khu di sản giữa lòng Hà Nội."
+    },
+    {
+      "name": "Hà Nội: bên hồ và chùa cổ (tham khảo)",
+      "province": "Hà Nội",
+      "stops": [
+        "tran-quoc",
+        "Hồ Hoàn Kiếm"
+      ],
+      "description": "Kết hợp không gian tâm linh với cảnh quan hồ trong một ngày tự khám phá."
+    },
+    {
+      "name": "Huế: kiến trúc lăng tẩm (tham khảo)",
+      "province": "Huế",
+      "stops": [
+        "minh-mang",
+        "khai-dinh"
+      ],
+      "description": "Hai điểm tìm hiểu di sản triều Nguyễn; tự sắp xếp phương tiện giữa các khu di tích."
+    },
+    {
+      "name": "Huế: chùa Thiên Mụ và Đại Nội (tham khảo)",
+      "province": "Huế",
+      "stops": [
+        "thien-mu",
+        "Đại Nội Huế"
+      ],
+      "description": "Gợi ý một ngày tìm hiểu không gian văn hóa và lịch sử cố đô."
+    },
+    {
+      "name": "Nha Trang: dấu ấn Chăm và Long Sơn (tham khảo)",
+      "province": "Khánh Hòa",
+      "stops": [
+        "po-nagar",
+        "long-son"
+      ],
+      "description": "Tìm hiểu hai không gian tín ngưỡng và kiến trúc của Nha Trang."
+    },
+    {
+      "name": "Mỹ Sơn và phố cổ Hội An (tham khảo)",
+      "province": "Đà Nẵng",
+      "stops": [
+        "my-son",
+        "Phố cổ Hội An"
+      ],
+      "description": "Khám phá đền tháp Chăm và không gian phố cổ; tự bố trí phương tiện giữa hai điểm."
+    },
+    {
+      "name": "Đà Nẵng: Ngũ Hành Sơn và biển Mỹ Khê (tham khảo)",
+      "province": "Đà Nẵng",
+      "stops": [
+        "ngu-hanh-son",
+        "Biển Mỹ Khê"
+      ],
+      "description": "Kết hợp tham quan núi đá với cảnh quan biển, điều chỉnh theo thời tiết và thể lực."
+    },
+    {
+      "name": "Sài Gòn: bưu điện và chợ Bến Thành (tham khảo)",
+      "province": "Hồ Chí Minh",
+      "stops": [
+        "buu-dien",
+        "ben-thanh"
+      ],
+      "description": "Gợi ý khám phá hai điểm đến tại trung tâm, tự bố trí ăn uống và di chuyển."
+    }
+  ]
+}

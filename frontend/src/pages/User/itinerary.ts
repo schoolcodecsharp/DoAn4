@@ -1,11 +1,12 @@
 import type { CatalogItem, TravelImage } from './catalog';
+import type { ActivityEstimate } from './planner-pricing';
 export const eventTypes = {
   DiaDiem: { label: 'Điểm tham quan', kind: 'destinations' },
   KhachSan: { label: 'Khách sạn', kind: 'hotels' },
   NhaHang: { label: 'Nhà hàng', kind: 'restaurants' },
 } as const;
 export type EventType = keyof typeof eventTypes;
-export type PlannedEvent = { key: string; loaiDiaDiem: EventType; maDoiTuong: number; thoiGianBatDau: string; thoiGianKetThuc: string; ghiChu: string };
+export type PlannedEvent = { key: string; loaiDiaDiem: EventType; maDoiTuong: number; thoiGianBatDau: string; thoiGianKetThuc: string; ghiChu: string; quantity?: number; roomId?: number; nights?: number; rooms?: number; estimate?: ActivityEstimate };
 export type SavedEvent = Omit<PlannedEvent, 'key'> & { maChiTiet: number; tenDiaDiem: string; diaChi?: string; hinhAnh: TravelImage[] };
 export type EventCatalog = Record<EventType, { data: CatalogItem[] | null; loading: boolean; error: string; reload: () => void }>;
 export function eventError(events: PlannedEvent[]) {

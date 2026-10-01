@@ -44,6 +44,16 @@ COLLATE utf8mb4_unicode_ci;
 
 USE WebDuLich;
 
+-- Province registry: seed/normalize safely after setup with --upgrade-provinces.
+-- Never rerun this bootstrap on an existing database.
+CREATE TABLE TinhThanh (
+    Code INT NOT NULL PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL UNIQUE,
+    DivisionType VARCHAR(40) NOT NULL,
+    Aliases JSON NOT NULL,
+    VerifiedOn DATE NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- =========================================================
 -- 2. BẢNG VAI TRÒ
@@ -129,6 +139,7 @@ CREATE TABLE DiaDiem (
     KinhDo DECIMAL(10,7),
 
     GiaVe DECIMAL(15,2) DEFAULT 0,
+    MienPhi BOOLEAN NOT NULL DEFAULT FALSE,
 
     -- Khoảng giá vé (VD: vé người lớn / trẻ em / VIP khác nhau)
     -- dùng để ước tính chi phí khi lập kế hoạch chuyến đi
@@ -578,6 +589,8 @@ CREATE TABLE LichTrinhChiTiet (
     ThoiGianKetThuc TIME,
 
     ChiPhi DECIMAL(15,2) DEFAULT 0,
+
+    DuToan JSON NULL,
 
     GhiChu VARCHAR(500),
 

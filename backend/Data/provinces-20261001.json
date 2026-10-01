@@ -1,0 +1,310 @@
+{
+  "verifiedOn": "2026-10-01",
+  "sources": [
+    "https://provinces.open-api.vn/api/v2/p/",
+    "https://baochinhphu.vn/nghi-quyet-cua-quoc-hoi-ve-sap-xep-don-vi-hanh-chinh-cap-tinh-102250612191145158.htm",
+    "https://xaydungchinhsach.chinhphu.vn/nghi-quyet-so-30-2026-qh16-thanh-lap-thanh-pho-dong-nai-119260430102336551.htm",
+    "https://xaydungchinhsach.chinhphu.vn/thong-qua-nghi-quyet-thanh-lap-thanh-pho-quang-ninh-119260824181004569.htm",
+    "https://chinhphu.vn/?classid=1&docid=219328&pageid=27160"
+  ],
+  "provinces": [
+    {
+      "code": 1,
+      "name": "Hà Nội",
+      "divisionType": "Thành phố",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 4,
+      "name": "Cao Bằng",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 8,
+      "name": "Tuyên Quang",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Hà Giang"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 11,
+      "name": "Điện Biên",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 12,
+      "name": "Lai Châu",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 14,
+      "name": "Sơn La",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 15,
+      "name": "Lào Cai",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Yên Bái"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 19,
+      "name": "Thái Nguyên",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Bắc Kạn",
+        "Bắc Cạn"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 20,
+      "name": "Lạng Sơn",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 22,
+      "name": "Quảng Ninh",
+      "divisionType": "Thành phố",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 24,
+      "name": "Bắc Ninh",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Bắc Giang"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 25,
+      "name": "Phú Thọ",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Vĩnh Phúc",
+        "Hòa Bình"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 31,
+      "name": "Hải Phòng",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Hải Dương"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 33,
+      "name": "Hưng Yên",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Thái Bình"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 37,
+      "name": "Ninh Bình",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Hà Nam",
+        "Nam Định"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 38,
+      "name": "Thanh Hóa",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 40,
+      "name": "Nghệ An",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 42,
+      "name": "Hà Tĩnh",
+      "divisionType": "Tỉnh",
+      "aliases": [],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 44,
+      "name": "Quảng Trị",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Quảng Bình"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 46,
+      "name": "Huế",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Thừa Thiên Huế",
+        "Thừa Thiên - Huế"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 48,
+      "name": "Đà Nẵng",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Quảng Nam"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 51,
+      "name": "Quảng Ngãi",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Kon Tum"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 52,
+      "name": "Gia Lai",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Bình Định"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 56,
+      "name": "Khánh Hòa",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Ninh Thuận"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 66,
+      "name": "Đắk Lắk",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Phú Yên"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 68,
+      "name": "Lâm Đồng",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Đắk Nông",
+        "Bình Thuận"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 75,
+      "name": "Đồng Nai",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Bình Phước"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 79,
+      "name": "Hồ Chí Minh",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Bình Dương",
+        "Bà Rịa - Vũng Tàu",
+        "TP HCM",
+        "TP.HCM",
+        "HCM",
+        "Sài Gòn"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 80,
+      "name": "Tây Ninh",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Long An"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 82,
+      "name": "Đồng Tháp",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Tiền Giang"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 86,
+      "name": "Vĩnh Long",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Bến Tre",
+        "Trà Vinh"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 91,
+      "name": "An Giang",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Kiên Giang"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 92,
+      "name": "Cần Thơ",
+      "divisionType": "Thành phố",
+      "aliases": [
+        "Hậu Giang",
+        "Sóc Trăng"
+      ],
+      "verifiedOn": "2026-10-01"
+    },
+    {
+      "code": 96,
+      "name": "Cà Mau",
+      "divisionType": "Tỉnh",
+      "aliases": [
+        "Bạc Liêu"
+      ],
+      "verifiedOn": "2026-10-01"
+    }
+  ]
+}

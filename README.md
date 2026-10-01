@@ -39,6 +39,8 @@ Không chạy các script trong `archive/` để cài đặt hoặc khởi độ
 
 ## Chạy demo
 
+Danh mục tỉnh/thành và dữ liệu mới ngày 01/10/2026: xem [hướng dẫn migration và giới hạn dữ liệu](docs/PROVINCES_CATALOG_2026-10-01.md). Database tại máy này đã được cập nhật; không cần nhập lại. Máy khác cần sao lưu và áp dụng migration trước khi dùng bộ lọc tỉnh mới.
+
 Database đã có từ phiên bản trước: build `tests/AdminSmoke`, chạy `dotnet run --no-build --project tests/AdminSmoke -- --upgrade-feedback` **trước khi chạy backend mới**. Lệnh sao lưu trước khi thêm bảng bình luận và khóa xác minh đánh giá; chạy lại sẽ bỏ qua schema đã cài. Không nhập lại `CSDL.sql`. Database mới tạo bằng schema hiện tại đã có phần này.
 
 Hai terminal: `dotnet run --project backend` và trong `frontend`: `npm run dev -- --host 127.0.0.1 --port 5173`.
@@ -71,6 +73,7 @@ node tests/admin-coverage.mjs
 node tests/restaurant-planner.mjs
 node tests/home-polish.mjs
 node tests/catalog-system-audit.mjs
+node tests/provinces.mjs
 ```
 
 Build `tests/AdminSmoke` trước khi dùng `--no-build`. `--audit`, `--verified-coverage`, home và catalog audit chỉ đọc dữ liệu ứng dụng. Các test completion/feedback/capacity/admin/planner có tạo dữ liệu thử riêng rồi dọn trong `finally`; nhật ký admin được giữ. Chạy tuần tự để fixture không xuất hiện trong bài audit danh mục. Các chế độ cũ `--functional`/`--browser` vẫn tạo tài khoản thử riêng; không dùng chúng khi cần kiểm thử chỉ với tài khoản sẵn có.
@@ -82,6 +85,8 @@ Trong trang tài khoản, bấm trực tiếp thẻ tour/phòng đã đặt đ�
 Trang chi tiết điểm đến, tour và khách sạn cho mọi người đọc đánh giá/bình luận không cần đăng nhập. Đăng nhập là có thể bình luận; chấm sao cần đơn của chính tài khoản đã hoàn thành trải nghiệm: tour `Completed`, phòng `CheckedOut`, đã qua ngày kết thúc tương ứng. Điểm đến phải nằm trong tour đã hoàn thành của người đó; lịch trình tự lập không tự xác nhận đã tham quan. Mỗi tài khoản chấm sao một lần cho mỗi dịch vụ. Admin chỉ ẩn/hiện tại `/admin/reviews` và `/admin/comments`. Điểm trung bình và sắp xếp danh mục chỉ tính đánh giá đã xác minh, đang công khai; đánh giá cũ chưa có bằng chứng vẫn được giữ trong database để tra cứu.
 
 ## Ảnh và dữ liệu mẫu mở rộng
+
+Từ 01/10/2026, dữ liệu mới theo yêu cầu chỉ dùng thông tin cơ sở/điểm đến có nguồn đối chiếu. Không dùng các chế độ tạo dữ liệu mẫu bên dưới để bổ sung giá/phòng/lịch khởi hành thật. Tour tham khảo mới là gợi ý NVT biên soạn, không phải tour mở bán.
 
 - `AnhDuLich/`: chỉ chứa ảnh JPEG để duyệt/chọn thủ công.
 - `backend/Data/photo-sources/`: nguồn, tác giả, giấy phép và SHA-256 của từng ảnh. Không bỏ metadata: công cụ nhập và kiểm tra nguồn dùng nó.
@@ -119,3 +124,13 @@ Database đang dùng: sao lưu và bổ sung schema bằng `dotnet run --project
 CORS sử dụng cấu hình `Cors:AllowedOrigins` (mảng URL đầy đủ, không dấu `/` cuối), hoặc biến môi trường `Cors__AllowedOrigins__0`. Development mặc định cho phép localhost/127.0.0.1 cổng 5173; Production không mặc định mở cho mọi origin. Giới hạn API: đăng nhập/đăng ký chung 10 lần/phút/IP; gửi đánh giá/bình luận chung 20 lần/phút/tài khoản. Khi trả 429, đợi số giây trong `Retry-After`. Khi deploy nhiều instance/proxy cần cấu hình proxy tin cậy và giới hạn dùng chung; không tin trực tiếp X-Forwarded-For từ khách.
 
 Kiểm tra bổ sung (dịch vụ 5000/5173 đang chạy, tài khoản SQL có sẵn trong `.local/test-accounts.json`): `node tests/account-workflows.mjs`, `node tests/account-details.mjs`, `node tests/feedback.mjs`, `node tests/restaurant-planner.mjs`; cuối cùng `node tests/rate-limits.mjs`. Trừ account-details và rate-limits, các suite này có tạo/xóa dữ liệu fixture riêng, không chạy trên production. Khi build trên Windows, dừng đúng tiến trình backend của dự án nếu DLL/exe đang bị khóa rồi chạy lại sau build.
+
+## Bổ sung danh mục và ảnh (2026-10-01)
+
+Đợt bổ sung danh mục/ảnh cùng ngày: 12 điểm đến, 8 khách sạn, 8 tour tham khảo, 40 ảnh có giấy phép (68 liên kết). Dataset, backup, lệnh nhập an toàn và kết quả kiểm thử tại [báo cáo bổ sung danh mục](docs/CATALOG_ENRICHMENT_2026-10-01.md). Không tự tạo giá, phòng trống hoặc lịch khởi hành; Git không chứa database có tài khoản cá nhân.
+
+## Dự toán lịch trình (2026-10-01)
+
+Lịch trình tính dự toán vé tham quan, ăn uống và phòng theo ngày lưu trú; lưu kế hoạch không giữ chỗ. Xem [hợp đồng dữ liệu và kiểm thử](docs/PLANNER_COSTS_2026-10-01.md).
+
+Database đang có dữ liệu: chạy `dotnet run --project tests/AdminSmoke -- --upgrade-planner` sau khi build. Lệnh sao lưu SQL trước và chỉ thêm cột còn thiếu; không chạy `database/CSDL.sql` để nâng cấp. Kiểm thử local bằng `--planner-checks` và `node tests/planner-costs.mjs`: dùng tài khoản sẵn có trong `.local/test-accounts.json`, tạo dữ liệu tạm có nhãn riêng rồi tự dọn; không chạy các kiểm thử có ghi dữ liệu này trên production.

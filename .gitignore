@@ -42,5 +42,6 @@ Thumbs.db
 
 # Local design sessions, diagram locks and redundant backup copies
 .impeccable/build/
+.impeccable/review/
 *.lck
 *.bak_*

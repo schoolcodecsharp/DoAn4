@@ -25,6 +25,8 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
         var tours = await conn.QueryAsync("""
             SELECT d.MaDatTour AS id, t.MaTour AS tourId, t.TenTour AS name, d.NgayKhoiHanh AS startDate,
                    d.SoNguoi AS people, d.TongTien AS total, d.TrangThai AS status,
+                   d.GiaMoiNguoi AS unitPrice,d.NgayDat AS bookedAt,d.GhiChu AS note,t.SoNgay AS duration,
+                   DATE_ADD(d.NgayKhoiHanh,INTERVAL (t.SoNgay-1) DAY) AS endDate,t.DiemKhoiHanh AS origin,t.DiemDen AS destination,
                    d.YeuCauHuy AS cancellationStatus,d.LyDoHuy AS cancellationReason,d.PhanHoiHuy AS cancellationReply,
                    COALESCE((SELECT SUM(p.SoTien) FROM ThanhToan p WHERE p.MaDatTour=d.MaDatTour AND p.TrangThai='ThanhCong'),0) AS paid
             FROM DatTour d JOIN Tour t ON t.MaTour=d.MaTour
@@ -35,6 +37,8 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
                    CONCAT(k.TenKhachSan, ' / ', p.TenLoaiPhong) AS name,
                    d.NgayNhanPhong AS startDate, d.NgayTraPhong AS endDate, d.SoNguoi AS people,
                    d.SoLuongPhong AS rooms, d.TongTien AS total, d.TrangThai AS status,
+                   d.GiaMoiDem AS unitPrice,d.NgayDat AS bookedAt,d.GhiChu AS note,p.TenLoaiPhong AS roomName,
+                   k.DiaChi AS address,k.SoDienThoai AS phone,DATEDIFF(d.NgayTraPhong,d.NgayNhanPhong) AS nights,
                    d.YeuCauHuy AS cancellationStatus,d.LyDoHuy AS cancellationReason,d.PhanHoiHuy AS cancellationReply,
                    COALESCE((SELECT SUM(p.SoTien) FROM ThanhToan p WHERE p.MaDatPhong=d.MaDatPhong AND p.TrangThai='ThanhCong'),0) AS paid
             FROM DatPhong d JOIN LoaiPhong p ON p.MaLoaiPhong=d.MaLoaiPhong
@@ -109,6 +113,7 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
         }
         var activityError = await ValidateActivities(conn, tx, request.Days);
         if (activityError != null) return BadRequest(new { message = activityError });
+        await BuildEstimates(conn, tx, new ItineraryEstimateRequest { NgayBatDau = request.NgayBatDau, SoNguoi = request.SoNguoi, Days = request.Days });
         var start = request.NgayBatDau.Date;
         var id = tripId ?? await conn.ExecuteScalarAsync<int>("""
             INSERT INTO ChuyenDi (MaNguoiDung, TenChuyenDi, DiemKhoiHanh, DiemDen, NgayBatDau, NgayKetThuc, SoNguoi, NganSach, MoTa, TrangThai)
@@ -132,14 +137,18 @@ public sealed partial class AccountController(IConfiguration config) : Controlle
                 new { id, number = i + 1, date = start.AddDays(i), title = request.Days[i].TieuDe.Trim(), note = request.Days[i].GhiChu }, tx);
             var order = 0;
             foreach (var activity in (request.Days[i].Activities ?? []).OrderBy(a => a.ThoiGianBatDau))
+            {
+                activity.Estimate!.RoomOptions = null;
                 await conn.ExecuteAsync("""
-                    INSERT INTO LichTrinhChiTiet (MaLichTrinh,ThuTu,LoaiDiaDiem,MaDiaDiem,MaNhaHang,MaKhachSan,ThoiGianBatDau,ThoiGianKetThuc,GhiChu)
-                    VALUES (@dayId,@order,@LoaiDiaDiem,@place,@restaurant,@hotel,@ThoiGianBatDau,@ThoiGianKetThuc,@GhiChu)
+                    INSERT INTO LichTrinhChiTiet (MaLichTrinh,ThuTu,LoaiDiaDiem,MaDiaDiem,MaNhaHang,MaKhachSan,ThoiGianBatDau,ThoiGianKetThuc,GhiChu,ChiPhi,DuToan)
+                    VALUES (@dayId,@order,@LoaiDiaDiem,@place,@restaurant,@hotel,@ThoiGianBatDau,@ThoiGianKetThuc,@GhiChu,@cost,@estimate)
                     """, new { dayId, order = ++order, activity.LoaiDiaDiem,
                         place = activity.LoaiDiaDiem == "DiaDiem" ? (int?)activity.MaDoiTuong : null,
                         restaurant = activity.LoaiDiaDiem == "NhaHang" ? (int?)activity.MaDoiTuong : null,
                         hotel = activity.LoaiDiaDiem == "KhachSan" ? (int?)activity.MaDoiTuong : null,
-                        activity.ThoiGianBatDau, activity.ThoiGianKetThuc, activity.GhiChu }, tx);
+                        activity.ThoiGianBatDau, activity.ThoiGianKetThuc, activity.GhiChu,
+                        cost = activity.Estimate.MinTotal, estimate = System.Text.Json.JsonSerializer.Serialize(activity.Estimate, EstimateJson) }, tx);
+            }
         }
         await tx.CommitAsync();
         return StatusCode(tripId.HasValue ? 200 : 201, new { id });

@@ -18,6 +18,7 @@ namespace backend.DTOs
         public decimal? ViDo { get; set; }
         public decimal? KinhDo { get; set; }
         public decimal GiaVe { get; set; }
+        public bool MienPhi { get; set; }
         public decimal GiaVeMin { get; set; }
         public decimal GiaVeMax { get; set; }
         public TimeSpan? GioMoCua { get; set; }
@@ -42,6 +43,7 @@ namespace backend.DTOs
         public decimal? ViDo { get; set; }
         public decimal? KinhDo { get; set; }
         public decimal GiaVe { get; set; }
+        public bool MienPhi { get; set; }
         public decimal GiaVeMin { get; set; }
         public decimal GiaVeMax { get; set; }
         public TimeSpan? GioMoCua { get; set; }

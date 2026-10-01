@@ -6,8 +6,11 @@ Cập nhật 30/09/2026: bổ sung bảng `BinhLuan` và hai khóa bằng chứn
 
 ## Các màn hình và quyền thao tác
 
+Cập nhật 01/10/2026: thêm TinhThanh, tổng 25 bảng và 47 khóa ngoại. Bảng địa giới là dữ liệu có phiên bản, chỉ tra cứu tại admin; không chỉnh tên/mã trực tiếp làm mất ánh xạ. Xem [danh mục tỉnh/thành](PROVINCES_CATALOG_2026-10-01.md).
+
 | Bảng | Trang / luồng | Phạm vi |
 |---|---|---|
+| TinhThanh | /admin/provinces; bộ lọc danh mục; form admin | Tra cứu 34 tên hiện hành, mã và tên cũ. Cập nhật bằng migration có sao lưu. |
 | VaiTro | `/admin/roles`, `/admin/users` | Xem vai trò hệ thống; phân vai trò cho tài khoản. Không sửa mã vai trò ứng dụng đang dùng. |
 | NguoiDung | `/admin/users` | Tạo/sửa/khóa, phân quyền; không lộ mật khẩu/hash. |
 | LoaiDiaDiem | `/admin/categories` | Tạo/sửa/ẩn loại địa điểm. |

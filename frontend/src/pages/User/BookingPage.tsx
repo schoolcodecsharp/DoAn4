@@ -19,10 +19,12 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
   const item = useResource<CatalogItem>(`/${catalogs[kind].endpoint}/${id}`);
   const options = useResource<(Omit<Departure, 'trangThai'> & Omit<Room, 'trangThai'> & { trangThai: string | boolean })[]>(kind === 'tours' ? `/tourkhoihanh/bytour/${id}` : `/loaiphong/bykhachsan/${id}`);
   const [selected, setSelected] = useState(params.get(kind === 'tours' ? 'departure' : 'room') || '');
-  const [people, setPeople] = useState(1);
-  const [rooms, setRooms] = useState(1);
-  const [checkin, setCheckin] = useState(today());
-  const [checkout, setCheckout] = useState('');
+  const initialCount = (key: string) => { const value = Number(params.get(key)); return Number.isInteger(value) && value >= 1 && value <= 100 ? value : 1; };
+  const initialDate = (key: string) => { const value = params.get(key) || ''; return /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value)) ? value : ''; };
+  const [people, setPeople] = useState(() => initialCount('people'));
+  const [rooms, setRooms] = useState(() => initialCount('rooms'));
+  const [checkin, setCheckin] = useState(() => initialDate('checkin') || today());
+  const [checkout, setCheckout] = useState(() => initialDate('checkout'));
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);

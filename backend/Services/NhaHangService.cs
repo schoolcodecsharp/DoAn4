@@ -40,6 +40,7 @@ namespace backend.Services
         }
         private static void Validate(CreateNhaHangDto dto)
         {
+            dto.TinhThanh = ProvinceCatalog.Require(dto.TinhThanh);
             if (string.IsNullOrWhiteSpace(dto.TenNhaHang) || dto.TenNhaHang.Trim().Length > 200 ||
                 dto.GiaMin < 0 || dto.GiaMax < dto.GiaMin || dto.GiaMax > 1000000000 ||
                 dto.GioMoCua < TimeSpan.Zero || dto.GioMoCua >= TimeSpan.FromDays(1) ||

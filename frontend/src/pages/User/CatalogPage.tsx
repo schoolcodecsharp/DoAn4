@@ -3,7 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { money } from '../../lib/api';
 import { catalogs, itemId, itemLocation, itemName, normalize, useResource, type CatalogItem, type Kind } from './catalog';
 import { LibraryPhoto } from './Photo';
-import ProvinceSelect from '../../components/ProvinceSelect';
+import { ProvinceFilter } from '../../components/ProvinceSelect';
+import { provinceNames, provinceSearchText, resolveProvince, useProvinces } from '../../lib/provinces';
 
 export default function CatalogPage({ kind }: { kind: Kind }) {
   const config = catalogs[kind];
@@ -14,11 +15,15 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
   const clear=()=>{setInput('');commit(new URLSearchParams());};
   const [input, setInput] = useState(params.get('keyword') || '');
   const keyword = params.get('keyword') || '';
-  const province = params.get('province') || '';
+  const provinceResource = useProvinces();
+  const provinces = provinceResource.data || [];
+  const provinceParam = params.get('province') || '';
+  const province = resolveProvince(provinceParam, provinces) || provinceParam;
   const { data, loading, error, reload } = useResource<CatalogItem[]>(`/${config.endpoint}`);
   const heroPhoto = data?.flatMap(item => item.hinhAnh || [])[0];
-  const provinceOptions = (data || []).filter(item => item.trangThai === true || item.trangThai === 'Active').flatMap(item => (item.tinhThanh || item.diemDen || '').split(',').map(name => name.trim()));
-  const items = (data || []).filter(item => item.trangThai !== false && item.trangThai !== 'Draft' && item.trangThai !== 'Cancelled' && item.trangThai !== 'Inactive').filter(item => normalize(`${itemName(item)} ${itemLocation(item)}`).includes(normalize(keyword))).filter(item => !province || normalize(`${itemLocation(item)} ${item.tinhThanh || ''}`).includes(normalize(province)));
+  const items = (data || []).filter(item => item.trangThai !== false && item.trangThai !== 'Draft' && item.trangThai !== 'Cancelled' && item.trangThai !== 'Inactive')
+    .filter(item => normalize(`${itemName(item)} ${itemLocation(item)} ${provinceSearchText(item.tinhThanh || item.diemDen || '', provinces)}`).includes(normalize(keyword)))
+    .filter(item => !province || provinceNames(item.tinhThanh || item.diemDen || '', provinces).some(name => normalize(name) === normalize(province)));
   const priceOf = (item: CatalogItem) => (kind === 'tours' ? item.giaTour : kind === 'hotels' ? item.giaPhongMin : kind === 'restaurants' ? item.giaMin : item.giaVe) ?? 0;
   const numeric = (key:string) => { const v=Number(params.get(key)); return Number.isFinite(v) && v>=0 ? v : 0; };
   const minPrice=numeric('minPrice'), maxPrice=numeric('maxPrice'), days=numeric('days'), sort=params.get('sort') || '';
@@ -36,7 +41,7 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
   const submit = (e: FormEvent) => { e.preventDefault(); const next = new URLSearchParams(pendingParams.current); if (input.trim()) next.set('keyword', input.trim()); else next.delete('keyword'); next.delete('page'); commit(next); };
   return <main className="user-page"><div className="user-container">
     <section className="catalog-intro"><div><p className="user-kicker">NVT DU LỊCH / {config.title}</p><h1>{config.heading}</h1><p>{config.description}</p><span className="guest-note">Xem tự do. Chỉ cần đăng nhập khi đặt chỗ hoặc lập lịch trình.</span></div>{heroPhoto && <LibraryPhoto key={heroPhoto.maHinhAnh} photo={heroPhoto} eager />}</section>
-    <form className="catalog-search catalog-search--provinces" onSubmit={submit}><div className="catalog-keyword-filter"><label htmlFor="catalog-keyword">Bạn muốn đến đâu?</label><input id="catalog-keyword" value={input} onChange={e => setInput(e.target.value)} placeholder="Tên dịch vụ hoặc điểm đến tại Việt Nam" /></div><ProvinceSelect options={provinceOptions} value={province} onChange={value => { const next = new URLSearchParams(pendingParams.current); if (value) next.set('province', value); else next.delete('province'); next.delete('page'); commit(next); }} /><button className="user-button" type="submit">Tìm kiếm</button></form>
+    <form className="catalog-search catalog-search--provinces" onSubmit={submit}><div className="catalog-keyword-filter"><label htmlFor="catalog-keyword">Bạn muốn đến đâu?</label><input id="catalog-keyword" value={input} onChange={e => setInput(e.target.value)} placeholder="Tên dịch vụ hoặc điểm đến tại Việt Nam" /></div><ProvinceFilter resource={provinceResource} value={province} onChange={value => { const next = new URLSearchParams(pendingParams.current); if (value) next.set('province', value); else next.delete('province'); next.delete('page'); commit(next); }} /><button className="user-button" type="submit">Tìm kiếm</button></form>
     <section className="catalog-advanced" aria-label="Bộ lọc nâng cao">
       <label>Giá từ (đ)<input type="number" min="0" step="100000" value={params.get('minPrice') || ''} onChange={e=>update('minPrice',e.target.value)} placeholder="0"/></label>
       <label>Giá đến (đ)<input type="number" min="0" step="100000" value={params.get('maxPrice') || ''} onChange={e=>update('maxPrice',e.target.value)} placeholder="Không giới hạn"/></label>

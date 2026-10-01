@@ -60,10 +60,10 @@ namespace backend.Data
             using var conn = GetConnection();
             var sql = @"
                 INSERT INTO DiaDiem (MaLoai, TenDiaDiem, MoTa, DiaChi, PhuongXa, QuanHuyen, TinhThanh, 
-                                     ViDo, KinhDo, GiaVe, GiaVeMin, GiaVeMax, GioMoCua, 
+                                     ViDo, KinhDo, GiaVe, MienPhi, GiaVeMin, GiaVeMax, GioMoCua,
                                      GioDongCua, ThoiGianThamQuan, TrangThai, NgayTao, NgayCapNhat)
                 VALUES (@MaLoai, @TenDiaDiem, @MoTa, @DiaChi, @PhuongXa, @QuanHuyen, @TinhThanh, 
-                        @ViDo, @KinhDo, @GiaVe, @GiaVeMin, @GiaVeMax, @GioMoCua, 
+                        @ViDo, @KinhDo, @GiaVe, @MienPhi, @GiaVeMin, @GiaVeMax, @GioMoCua,
                         @GioDongCua, @ThoiGianThamQuan, @TrangThai, NOW(), NOW());
                 SELECT LAST_INSERT_ID();";
             return await conn.ExecuteScalarAsync<int>(sql, dto);
@@ -76,7 +76,7 @@ namespace backend.Data
                 UPDATE DiaDiem SET 
                     MaLoai = @MaLoai, TenDiaDiem = @TenDiaDiem, MoTa = @MoTa, DiaChi = @DiaChi, 
                     PhuongXa = @PhuongXa, QuanHuyen = @QuanHuyen, TinhThanh = @TinhThanh, 
-                    ViDo = @ViDo, KinhDo = @KinhDo, GiaVe = @GiaVe, 
+                    ViDo = @ViDo, KinhDo = @KinhDo, GiaVe = @GiaVe, MienPhi = @MienPhi,
                     GiaVeMin = @GiaVeMin, GiaVeMax = @GiaVeMax, GioMoCua = @GioMoCua, 
                     GioDongCua = @GioDongCua, ThoiGianThamQuan = @ThoiGianThamQuan, 
                     TrangThai = @TrangThai, NgayCapNhat = NOW()

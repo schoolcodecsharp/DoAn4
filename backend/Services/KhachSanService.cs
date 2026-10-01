@@ -24,16 +24,18 @@ namespace backend.Services
 
         public async Task<IEnumerable<KhachSanDto>> GetByFilterAsync(string? tinh, string? loai, string? keyword)
         {
-            return await _repository.GetByFilterAsync(tinh, loai, keyword);
+            return await _repository.GetByFilterAsync(ProvinceCatalog.Require(tinh), loai, keyword);
         }
 
         public async Task<int> CreateAsync(CreateKhachSanDto dto)
         {
+            dto.TinhThanh = ProvinceCatalog.Require(dto.TinhThanh);
             return await _repository.CreateAsync(dto);
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateKhachSanDto dto)
         {
+            dto.TinhThanh = ProvinceCatalog.Require(dto.TinhThanh);
             return await _repository.UpdateAsync(id, dto);
         }
 

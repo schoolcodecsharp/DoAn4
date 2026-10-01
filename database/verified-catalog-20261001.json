@@ -1,0 +1,301 @@
+{
+  "verifiedOn": "2026-10-01",
+  "scope": "18 đơn vị còn thiếu sau chuẩn hóa; không sửa thông tin dịch vụ cũ.",
+  "referenceTourPolicy": "Gợi ý tham quan trong ngày do NVT biên soạn từ điểm đến đã đối chiếu. Một điểm dừng, bắt đầu tại địa phương, không bao gồm vận chuyển/liên tỉnh, lưu trú hay nhà hàng. Không phải chương trình của đơn vị nguồn, không mở bán; ngày/giờ thực tế và giá cần xác nhận.",
+  "stays": [
+    {
+      "province": "Bắc Ninh",
+      "hotel": "Mường Thanh Luxury Bắc Ninh",
+      "restaurant": "Nhà hàng Vọng Nguyệt - Mường Thanh Luxury Bắc Ninh",
+      "address": "Bắc Ninh",
+      "sources": [
+        "https://luxurybacninh.muongthanh.com/"
+      ]
+    },
+    {
+      "province": "Phú Thọ",
+      "hotel": "Mường Thanh Luxury Phú Thọ",
+      "restaurant": "Nhà hàng Âu Lạc - Mường Thanh Luxury Phú Thọ",
+      "address": "Đại lộ Hùng Vương, khu vực Việt Trì, Phú Thọ",
+      "sources": [
+        "https://booking.muongthanh.com/khach-san-muong-thanh-luxury-phu-tho"
+      ]
+    },
+    {
+      "province": "Thái Nguyên",
+      "hotel": "May Plaza Hotel",
+      "restaurant": "Nhà hàng May Plaza",
+      "address": "668 Phan Đình Phùng, Thái Nguyên",
+      "sources": [
+        "https://mayplazahotel.com/gioi-thieu/",
+        "https://mythainguyen.vn/vi/nhahangmayplaza/bookingres"
+      ]
+    },
+    {
+      "province": "Lạng Sơn",
+      "hotel": "Mường Thanh Luxury Lạng Sơn",
+      "restaurant": "Nhà hàng Mẫu Sơn - Mường Thanh Luxury Lạng Sơn",
+      "address": "Lạng Sơn",
+      "sources": [
+        "https://luxurylangson.muongthanh.com/"
+      ]
+    },
+    {
+      "province": "Hải Phòng",
+      "hotel": "Sheraton Hai Phong",
+      "restaurant": "Harbor - Sheraton Hai Phong",
+      "address": "1 đường Hà Nội, Vinhomes Imperia, Hải Phòng",
+      "sources": [
+        "https://www.marriott.com/en-us/hotels/hphsi-sheraton-hai-phong/dining/"
+      ]
+    },
+    {
+      "province": "Điện Biên",
+      "hotel": "Mường Thanh Grand Điện Biên Phủ",
+      "restaurant": "Nhà hàng Mường Phăng - Mường Thanh Grand Điện Biên Phủ",
+      "address": "Khu vực Điện Biên Phủ, Điện Biên",
+      "sources": [
+        "https://www.booking.muongthanh.com/khach-san-muong-thanh-grand-dien-bien-phu"
+      ]
+    },
+    {
+      "province": "Lai Châu",
+      "hotel": "Mường Thanh Lai Châu",
+      "restaurant": "Nhà hàng Mường Thanh - Mường Thanh Lai Châu",
+      "address": "Lai Châu",
+      "sources": [
+        "https://booking.muongthanh.com/khach-san-muong-thanh-lai-chau"
+      ]
+    },
+    {
+      "province": "Sơn La",
+      "hotel": "Mường Thanh Luxury Sơn La",
+      "restaurant": "Nhà hàng Pha Luông - Mường Thanh Luxury Sơn La",
+      "address": "Sơn La",
+      "sources": [
+        "https://luxurysonla.muongthanh.com/"
+      ]
+    },
+    {
+      "province": "Thanh Hóa",
+      "hotel": "Mường Thanh Grand Thanh Hóa",
+      "restaurant": "Nhà hàng Vĩnh Lộc - Mường Thanh Grand Thanh Hóa",
+      "address": "Thanh Hóa",
+      "sources": [
+        "https://grandthanhhoa.muongthanh.com/"
+      ]
+    },
+    {
+      "province": "Nghệ An",
+      "hotel": "Mường Thanh Luxury Sông Lam",
+      "restaurant": "Nhà hàng Yên Trường - Mường Thanh Luxury Sông Lam",
+      "address": "Khu vực Vinh, Nghệ An",
+      "sources": [
+        "https://luxurysonglam.muongthanh.com/"
+      ]
+    },
+    {
+      "province": "Hà Tĩnh",
+      "hotel": "Mường Thanh Grand Hà Tĩnh",
+      "restaurant": "Nhà hàng Thiên Cầm - Mường Thanh Grand Hà Tĩnh",
+      "address": "Quốc lộ 1A, khu vực Kỳ Anh, Hà Tĩnh",
+      "sources": [
+        "https://grandhatinh.muongthanh.com/"
+      ]
+    },
+    {
+      "province": "Đắk Lắk",
+      "hotel": "Mường Thanh Luxury Buôn Ma Thuột",
+      "restaurant": "Nhà hàng Dray Sap - Mường Thanh Luxury Buôn Ma Thuột",
+      "address": "Buôn Ma Thuột, Đắk Lắk",
+      "sources": [
+        "https://booking.muongthanh.com/khach-san-muong-thanh-luxury-buon-ma-thuot"
+      ]
+    },
+    {
+      "province": "Đồng Nai",
+      "hotel": "The Mira Central Park Hotel",
+      "restaurant": "Park Avenue - The Mira Central Park Hotel",
+      "address": "1 Nguyễn Ái Quốc, khu vực Biên Hòa, Đồng Nai",
+      "sources": [
+        "https://themiracentralpark.com.vn/vi/about-us/",
+        "https://themiracentralpark.com.vn/vi/contact/"
+      ]
+    },
+    {
+      "province": "Hồ Chí Minh",
+      "hotel": "Sheraton Saigon Grand Opera Hotel",
+      "restaurant": "Li Bai - Sheraton Saigon Grand Opera Hotel",
+      "address": "88 Đồng Khởi, Hồ Chí Minh",
+      "sources": [
+        "https://www.marriott.com/en-us/hotels/sgnsi-sheraton-saigon-grand-opera-hotel/dining/"
+      ]
+    },
+    {
+      "province": "Tây Ninh",
+      "hotel": "Meliá Vinpearl Tay Ninh",
+      "restaurant": "Garbo 986 - Meliá Vinpearl Tay Ninh",
+      "address": "Tây Ninh",
+      "sources": [
+        "https://www.melia.com/en/hotels/vietnam/tay-ninh/melia-vinpearl-tay-ninh/restaurants"
+      ]
+    },
+    {
+      "province": "Đồng Tháp",
+      "hotel": "Mekong Lodge Resort",
+      "restaurant": "Mekong Lodge Riverside Restaurant",
+      "address": "An Hòa, khu vực Đông Hòa Hiệp, Cái Bè, Đồng Tháp",
+      "sources": [
+        "https://www.mekonglodge.com/en/the-restaurant.html",
+        "https://mekonglodge.com/en/our-lodge.html"
+      ]
+    },
+    {
+      "province": "Vĩnh Long",
+      "hotel": "Bến Tre Riverside Resort",
+      "restaurant": "Nhà hàng Hoàng Lam - Bến Tre Riverside Resort",
+      "address": "708 Nguyễn Văn Tư, phường Bến Tre, Vĩnh Long",
+      "sources": [
+        "https://bentreriverside.com/en/",
+        "https://bentreriverside.com/nha-hang/"
+      ]
+    },
+    {
+      "province": "Cà Mau",
+      "hotel": "Mường Thanh Luxury Cà Mau",
+      "restaurant": "Nhà hàng Viên An - Mường Thanh Luxury Cà Mau",
+      "address": "Cà Mau",
+      "sources": [
+        "https://luxurycamau.muongthanh.com/"
+      ]
+    }
+  ],
+  "destinations": [
+    {
+      "province": "Bắc Ninh",
+      "name": "Đền Đô",
+      "category": "Văn hóa",
+      "description": "Di tích gắn với các vị vua triều Lý tại vùng Kinh Bắc.",
+      "source": "https://www.vietravel.com/vn/am-thuc-kham-pha/dia-diem-du-lich-bac-ninh-v17381.aspx"
+    },
+    {
+      "province": "Phú Thọ",
+      "name": "Khu di tích lịch sử Đền Hùng",
+      "category": "Văn hóa",
+      "description": "Quần thể di tích thờ các Vua Hùng tại Phú Thọ; có Đền Hạ và chùa Thiên Quang.",
+      "source": "https://vietnamtourism.gov.vn/post/16741"
+    },
+    {
+      "province": "Thái Nguyên",
+      "name": "Hồ Ba Bể",
+      "category": "Thiên nhiên",
+      "description": "Hồ nước thuộc khu vực Bắc Kạn trước sắp xếp, nay thuộc Thái Nguyên. Khu vực hồ có đảo Bà Góa và bản Pác Ngòi.",
+      "source": "https://hanoitourist.vn/hnt-ho-ba-be-thac-ban-gioc?page=1"
+    },
+    {
+      "province": "Lạng Sơn",
+      "name": "Động Tam Thanh - Chùa Tam Thanh",
+      "category": "Văn hóa",
+      "description": "Chùa nằm trong động Tam Thanh, thuộc quần thể danh thắng Nhị - Tam Thanh ở Lạng Sơn.",
+      "source": "https://tamthanh.langson.gov.vn/gioi-thieu/di-tich-danh-thang"
+    },
+    {
+      "province": "Hải Phòng",
+      "name": "Đảo Cát Bà",
+      "category": "Thiên nhiên",
+      "description": "Đảo thuộc Hải Phòng, kết nối với cảnh quan biển đảo và vịnh Lan Hạ.",
+      "source": "https://catba.haiphong.vietnaminfo.net/vi"
+    },
+    {
+      "province": "Điện Biên",
+      "name": "Bảo tàng Chiến thắng lịch sử Điện Biên Phủ",
+      "category": "Văn hóa",
+      "description": "Bảo tàng giới thiệu chiến dịch Điện Biên Phủ, có không gian trưng bày và tranh panorama.",
+      "source": "https://vietnamtourism.gov.vn/post/42727"
+    },
+    {
+      "province": "Lai Châu",
+      "name": "Bản Sin Suối Hồ",
+      "category": "Văn hóa",
+      "description": "Bản du lịch cộng đồng tại Lai Châu, nơi du khách tìm hiểu văn hóa người Mông và cảnh quan vùng cao.",
+      "source": "https://dantoc.vietnamtourism.gov.vn/ban-sin-suoi-ho-lai-chau-nhan-giai-thuong-diem-du-lich-cong-dong-tot-nhat-nam-2025/"
+    },
+    {
+      "province": "Sơn La",
+      "name": "Di tích Nhà tù Sơn La",
+      "category": "Văn hóa",
+      "description": "Di tích lịch sử tại Sơn La, lưu giữ các khu giam giữ và hiện vật; gần Bảo tàng tỉnh Sơn La.",
+      "source": "https://csdl.vietnamtourism.gov.vn/dest/?item=506"
+    },
+    {
+      "province": "Thanh Hóa",
+      "name": "Thành nhà Hồ",
+      "category": "Văn hóa",
+      "description": "Di sản thành đá thời Hồ tại Thanh Hóa, được UNESCO ghi danh Di sản thế giới.",
+      "source": "https://whc.unesco.org/en/list/1358/"
+    },
+    {
+      "province": "Nghệ An",
+      "name": "Khu di tích Kim Liên",
+      "category": "Văn hóa",
+      "description": "Khu di tích tại Nghệ An gắn với quê hương Chủ tịch Hồ Chí Minh.",
+      "source": "https://congan.nghean.gov.vn/tin-tuc-su-kien/201805/hoi-thao-khoa-hoc-khai-thac-tiem-nang-du-lich-nghe-an-794653/"
+    },
+    {
+      "province": "Hà Tĩnh",
+      "name": "Khu di tích Ngã ba Đồng Lộc",
+      "category": "Văn hóa",
+      "description": "Di tích tại Hà Tĩnh gắn với lịch sử thanh niên xung phong và sự hy sinh của mười nữ thanh niên xung phong.",
+      "source": "https://dongloc.hatinh.gov.vn/vi/bai-viet/dong-loc-diem-den-hap-dan-trong-ky-nghi-le-duong-lich"
+    },
+    {
+      "province": "Đắk Lắk",
+      "name": "Bảo tàng Thế giới Cà phê",
+      "category": "Văn hóa",
+      "description": "Không gian bảo tàng tại Buôn Ma Thuột giới thiệu văn hóa cà phê và các trải nghiệm tương tác.",
+      "source": "https://baotangthegioicaphe.com/bao-tang-the-gioi-ca-phe"
+    },
+    {
+      "province": "Đồng Nai",
+      "name": "Vườn quốc gia Cát Tiên - khu vực Đồng Nai",
+      "category": "Thiên nhiên",
+      "description": "Phần vườn quốc gia thuộc Đồng Nai; điểm đến tìm hiểu hệ sinh thái rừng. Vườn còn trải sang Lâm Đồng.",
+      "source": "https://nongthon.vietnamtourism.gov.vn/vuon-quoc-gia-cat-tien-mo-hinh-du-lich-sinh-thai-ket-hop-nong-nghiep-nong-thon-huong-toi-phat-trien-ben-vung/"
+    },
+    {
+      "province": "Hồ Chí Minh",
+      "name": "Dinh Độc Lập",
+      "category": "Văn hóa",
+      "description": "Di tích lịch sử tại trung tâm Thành phố Hồ Chí Minh, gắn với tiến trình thống nhất đất nước.",
+      "source": "https://dinhdoclap.gov.vn/lich-su-dinh-doc-lap/"
+    },
+    {
+      "province": "Tây Ninh",
+      "name": "Núi Bà Đen",
+      "category": "Thiên nhiên",
+      "description": "Điểm đến tại Tây Ninh với cảnh quan núi và quần thể công trình tâm linh.",
+      "source": "https://vietravel.com/vn/am-thuc-kham-pha/tour-tay-ninh-1-ngay-hanh-trinh-chinh-phuc-noc-nha-nam-bo-dai-tuong-phat-di-lac-nui-ba-den-v16984.aspx"
+    },
+    {
+      "province": "Đồng Tháp",
+      "name": "Làng hoa Sa Đéc",
+      "category": "Văn hóa",
+      "description": "Làng nghề trồng hoa và cây cảnh tại Sa Đéc, Đồng Tháp; có hoạt động tham quan gắn với nghề hoa.",
+      "source": "https://nongthon.vietnamtourism.gov.vn/lang-hoa-sa-dec-diem-hen-ruc-ro-sac-hoa/"
+    },
+    {
+      "province": "Vĩnh Long",
+      "name": "Cù lao An Bình",
+      "category": "Thiên nhiên",
+      "description": "Vùng cù lao của Vĩnh Long gắn với sông nước, vườn cây và du lịch cộng đồng.",
+      "source": "https://nongthon.vietnamtourism.gov.vn/vinh-long-long-ho-huong-den-phat-trien-du-lich-cong-dong-nong-nghiep-nong-thon-du-lich-xanh/"
+    },
+    {
+      "province": "Cà Mau",
+      "name": "Mũi Cà Mau",
+      "category": "Thiên nhiên",
+      "description": "Vùng đất mũi ở cực Nam phần đất liền Việt Nam, thuộc Cà Mau.",
+      "source": "https://csdl.vietnamtourism.gov.vn/dest/?item=447"
+    }
+  ]
+}

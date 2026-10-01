@@ -45,7 +45,7 @@ public sealed partial class AccountController
                    COALESCE(a.MaDiaDiem,a.MaNhaHang,a.MaKhachSan) AS MaDoiTuong,
                    COALESCE(d.TenDiaDiem,n.TenNhaHang,k.TenKhachSan) AS TenDiaDiem,
                    COALESCE(d.DiaChi,n.DiaChi,k.DiaChi) AS DiaChi,
-                   a.ThoiGianBatDau,a.ThoiGianKetThuc,a.GhiChu
+                   a.ThoiGianBatDau,a.ThoiGianKetThuc,a.GhiChu,a.DuToan
             FROM LichTrinhChiTiet a
             LEFT JOIN DiaDiem d ON d.MaDiaDiem=a.MaDiaDiem
             LEFT JOIN NhaHang n ON n.MaNhaHang=a.MaNhaHang
@@ -70,6 +70,12 @@ public sealed class ItineraryActivityRequest
     public TimeSpan? ThoiGianBatDau { get; set; }
     public TimeSpan? ThoiGianKetThuc { get; set; }
     public string? GhiChu { get; set; }
+    public int? Quantity { get; set; }
+    public int? RoomId { get; set; }
+    public int? Nights { get; set; }
+    public int? Rooms { get; set; }
+    [System.Text.Json.Serialization.JsonIgnore]
+    public ActivityEstimate? Estimate { get; set; }
 }
 
 public sealed class SavedActivity
@@ -85,4 +91,7 @@ public sealed class SavedActivity
     public TimeSpan? ThoiGianKetThuc { get; set; }
     public string? GhiChu { get; set; }
     public List<HinhAnhResponseDto> HinhAnh { get; set; } = [];
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string? DuToan { get; set; }
+    public ActivityEstimate? Estimate => string.IsNullOrWhiteSpace(DuToan) ? null : System.Text.Json.JsonSerializer.Deserialize<ActivityEstimate>(DuToan, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
 }

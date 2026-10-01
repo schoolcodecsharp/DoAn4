@@ -1,0 +1,65 @@
+.planner-page { --planner-muted: #4c6559; --planner-warning: #80351f; }
+.planner-page .detail-heading { margin-block: 2rem; }
+.planner-page .detail-heading h1 { font-size: clamp(2rem, 3.8vw, 3.4rem); max-width: 22ch; line-height: 1.12; }
+.planner-page .detail-heading p { color: var(--planner-muted); max-width: 65ch; }
+.planner-layout { align-items: start; }
+.planner-main { min-width: 0; }
+.planner-page .user-form label { color: var(--ink); font-size: .9375rem; }
+.planner-page input::placeholder, .planner-page textarea::placeholder { color: #5e6a60; opacity: 1; }
+.planner-page .planner-day { border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 1.5rem 0; margin-top: 2rem; min-width: 0; }
+.planner-page .planner-day legend { font-size: 1.125rem; padding-right: .8rem; }
+.planner-page .event-timeline > li { padding-block: 1.5rem 2rem; }
+.planner-page .event-hours { align-items: start; }
+.planner-page .event-options { max-height: none; overflow: visible; }
+.planner-page .event-option { grid-template-columns: 112px minmax(0, 1fr); }
+.planner-page .event-option p { font-size: .9375rem; }
+.planner-page .event-picker { padding-top: 1.25rem; }
+.planner-page .event-picker summary { min-height: 44px; }
+.event-cost-editor { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--line, #d8dbcb); }
+.event-cost { padding-block: .75rem; overflow-wrap: anywhere; }
+.event-cost strong { display: block; font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.event-cost p { margin-block: .45rem; }
+.user-page .cost-disclaimer { color: #4c6559; font-size: .875rem; line-height: 1.6; }
+.user-page .cost-warning { color: #80351f; font-size: .9375rem; line-height: 1.6; }
+.planner-ledger { position: sticky; top: 110px; max-height: calc(100dvh - 132px); display: flex; flex-direction: column; }
+.planner-ledger-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: var(--ink) var(--paper); padding-right: .5rem; }
+.planner-save-actions { flex-shrink: 0; padding-top: .75rem; border-top: 1px solid var(--line); }
+.planner-page .planner-save-actions .user-button { margin-top: 0; }
+@media (max-height: 850px) { .planner-ledger { position: static; } }
+.planner-ledger .user-button { width: 100%; margin-top: 1rem; }
+.cost-ledger h2 { margin-block: 1rem .5rem; font-size: 1.5rem; }
+.cost-grand-total { display: block; font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1.35; font-weight: 500; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.cost-ledger dl { margin-block: 1.5rem; }
+.cost-ledger dl > div, .cost-budget { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--line, #d8dbcb); padding-block: .75rem; }
+.cost-ledger dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.cost-ledger dt { white-space: nowrap; }
+.cost-ledger p { margin-block: .75rem; }
+.cost-ledger { margin-block: .5rem 1rem; }
+.planner-page :focus-visible, .booking-information :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.planner-page input, .planner-page textarea { caret-color: var(--ink); }
+.planner-page ::selection { color: var(--surface); background: var(--ink); }
+.booking-information { background: var(--surface); border: 1px solid var(--line); padding: 1rem 1.5rem; }
+.booking-information > summary { cursor: pointer; padding-block: .5rem; font-weight: 600; }
+.booking-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 2rem; margin-block: 1.5rem; }
+.booking-facts div { min-width: 0; }
+.booking-facts dt { color: #4c6559; font-size: .875rem; }
+.booking-facts dd { margin: .3rem 0 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.booking-information .room-photo { max-width: 320px; }
+.booking-information .user-panel { border: 0; padding: 1rem 0; }
+@media (max-width: 900px) {
+  .planner-layout { display: flex; flex-direction: column; }
+  .planner-main { display: contents; }
+  .planner-main > section:first-child { order: 0; width: 100%; }
+  .planner-ledger { order: 1; position: static; width: 100%; max-height: none; }
+  .planner-ledger-content { overflow: visible; padding-right: 0; }
+  .planner-main > section:last-child { order: 2; width: 100%; }
+}
+@media (max-width: 600px) {
+  .planner-page .event-hours, .booking-facts { grid-template-columns: minmax(0, 1fr); }
+  .planner-page .event-option { grid-template-columns: 88px minmax(0, 1fr); }
+  .planner-page .event-option .user-button { padding: .65rem; font-size: .875rem; }
+  .planner-page .event-type-buttons button { flex: 1 1 auto; min-height: 44px; }
+  .planner-page .event-summary { grid-template-columns: minmax(0, 1fr); }
+  .cost-ledger dl > div, .cost-budget { flex-wrap: wrap; }
+  .booking-information { padding-inline: 1rem; }
+}

@@ -4,6 +4,7 @@ const trip: [string,string] = ['maChuyenDi','Chuyến đi'];
 const status: [string,string] = ['trangThai','Trạng thái'];
 const targets: [string,string][] = [['maTour','Tour'],['maDiaDiem','Điểm đến'],['maNhaHang','Nhà hàng'],['maKhachSan','Khách sạn']];
 export const dataSections: Record<string,DataSection> = {
+  provinces: {title:'Tỉnh / thành phố',endpoint:'provinces',id:'code',description:'Danh mục địa giới đã đối chiếu ngày 01/10/2026. Tên cũ được quy đổi để tìm kiếm; chỉ xem, cập nhật qua migration có kiểm chứng.',fields:[['name','Tên hiện hành'],['divisionType','Loại đơn vị'],['legacyNames','Tên cũ / tên gọi khác'],['verifiedOn','Ngày đối chiếu']]},
   comments: {title:'Bình luận của khách',endpoint:'binhluan',id:'maBinhLuan',description:'Tra cứu và ẩn/hiện bình luận công khai. Không sửa nội dung thay khách.',fields:[person,...targets.filter(([key])=>key!=='maNhaHang'),['noiDung','Nội dung'],['ngayTao','Ngày gửi'],status]},
   roles: {title:'Vai trò hệ thống',endpoint:'vaitro',id:'maVaiTro',description:'Vai trò được ứng dụng dùng để phân quyền. Chỉ xem; phân vai trò cho tài khoản tại mục Tài khoản.',fields:[['tenVaiTro','Tên vai trò'],['moTa','Mô tả'],status]},
   trips: {title:'Chuyến đi cá nhân',endpoint:'chuyendi',id:'maChuyenDi',description:'Tra cứu kế hoạch của khách. Nội dung và lời mời được chủ chuyến đi quản lý trong tài khoản, không sửa thay quyền của khách.',fields:[['tenChuyenDi','Tên chuyến đi'],person,['diemKhoiHanh','Điểm khởi hành'],['diemDen','Điểm đến'],['ngayBatDau','Bắt đầu'],['ngayKetThuc','Kết thúc'],['soNguoi','Số người'],['nganSach','Ngân sách'],status,['moTa','Ghi chú']]},
@@ -15,6 +16,7 @@ export const dataSections: Record<string,DataSection> = {
   images: {title:'Thư viện hình ảnh',endpoint:'hinhanh',id:'maHinhAnh',description:'Xem ảnh và nguồn ghi công. Mở bộ ảnh để tải thêm, đổi mô tả, sắp xếp hoặc gỡ ảnh của đúng dịch vụ.',fields:[['loaiDoiTuong','Loại dịch vụ'],['maDoiTuong','Mã dịch vụ'],['moTa','Mô tả'],['thuTu','Thứ tự'],['nguon','Nguồn'],['tacGia','Tác giả'],['giayPhep','Giấy phép'],['ngayTao','Ngày tạo']]},
 };
 export const tableCoverage = [
+  ['TinhThanh','provinces','Tra cứu tên hiện hành và tên tỉnh cũ'],
   ['VaiTro','roles','Xem vai trò; phân quyền tại tài khoản'],['NguoiDung','users','Tạo, sửa, khóa và phân vai trò'],
   ['LoaiDiaDiem','categories','Quản lý loại địa điểm'],['DiaDiem','destinations','Quản lý điểm đến và ảnh'],['NhaHang','restaurants','Quản lý nhà hàng và ảnh'],
   ['KhachSan','hotels','Quản lý nơi lưu trú'],['LoaiPhong','rooms','Quản lý loại phòng, giá, số lượng và ảnh'],['DatPhong','room-orders','Tra cứu và xử lý đơn phòng'],
