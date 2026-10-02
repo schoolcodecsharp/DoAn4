@@ -1,0 +1,758 @@
+{
+  "verifiedOn": "2026-10-02",
+  "policy": "Danh mục có nguồn đối chiếu; tour là gợi ý do NVT biên soạn, không phải sản phẩm đang mở bán hoặc chương trình chính thức của cơ sở. Chưa xác nhận giá, phòng trống, chỗ, giờ phục vụ và vận chuyển. Giá 0 trong schema cũ nghĩa là chưa có báo giá, không phải miễn phí.",
+  "places": [
+    {
+      "key": "tam-coc",
+      "kind": "DiaDiem",
+      "name": "Tam Cốc",
+      "province": "Ninh Bình",
+      "category": "Danh lam thắng cảnh",
+      "address": "Tam Cốc, Ninh Bình",
+      "description": "Tuyến tham quan bằng thuyền trên sông Ngô Đồng, đi qua hang nước và cảnh quan núi đá vôi xen ruộng lúa.",
+      "source": "https://vietnam.travel/node/1535"
+    },
+    {
+      "key": "bich-dong",
+      "kind": "DiaDiem",
+      "name": "Chùa Bích Động",
+      "province": "Ninh Bình",
+      "category": "Di tích lịch sử",
+      "address": "Khu vực Tam Cốc - Bích Động, Ninh Bình",
+      "description": "Quần thể chùa trên núi Ngũ Nhạc, gồm chùa Hạ, Trung và Thượng. Có thể kết hợp tìm hiểu kiến trúc và cảnh quan.",
+      "source": "https://vietnam.travel/node/1535"
+    },
+    {
+      "key": "hang-mua",
+      "kind": "DiaDiem",
+      "name": "Hang Múa",
+      "province": "Ninh Bình",
+      "category": "Danh lam thắng cảnh",
+      "address": "Khu vực Tam Cốc, Ninh Bình",
+      "description": "Điểm ngắm cảnh trên cao nhìn ra thung lũng Tam Cốc, dòng sông và các dãy núi đá vôi. Lối lên có nhiều bậc thang.",
+      "source": "https://vietnam.travel/node/1535"
+    },
+    {
+      "key": "van-long",
+      "kind": "DiaDiem",
+      "name": "Khu bảo tồn thiên nhiên Vân Long",
+      "province": "Ninh Bình",
+      "category": "Danh lam thắng cảnh",
+      "address": "Vân Long, Ninh Bình",
+      "description": "Vùng đất ngập nước có cảnh quan núi đá vôi và hệ sinh thái đa dạng. Hoạt động thuyền tham quan cần xác nhận tại bến.",
+      "source": "https://vietnam.travel/things-to-do/guide-boat-tours-ninh-binh"
+    },
+    {
+      "key": "cuc-phuong",
+      "kind": "DiaDiem",
+      "name": "Vườn quốc gia Cúc Phương - khu vực Ninh Bình",
+      "province": "Ninh Bình",
+      "category": "Công viên - Vườn",
+      "address": "Khu vực cửa vườn quốc gia Cúc Phương, Ninh Bình",
+      "description": "Không gian rừng với nhiều tuyến đi bộ tìm hiểu thiên nhiên. Chỉ chọn tuyến được phép và theo hướng dẫn của ban quản lý.",
+      "source": "https://www.vietnam.travel/things-to-do/7-amazing-national-parks-vietnam"
+    },
+    {
+      "key": "pu-luong",
+      "kind": "DiaDiem",
+      "name": "Khu bảo tồn thiên nhiên Pù Luông",
+      "province": "Thanh Hóa",
+      "category": "Danh lam thắng cảnh",
+      "address": "Pù Luông, Thanh Hóa",
+      "description": "Cảnh quan thung lũng, ruộng bậc thang và các bản làng miền núi; phù hợp tìm hiểu thiên nhiên và đời sống địa phương.",
+      "source": "https://www.vietnam.travel/things-to-do/7-amazing-national-parks-vietnam"
+    },
+    {
+      "key": "bach-ma",
+      "kind": "DiaDiem",
+      "name": "Vườn quốc gia Bạch Mã",
+      "province": "Huế",
+      "category": "Công viên - Vườn",
+      "address": "Vườn quốc gia Bạch Mã, Huế",
+      "description": "Vườn quốc gia vùng núi có các tuyến đi bộ, thác và hồ tự nhiên. Cần xác nhận điều kiện thời tiết và tuyến tham quan trước chuyến đi.",
+      "source": "https://www.vietnam.travel/things-to-do/7-amazing-national-parks-vietnam"
+    },
+    {
+      "key": "con-dao",
+      "kind": "DiaDiem",
+      "name": "Vườn quốc gia Côn Đảo",
+      "province": "Hồ Chí Minh",
+      "category": "Công viên - Vườn",
+      "address": "Côn Đảo, Hồ Chí Minh",
+      "description": "Khu bảo tồn có cả rừng trên đảo và không gian biển. Việc tham quan các tuyến bảo tồn cần tuân thủ hướng dẫn của đơn vị quản lý.",
+      "source": "https://www.vietnam.travel/things-to-do/your-beach-break-guide-con-dao"
+    },
+    {
+      "key": "dam-trau",
+      "kind": "DiaDiem",
+      "name": "Bãi Đầm Trầu",
+      "province": "Hồ Chí Minh",
+      "category": "Bãi biển",
+      "address": "Côn Đảo, Hồ Chí Minh",
+      "description": "Bãi biển ở Côn Đảo với bờ cát và cảnh quan cây xanh xung quanh. Hoạt động biển phụ thuộc thời tiết và hướng dẫn tại chỗ.",
+      "source": "https://www.vietnam.travel/things-to-do/your-beach-break-guide-con-dao"
+    },
+    {
+      "key": "mai-chau",
+      "kind": "DiaDiem",
+      "name": "Thung lũng Mai Châu",
+      "province": "Phú Thọ",
+      "category": "Danh lam thắng cảnh",
+      "address": "Mai Châu, Phú Thọ",
+      "description": "Thung lũng với ruộng lúa, núi xanh và các bản du lịch cộng đồng. Có thể tìm hiểu nhà sàn và văn hóa của cư dân địa phương.",
+      "source": "https://vietnam.travel/places-to-go/northern-vietnam/mai-chau"
+    },
+    {
+      "key": "ban-lac",
+      "kind": "DiaDiem",
+      "name": "Bản Lác - Mai Châu",
+      "province": "Phú Thọ",
+      "category": "Làng nghề - Phố cổ",
+      "address": "Mai Châu, Phú Thọ",
+      "description": "Bản du lịch cộng đồng trong thung lũng Mai Châu, gắn với nhà sàn và đời sống của người Thái. Tôn trọng không gian sinh hoạt của người dân.",
+      "source": "https://vietnam.travel/places-to-go/northern-vietnam/mai-chau"
+    },
+    {
+      "key": "cu-lao-cham",
+      "kind": "DiaDiem",
+      "name": "Cù Lao Chàm",
+      "province": "Đà Nẵng",
+      "category": "Danh lam thắng cảnh",
+      "address": "Vùng biển Hội An, Đà Nẵng",
+      "description": "Cụm đảo gần Hội An với cảnh quan biển và đời sống làng chài. Cần kiểm tra lịch tàu, thời tiết và quy định bảo tồn trước khi ra đảo.",
+      "source": "https://vietnam.travel/node/1853"
+    },
+    {
+      "key": "tra-que",
+      "kind": "DiaDiem",
+      "name": "Làng rau Trà Quế",
+      "province": "Đà Nẵng",
+      "category": "Làng nghề - Phố cổ",
+      "address": "Khu vực Hội An, Đà Nẵng",
+      "description": "Làng trồng rau và gia vị gần Hội An, có các hoạt động tìm hiểu canh tác và ẩm thực địa phương. Trải nghiệm có hướng dẫn cần liên hệ riêng.",
+      "source": "https://vietnam.travel/vi/things-to-do/tra-que-vegetable-village-hoi-an-ultimate-%E2%80%9Cgreen%E2%80%9D-trip"
+    },
+    {
+      "key": "ky-co",
+      "kind": "DiaDiem",
+      "name": "Bãi Kỳ Co",
+      "province": "Gia Lai",
+      "category": "Bãi biển",
+      "address": "Khu vực Nhơn Lý, Quy Nhơn, Gia Lai",
+      "description": "Bãi biển trong hành trình khám phá khu vực Quy Nhơn, nổi bật với bờ cát và các khối đá ven nước.",
+      "source": "https://www.avanihotels.com/uploads/minor/avani/documents/vquy/leisure/avani_quy_nhon_resort_excursions_activities-booklet_2025.pdf"
+    },
+    {
+      "key": "eo-gio",
+      "kind": "DiaDiem",
+      "name": "Eo Gió",
+      "province": "Gia Lai",
+      "category": "Danh lam thắng cảnh",
+      "address": "Khu vực Nhơn Lý, Quy Nhơn, Gia Lai",
+      "description": "Eo biển được bao quanh bởi các dãy núi và ghềnh đá; là điểm ngắm cảnh ven biển ở khu vực Quy Nhơn.",
+      "source": "https://www.avanihotels.com/uploads/minor/avani/documents/vquy/leisure/avani_quy_nhon_resort_excursions_activities-booklet_2025.pdf"
+    },
+    {
+      "key": "suoi-tien",
+      "kind": "DiaDiem",
+      "name": "Suối Tiên - Mũi Né",
+      "province": "Lâm Đồng",
+      "category": "Danh lam thắng cảnh",
+      "address": "Khu vực Mũi Né, Lâm Đồng",
+      "description": "Dòng suối nằm gần các đồi cát Mũi Né, có cảnh quan vách cát tạo hình dọc lối đi. Điều kiện tham quan phụ thuộc thời tiết.",
+      "source": "https://vietnam.travel/node/1492"
+    },
+    {
+      "key": "ke-ga",
+      "kind": "DiaDiem",
+      "name": "Hải đăng Kê Gà",
+      "province": "Lâm Đồng",
+      "category": "Di tích lịch sử",
+      "address": "Khu vực Kê Gà, Lâm Đồng",
+      "description": "Ngọn hải đăng ven biển được giới thiệu trong hành trình khám phá vùng Bình Thuận trước đây. Cần xác nhận phương tiện ra đảo và phạm vi được tham quan.",
+      "source": "https://vietnam.travel/node/1492"
+    },
+    {
+      "key": "mu-cang-chai",
+      "kind": "DiaDiem",
+      "name": "Ruộng bậc thang Mù Cang Chải",
+      "province": "Lào Cai",
+      "category": "Danh lam thắng cảnh",
+      "address": "Mù Cang Chải, Lào Cai",
+      "description": "Cảnh quan ruộng bậc thang trên sườn núi, thay đổi theo mùa canh tác. Không tự ý đi vào ruộng hoặc khu vực sản xuất của người dân.",
+      "source": "https://www.vietnam.travel/things-to-do/4-things-youll-love-about-mu-cang-chai"
+    },
+    {
+      "key": "yen-tu",
+      "kind": "DiaDiem",
+      "name": "Khu di tích và danh thắng Yên Tử",
+      "province": "Quảng Ninh",
+      "category": "Di tích lịch sử",
+      "address": "Yên Tử, Quảng Ninh",
+      "description": "Không gian núi rừng và di tích gắn với Thiền phái Trúc Lâm. Lựa chọn tuyến tham quan phù hợp thể lực, xác nhận vé và vận chuyển riêng.",
+      "source": "https://all.accor.com/hotel/B1Y7/index.en.shtml"
+    },
+    {
+      "key": "tra-su",
+      "kind": "DiaDiem",
+      "name": "Rừng tràm Trà Sư",
+      "province": "An Giang",
+      "category": "Danh lam thắng cảnh",
+      "address": "Khu vực Trà Sư, An Giang",
+      "description": "Vùng rừng ngập nước với cảnh quan tràm và hoạt động khám phá bằng thuyền. Cần tuân thủ tuyến tham quan và quy định bảo vệ sinh cảnh.",
+      "source": "https://vietnam.travel/vi/things-to-do/colourful-charms-chau-doc"
+    },
+    {
+      "key": "nui-sam",
+      "kind": "DiaDiem",
+      "name": "Núi Sam",
+      "province": "An Giang",
+      "category": "Di tích lịch sử",
+      "address": "Khu vực Châu Đốc, An Giang",
+      "description": "Điểm đến văn hóa và tâm linh nổi bật của khu vực Châu Đốc. Cần giữ trật tự và trang phục phù hợp khi vào nơi thờ tự.",
+      "source": "https://vietnam.travel/vi/things-to-do/colourful-charms-chau-doc"
+    },
+    {
+      "key": "dan-toc-hoc",
+      "kind": "DiaDiem",
+      "name": "Bảo tàng Dân tộc học Việt Nam",
+      "province": "Hà Nội",
+      "category": "Bảo tàng",
+      "address": "Đường Nguyễn Văn Huyên, Nghĩa Đô, Hà Nội",
+      "description": "Bảo tàng giới thiệu đời sống và văn hóa các dân tộc Việt Nam qua hiện vật, trưng bày và không gian kiến trúc ngoài trời.",
+      "source": "https://vme.org.vn/en"
+    },
+    {
+      "key": "anantara-hoian",
+      "kind": "KhachSan",
+      "name": "Anantara Hoi An Resort",
+      "province": "Đà Nẵng",
+      "accommodationType": "Resort",
+      "address": "Hội An",
+      "description": "Khu nghỉ dưỡng bên sông Thu Bồn, có không gian lưu trú gắn với cảnh quan ven sông và khu phố cổ.",
+      "source": "https://www.anantara.com/en/hoi-an/restaurants/hoi-an-riverside"
+    },
+    {
+      "key": "anantara-hoian-restaurant",
+      "kind": "NhaHang",
+      "name": "Hoi An Riverside - Anantara Hoi An Resort",
+      "province": "Đà Nẵng",
+      "address": "Anantara Hoi An Resort, Hội An",
+      "description": "Nhà hàng trong khu nghỉ dưỡng, phục vụ ẩm thực Việt Nam với không gian nhìn ra sông Thu Bồn.",
+      "source": "https://www.anantara.com/en/hoi-an/restaurants/hoi-an-riverside"
+    },
+    {
+      "key": "anantara-muine",
+      "kind": "KhachSan",
+      "name": "Anantara Mui Ne Resort",
+      "province": "Lâm Đồng",
+      "accommodationType": "Resort",
+      "address": "Mũi Né",
+      "description": "Khu nghỉ dưỡng tại Mũi Né, có nhà hàng L’Anmien và không gian nhìn ra cảnh quan mặt nước, biển.",
+      "source": "https://www.anantara.com/en/mui-ne/restaurants/l-anmien-restaurant"
+    },
+    {
+      "key": "anantara-muine-restaurant",
+      "kind": "NhaHang",
+      "name": "L’Anmien - Anantara Mui Ne Resort",
+      "province": "Lâm Đồng",
+      "address": "Anantara Mui Ne Resort, Mũi Né",
+      "description": "Nhà hàng phục vụ món Việt Nam và quốc tế, có lựa chọn gọi món và không gian sân hiên.",
+      "source": "https://www.anantara.com/en/mui-ne/restaurants/l-anmien-restaurant"
+    },
+    {
+      "key": "avani-quynhon",
+      "kind": "KhachSan",
+      "name": "Avani Quy Nhon Resort",
+      "province": "Gia Lai",
+      "accommodationType": "Resort",
+      "address": "Quy Nhơn",
+      "description": "Khu nghỉ dưỡng tại khu vực Quy Nhơn, có nhà hàng bên ghềnh đá và các lựa chọn ẩm thực trong khuôn viên.",
+      "source": "https://www.avanihotels.com/en/quy-nhon/restaurants"
+    },
+    {
+      "key": "avani-quynhon-restaurant",
+      "kind": "NhaHang",
+      "name": "TRE - Avani Quy Nhon Resort",
+      "province": "Gia Lai",
+      "address": "Avani Quy Nhon Resort, Quy Nhơn",
+      "description": "Nhà hàng bên ghềnh đá, phục vụ món Việt Nam và quốc tế trong khuôn viên Avani Quy Nhon.",
+      "source": "https://www.avanihotels.com/en/quy-nhon/restaurants"
+    },
+    {
+      "key": "sixsenses-ninhvan",
+      "kind": "KhachSan",
+      "name": "Six Senses Ninh Van Bay",
+      "province": "Khánh Hòa",
+      "accommodationType": "Resort",
+      "address": "Vịnh Ninh Vân, Khánh Hòa",
+      "description": "Khu nghỉ dưỡng tại vịnh Ninh Vân, có nhà hàng Dining by the Bay nhìn ra vịnh. Cần liên hệ khu nghỉ dưỡng để xác nhận cách tiếp cận và vận chuyển.",
+      "source": "https://www.sixsenses.com/en/hotels-resorts/asia-the-pacific/vietnam/ninh-van-bay/dining/dining-by-the-bay/"
+    },
+    {
+      "key": "sixsenses-ninhvan-restaurant",
+      "kind": "NhaHang",
+      "name": "Dining by the Bay - Six Senses Ninh Van Bay",
+      "province": "Khánh Hòa",
+      "address": "Six Senses Ninh Van Bay, Vịnh Ninh Vân, Khánh Hòa",
+      "description": "Nhà hàng nhìn ra vịnh, giới thiệu ẩm thực Việt Nam và các lựa chọn món Á, phương Tây.",
+      "source": "https://www.sixsenses.com/en/hotels-resorts/asia-the-pacific/vietnam/ninh-van-bay/dining/dining-by-the-bay/"
+    },
+    {
+      "key": "sixsenses-condao",
+      "kind": "KhachSan",
+      "name": "Six Senses Con Dao",
+      "province": "Hồ Chí Minh",
+      "accommodationType": "Resort",
+      "address": "Bãi Đất Dốc, Côn Đảo, Hồ Chí Minh",
+      "description": "Khu nghỉ dưỡng ở bãi Đất Dốc, Côn Đảo, có các lựa chọn ẩm thực Việt Nam và quốc tế trong khuôn viên.",
+      "source": "https://www.sixsensescondao.com/dining/"
+    },
+    {
+      "key": "sixsenses-condao-restaurant",
+      "kind": "NhaHang",
+      "name": "By the Beach - Six Senses Con Dao",
+      "province": "Hồ Chí Minh",
+      "address": "Six Senses Con Dao, Bãi Đất Dốc, Côn Đảo, Hồ Chí Minh",
+      "description": "Nhà hàng sát biển trong khu nghỉ dưỡng, phục vụ ẩm thực quốc tế. Cần xác nhận chính sách tiếp nhận khách không lưu trú.",
+      "source": "https://www.sixsensescondao.com/dining/"
+    },
+    {
+      "key": "victoria-chaudoc",
+      "kind": "KhachSan",
+      "name": "Victoria Chau Doc Hotel",
+      "province": "An Giang",
+      "accommodationType": "Hotel",
+      "address": "Châu Đốc, An Giang",
+      "description": "Khách sạn bên sông Hậu tại Châu Đốc, có không gian nhà hàng Bassac trong khuôn viên.",
+      "source": "https://www.victoriahotels.asia/vi/victoria-chau-doc-hotel/"
+    },
+    {
+      "key": "victoria-chaudoc-restaurant",
+      "kind": "NhaHang",
+      "name": "Bassac - Victoria Chau Doc Hotel",
+      "province": "An Giang",
+      "address": "Victoria Chau Doc Hotel, Châu Đốc, An Giang",
+      "description": "Nhà hàng ven sông tại Victoria Chau Doc, đón cả khách lưu trú và thực khách bên ngoài theo thông tin của cơ sở.",
+      "source": "https://www.victoriahotels.asia/vi/victoria-chau-doc-hotel/"
+    },
+    {
+      "key": "silkpath-hue",
+      "kind": "KhachSan",
+      "name": "Silk Path Grand Hue Hotel",
+      "province": "Huế",
+      "accommodationType": "Hotel",
+      "address": "02 Lê Lợi, Huế",
+      "description": "Khách sạn tại đường Lê Lợi, có các lựa chọn nhà hàng phục vụ ẩm thực Huế, Việt Nam và quốc tế.",
+      "source": "https://silkpathhotel.com/dininghue/"
+    },
+    {
+      "key": "silkpath-hue-restaurant",
+      "kind": "NhaHang",
+      "name": "Olivio - Silk Path Grand Hue Hotel",
+      "province": "Huế",
+      "address": "Silk Path Grand Hue Hotel, 02 Lê Lợi, Huế",
+      "description": "Nhà hàng trong Silk Path Grand Hue, chuyên món châu Âu với phong cách Địa Trung Hải.",
+      "source": "https://silkpathhotel.com/dininghue/"
+    },
+    {
+      "key": "legacy-yentu",
+      "kind": "KhachSan",
+      "name": "Legacy Yen Tu - MGallery",
+      "province": "Quảng Ninh",
+      "accommodationType": "Hotel",
+      "address": "Khu vực Yên Tử, Quảng Ninh",
+      "description": "Cơ sở nghỉ dưỡng tại Yên Tử, có thiết kế gắn với cảm hứng văn hóa triều Trần và cảnh quan núi rừng.",
+      "source": "https://all.accor.com/hotel/B1Y7/index.en.shtml"
+    },
+    {
+      "key": "legacy-yentu-restaurant",
+      "kind": "NhaHang",
+      "name": "Thọ Quang - Legacy Yen Tu",
+      "province": "Quảng Ninh",
+      "address": "Legacy Yen Tu - MGallery, Khu vực Yên Tử, Quảng Ninh",
+      "description": "Nhà hàng tại Legacy Yen Tu, giới thiệu món Việt Nam và các lựa chọn quốc tế.",
+      "source": "https://all.accor.com/hotel/B1Y7/index.en.shtml"
+    },
+    {
+      "key": "jw-hanoi",
+      "kind": "KhachSan",
+      "name": "JW Marriott Hotel Hanoi",
+      "province": "Hà Nội",
+      "accommodationType": "Hotel",
+      "address": "Hà Nội",
+      "description": "Khách sạn tại Hà Nội có nhiều không gian ẩm thực trong khuôn viên, gồm nhà hàng French Grill.",
+      "source": "https://www.marriott.com/en-us/hotels/hanjw-jw-marriott-hotel-hanoi/dining/"
+    },
+    {
+      "key": "jw-hanoi-restaurant",
+      "kind": "NhaHang",
+      "name": "French Grill - JW Marriott Hotel Hanoi",
+      "province": "Hà Nội",
+      "address": "JW Marriott Hotel Hanoi, Hà Nội",
+      "description": "Nhà hàng tại JW Marriott Hotel Hanoi, phục vụ ẩm thực Pháp đương đại.",
+      "source": "https://www.marriott.com/en-us/hotels/hanjw-jw-marriott-hotel-hanoi/dining/"
+    },
+    {
+      "key": "maichau-ecolodge",
+      "kind": "KhachSan",
+      "name": "Mai Chau Ecolodge",
+      "province": "Phú Thọ",
+      "accommodationType": "Resort",
+      "address": "Khu vực Nà Phòn, Mai Châu, Phú Thọ",
+      "description": "Cơ sở lưu trú sinh thái ở thung lũng Mai Châu, sử dụng cảm hứng kiến trúc nhà sàn và có nhà hàng nhìn ra cảnh quan đồng ruộng.",
+      "source": "https://maichau.ecolodge.asia/en/at-the-lodge.html"
+    },
+    {
+      "key": "maichau-ecolodge-restaurant",
+      "kind": "NhaHang",
+      "name": "The Orchid Restaurant - Mai Chau Ecolodge",
+      "province": "Phú Thọ",
+      "address": "Mai Chau Ecolodge, Khu vực Nà Phòn, Mai Châu, Phú Thọ",
+      "description": "Nhà hàng tại Mai Chau Ecolodge, giới thiệu món Việt Nam và ẩm thực địa phương trong không gian nhìn ra thung lũng.",
+      "source": "https://maichau.ecolodge.asia/en/at-the-lodge.html"
+    }
+  ],
+  "tours": [
+    {
+      "key": "hoian",
+      "name": "Hội An: làng rau, phố sông và Cù Lao Chàm (tham khảo)",
+      "province": "Đà Nẵng",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "tra-que",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "anantara-hoian",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "anantara-hoian-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "key": "cu-lao-cham",
+          "day": 2,
+          "note": "Ra đảo cần đặt vận chuyển riêng và xác nhận thời tiết; có thể thay đổi ngày tham quan khi tàu ngừng hoạt động."
+        }
+      ]
+    },
+    {
+      "key": "muine",
+      "name": "Mũi Né: suối cát và miền đồi cát (tham khảo)",
+      "province": "Lâm Đồng",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "suoi-tien",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "anantara-muine",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "anantara-muine-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "kind": "DiaDiem",
+          "name": "Đồi cát Mũi Né",
+          "province": "Lâm Đồng",
+          "day": 2,
+          "note": "Điểm gợi ý; xác nhận giờ mở cửa, giá vé và thời gian di chuyển trước khi chốt kế hoạch."
+        }
+      ]
+    },
+    {
+      "key": "quynhon",
+      "name": "Quy Nhơn: Kỳ Co và Eo Gió (tham khảo)",
+      "province": "Gia Lai",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "ky-co",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "avani-quynhon",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "avani-quynhon-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "key": "eo-gio",
+          "day": 2,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "key": "ninhvan",
+      "name": "Khánh Hòa: biển Nha Trang và vịnh Ninh Vân (tham khảo)",
+      "province": "Khánh Hòa",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "kind": "DiaDiem",
+          "name": "Bãi biển Nha Trang",
+          "province": "Khánh Hòa",
+          "day": 1,
+          "note": "Điểm gợi ý; xác nhận giờ mở cửa, giá vé và thời gian di chuyển trước khi chốt kế hoạch."
+        },
+        {
+          "key": "sixsenses-ninhvan",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "sixsenses-ninhvan-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "kind": "DiaDiem",
+          "name": "Tháp Bà Ponagar",
+          "province": "Khánh Hòa",
+          "day": 2,
+          "note": "Điểm gợi ý; xác nhận giờ mở cửa, giá vé và thời gian di chuyển trước khi chốt kế hoạch."
+        }
+      ]
+    },
+    {
+      "key": "condao",
+      "name": "Côn Đảo: rừng đảo và bãi Đầm Trầu (tham khảo)",
+      "province": "Hồ Chí Minh",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "con-dao",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "sixsenses-condao",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "sixsenses-condao-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "key": "dam-trau",
+          "day": 2,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "key": "chaudoc",
+      "name": "Châu Đốc: Trà Sư và Núi Sam (tham khảo)",
+      "province": "An Giang",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "tra-su",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "victoria-chaudoc",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "victoria-chaudoc-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "key": "nui-sam",
+          "day": 2,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "key": "hue",
+      "name": "Huế: Bạch Mã và dấu xưa lăng tẩm (tham khảo)",
+      "province": "Huế",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "bach-ma",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "silkpath-hue",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "silkpath-hue-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "kind": "DiaDiem",
+          "name": "Lăng Khải Định",
+          "province": "Huế",
+          "day": 2,
+          "note": "Điểm gợi ý; xác nhận giờ mở cửa, giá vé và thời gian di chuyển trước khi chốt kế hoạch."
+        }
+      ]
+    },
+    {
+      "key": "yentu",
+      "name": "Quảng Ninh: Yên Tử và Hạ Long (tham khảo)",
+      "province": "Quảng Ninh",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "yen-tu",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "legacy-yentu",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "legacy-yentu-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "kind": "DiaDiem",
+          "name": "Vịnh Hạ Long",
+          "province": "Quảng Ninh",
+          "day": 2,
+          "note": "Điểm gợi ý; xác nhận giờ mở cửa, giá vé và thời gian di chuyển trước khi chốt kế hoạch."
+        }
+      ]
+    },
+    {
+      "key": "hanoi",
+      "name": "Hà Nội: văn hóa dân tộc và Văn Miếu (tham khảo)",
+      "province": "Hà Nội",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "dan-toc-hoc",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "jw-hanoi",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "jw-hanoi-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "kind": "DiaDiem",
+          "name": "Văn Miếu - Quốc Tử Giám",
+          "province": "Hà Nội",
+          "day": 2,
+          "note": "Điểm gợi ý; xác nhận giờ mở cửa, giá vé và thời gian di chuyển trước khi chốt kế hoạch."
+        }
+      ]
+    },
+    {
+      "key": "maichau",
+      "name": "Mai Châu: thung lũng và văn hóa bản Lác (tham khảo)",
+      "province": "Phú Thọ",
+      "days": 2,
+      "description": "Gợi ý tự sắp xếp hai ngày khám phá địa phương, kết hợp một lựa chọn lưu trú và ăn uống có nguồn đối chiếu. Các dịch vụ cần liên hệ xác nhận riêng; không phải gói đã bao gồm phòng, bữa ăn, vé hoặc vận chuyển.",
+      "stops": [
+        {
+          "key": "mai-chau",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "maichau-ecolodge",
+          "day": 1,
+          "note": "Lựa chọn nghỉ một đêm tham khảo; chưa đặt phòng, chưa có giá hoặc tồn phòng được xác nhận. Liên hệ cơ sở về cách di chuyển, nhận và trả phòng."
+        },
+        {
+          "key": "maichau-ecolodge-restaurant",
+          "day": 1,
+          "note": "Gợi ý ăn uống; chưa đặt bàn, chưa bao gồm suất ăn. Liên hệ cơ sở về thực đơn, giờ phục vụ và điều kiện tiếp nhận khách."
+        },
+        {
+          "key": "ban-lac",
+          "day": 2,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "key": "tamcoc-bichdong",
+      "name": "Ninh Bình: Tam Cốc và chùa Bích Động (tham khảo)",
+      "province": "Ninh Bình",
+      "days": 1,
+      "description": "Gợi ý tham quan trong ngày, kết hợp cảnh quan sông nước và không gian chùa cổ. Không bao gồm vé thuyền, phương tiện hay bữa ăn.",
+      "stops": [
+        {
+          "key": "tam-coc",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "bich-dong",
+          "day": 1,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "key": "vanlong-hangmua",
+      "name": "Ninh Bình: Vân Long và góc nhìn Hang Múa (tham khảo)",
+      "province": "Ninh Bình",
+      "days": 1,
+      "description": "Gợi ý một ngày khám phá vùng đất ngập nước và ngắm cảnh núi đá vôi. Tự cân đối sức khỏe và thời gian di chuyển, không ấn định giờ hoặc cam kết dịch vụ.",
+      "stops": [
+        {
+          "key": "van-long",
+          "day": 1,
+          "note": ""
+        },
+        {
+          "key": "hang-mua",
+          "day": 1,
+          "note": ""
+        }
+      ]
+    }
+  ]
+}
