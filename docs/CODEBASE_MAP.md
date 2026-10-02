@@ -19,7 +19,7 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 
 | Request | Frontend source | Backend starting point / dependency |
 |---|---|---|
-| Home `/` | `frontend/src/pages/Home/HomePage.tsx`, `home.css`; home overrides in `src/experience.css` | `pages/User/catalog.ts`, image helpers |
+| Home `/` | `frontend/src/pages/Home/HomePage.tsx`, `home.css`, curated `homeContent.ts` | Existing `/media` assets; source metadata in `backend/Data/photo-sources`, public `/image-credits`; no catalog fetch for editorial hero |
 | Header/navigation/transitions | `frontend/src/components/Header/ImmersiveHeader.tsx`, `components/PageTransition.tsx`, `src/experience.css` | Session context |
 | Lists `/tours`, `/hotels`, `/destinations`, `/restaurants` | `frontend/src/pages/User/CatalogPage.tsx`, `catalog.ts`, `components/ProvinceSelect.tsx` | Tour, KhachSan, DiaDiem, NhaHang controllers |
 | Detail `/<kind>/:id` | `frontend/src/pages/User/DetailPage.tsx`, `TourSchedule.tsx`, `Photo.tsx` | Tour, TourChiTiet, TourKhoiHanh, KhachSan, LoaiPhong, DiaDiem, HinhAnh controllers |
@@ -84,10 +84,13 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 - `backend/Services/TourRules.cs`: paired capacity 0/0 means unconfirmed. `TourRepository.Update` prevents clearing capacity when departures exist; `TourKhoiHanhRepository.Create` rejects unconfirmed capacity. Both lock the parent tour in a transaction. Admin `schema.ts` labels this contract and accepts min 0.
 - Verify read-only public/API/UI coverage: `node tests/catalog-system-audit.mjs` (existing local credentials/services, desktop/mobile). Capacity regression: `dotnet run --project tests/AdminSmoke -- --capacity-checks` uses `CapacityChecks.cs`, writes tagged disposable tour/departure fixtures and cleans only those records. Do not confuse these with a production-safe read-only command.
 
-### Homepage refinement — verified 2026-09-28
+### Homepage refinement — verified 2026-10-02
 
 - `ImmersiveHeader.tsx` observes `.booking-home` scroll (not nested menu scrolling): transparent hero at top, solid forest-green `is-home-scrolled` after 40px; non-home headers unchanged.
-- Homepage retains existing hero slideshow/hold controls, real library images and public links; service rows include restaurants and planner. Destination links use encoded catalog search; no database changes.
+- `HomePage.tsx` and `home.css` own the fullscreen photographic hero, discovery strip, story/photo, service rows and asymmetric destination gallery. Obsolete homepage overrides were removed from `experience.css`; shared header/account/catalog styling remains. `homeContent.ts` pins three existing credited photos so editorial image selection does not shift with API ordering. This is not booking inventory or newly added database data.
+- Homepage retains slideshow/hold controls and service routes (including restaurants/planner). Autoplay uses 8 seconds with a 1.4-second crossfade, pauses for keyboard focus/hidden tab, honors reduced motion and offers an image-error retry. Fullscreen uses minimum dynamic viewport height; short/zoomed screens grow to keep content reachable. Destination cards use encoded catalog search; banner captions open the matching public detail.
+- Read-only regression: `node tests/home-fullscreen.mjs` checks 1440/820/390/320 widths, hero bounds, 44px slide controls, real image loading, navigation, menu focus, header scroll state, autoplay/focus/pause and image retry; no database writes. Optional `--no-capture` skips screenshots. Evidence in ignored `.impeccable/review/`: viewport hero and full-page captures (nested scroll container expanded only for the latter). Design contract: `docs/HOME_SURFACE_2026-10-02.md`.
+- `ImageCreditsPage.tsx` deduplicates shared image URLs by attribution completeness, not last API row; older uncredited duplicates cannot hide author/license metadata. The fullscreen regression checks the Hội An source card.
 - Read-only UI regression: `node tests/home-polish.mjs` against running frontend/backend. Checks desktop/tablet/mobile, scrolling, menu keyboard focus, route return, slideshow, image loading and console errors. Captures in ignored `.local/home-after-*.png`.
 
 ### Admin database coverage — verified 2026-09-28
@@ -115,6 +118,19 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 - Membership is for self-planned trips, not tour passengers/room inventory. Payments are manually recorded by admin; do not imply a real payment gateway or implemented refunds. Confirm full business rules in README and affected services.
 
 ## Run and verify
+
+### Catalog diversity — verified 2026-10-02
+
+- `database/catalog-diversity-20261002.json`: 22 destinations, 10 stays, 10 restaurants across 13 canonical provinces; 12 NVT-authored reference tours and 44 typed day activities. Source URLs/dates are retained in descriptions. No fabricated prices, room stock, departures or reviews; new venues intentionally await licensed photos.
+- `tests/AdminSmoke/CatalogDiversity.cs`, `--diversify-catalog`: shared advisory lock, full backup via `CatalogEnrichment.Backup`, transaction, fingerprints of old rows in all 25 tables, additive writes only to six catalog tables. Reuses 28 credited image links from actual existing tour stops; no new raster files. Rerun adds nothing. `--check-diversity` is read-only; this package depends on existing schema/base stops, not a blank DB seed.
+- `node tests/catalog-diversity.mjs`: read-only API uniqueness/provenance/FK/day/inventory checks and 108 Chromium detail visits at 1440/390px. Report, counts, source links and backup paths: `docs/CATALOG_DIVERSITY_2026-10-02.md`.
+
+### Photo coverage follow-up — verified 2026-10-02
+
+- `backend/Data/photo-coverage-20261002.json` pins 36 reviewed Commons photographs for previously empty destinations. Files: `wwwroot/media/coverage-20261002`; attribution/hash: `Data/photo-sources`. Owner resolution uses exact name + canonical province, not discovery-time IDs in `database/photo-coverage-targets-20261002.json`.
+- `tests/AdminSmoke/PhotoCoverage.cs`: `--fill-photo-coverage` takes a full backup, locks the catalog, validates hashes/provenance, inserts only HinhAnh in a transaction, fingerprints all 25 existing tables and adds images to empty active tours only from actual destination stops. Rerun inserts zero; `--check-photo-coverage` is read-only. Current coverage is incomplete: 68/74 active destinations, 5/45 restaurants, 52/55 tours; inactive test fixtures excluded, not deleted.
+- `node tests/photo-coverage.mjs`: read-only file/hash/API/image-decoding checks, contact sheets and desktop/mobile detail visits; `--photos-only` validates downloads before import; `--require-complete` fails while any active entry lacks images. Report: `docs/PHOTO_COVERAGE_2026-10-02.md`. No frontend contracts or layouts changed.
+- Download/discovery scripts now accept explicit manifests. `Download-CatalogPhotos.ps1 -ManifestPath backend/Data/photo-coverage-20261002.json -MediaFolder coverage-20261002`; discovery accepts `-ItemsPath`, `-CacheName`, `-Start`, `-Count` and never publishes search results automatically.
 
 ### Verified catalog/media enrichment — 2026-10-01
 

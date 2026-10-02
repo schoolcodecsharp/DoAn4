@@ -129,6 +129,10 @@ Kiểm tra bổ sung (dịch vụ 5000/5173 đang chạy, tài khoản SQL có s
 
 Đợt bổ sung danh mục/ảnh cùng ngày: 12 điểm đến, 8 khách sạn, 8 tour tham khảo, 40 ảnh có giấy phép (68 liên kết). Dataset, backup, lệnh nhập an toàn và kết quả kiểm thử tại [báo cáo bổ sung danh mục](docs/CATALOG_ENRICHMENT_2026-10-01.md). Không tự tạo giá, phòng trống hoặc lịch khởi hành; Git không chứa database có tài khoản cá nhân.
 
+Đợt đa dạng dữ liệu 02/10/2026: thêm 22 điểm đến, 10 nơi lưu trú, 10 nhà hàng, 12 tour tham khảo với 44 hoạt động và 28 liên kết ảnh có sẵn. Dùng `--check-diversity` để kiểm tra chỉ đọc, `--diversify-catalog` để nhập có backup/transaction; kiểm thử bằng `node tests/catalog-diversity.mjs`. Xem [nguồn, số liệu và giới hạn](docs/CATALOG_DIVERSITY_2026-10-02.md). Không thêm tồn phòng, giá hay ngày khởi hành chưa xác minh.
+
+Đợt bổ sung ảnh 02/10/2026: thêm 36 ảnh địa điểm và 28 liên kết ảnh tour. Chạy `dotnet run --project tests/AdminSmoke -- --check-photo-coverage` để xem mục còn thiếu; `--fill-photo-coverage` nhập có backup/transaction, không tạo trùng. Kiểm tra web bằng `node tests/photo-coverage.mjs`; thêm `--require-complete` để báo lỗi nếu còn thiếu ảnh. **Chưa phủ đủ ảnh cho mọi mục**, xem [báo cáo ảnh và phần cần bổ sung](docs/PHOTO_COVERAGE_2026-10-02.md).
+
 ## Dự toán lịch trình (2026-10-01)
 
 Lịch trình tính dự toán vé tham quan, ăn uống và phòng theo ngày lưu trú; lưu kế hoạch không giữ chỗ. Xem [hợp đồng dữ liệu và kiểm thử](docs/PLANNER_COSTS_2026-10-01.md).
