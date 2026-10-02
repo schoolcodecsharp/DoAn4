@@ -1,7 +1,9 @@
-param([string]$ProjectRoot=(Split-Path $PSScriptRoot -Parent))
+param([string]$ProjectRoot=(Split-Path $PSScriptRoot -Parent), [string]$ManifestPath='', [string]$MediaFolder='catalog-20261001')
 $ErrorActionPreference='Stop'
-$photos=Get-Content (Join-Path $ProjectRoot 'backend/Data/catalog-photos-20261001.json') -Raw | ConvertFrom-Json
-$folder=Join-Path $ProjectRoot 'backend/wwwroot/media/catalog-20261001'
+if($MediaFolder -notmatch '^[a-z0-9-]+$'){throw 'Invalid media folder'}
+if(!$ManifestPath){$ManifestPath=Join-Path $ProjectRoot 'backend/Data/catalog-photos-20261001.json'}
+$photos=Get-Content $ManifestPath -Raw | ConvertFrom-Json
+$folder=Join-Path $ProjectRoot ('backend/wwwroot/media/'+$MediaFolder)
 $metadata=Join-Path $ProjectRoot 'backend/Data/photo-sources'
 New-Item -ItemType Directory -Force $folder | Out-Null
 Add-Type -AssemblyName System.Drawing
@@ -27,7 +29,7 @@ try {
         $stream=[IO.MemoryStream]::new($bytes); $im=[Drawing.Image]::FromStream($stream)
         try {$width=$im.Width;$height=$im.Height} finally {$im.Dispose();$stream.Dispose()}
         if($width -lt 800 -or $height -lt 500){throw ('Too small: '+$file)}
-        $record=[ordered]@{Title=$p.title;DuongDan=('/media/catalog-20261001/'+$file);MoTa=$p.caption;Nguon=$p.source;TacGia=$p.author;GiayPhep=$p.license;UrlGiayPhep=$p.licenseUrl;DownloadUrl=$p.download;Sha256=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes)).ToLowerInvariant();DownloadedAt=[DateTime]::UtcNow.ToString('o');Width=$width;Height=$height}
+        $record=[ordered]@{Title=$p.title;DuongDan=('/media/'+$MediaFolder+'/'+$file);MoTa=$p.caption;Nguon=$p.source;TacGia=$p.author;GiayPhep=$p.license;UrlGiayPhep=$p.licenseUrl;DownloadUrl=$p.download;Sha256=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($bytes)).ToLowerInvariant();DownloadedAt=[DateTime]::UtcNow.ToString('o');Width=$width;Height=$height}
         [IO.File]::WriteAllBytes($target,$bytes)
         $record | ConvertTo-Json -Depth 5 | Set-Content -Encoding utf8 $metaPath
         Write-Output ('OK '+$file+' '+$width+'x'+$height)

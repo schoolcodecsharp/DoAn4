@@ -1,0 +1,254 @@
+[
+  {
+    "key": "destination-50",
+    "kind": "DiaDiem",
+    "id": 50,
+    "query": "Chuong pagoda Hung Yen"
+  },
+  {
+    "key": "destination-51",
+    "kind": "DiaDiem",
+    "id": 51,
+    "query": "Mau temple Hung Yen"
+  },
+  {
+    "key": "destination-60",
+    "kind": "DiaDiem",
+    "id": 60,
+    "query": "Do temple Vietnam"
+  },
+  {
+    "key": "destination-61",
+    "kind": "DiaDiem",
+    "id": 61,
+    "query": "Hung temple Phu Tho"
+  },
+  {
+    "key": "destination-62",
+    "kind": "DiaDiem",
+    "id": 62,
+    "query": "Ba Be lake"
+  },
+  {
+    "key": "destination-63",
+    "kind": "DiaDiem",
+    "id": 63,
+    "query": "Tam Thanh Lang Son"
+  },
+  {
+    "key": "destination-64",
+    "kind": "DiaDiem",
+    "id": 64,
+    "query": "Cat Ba island"
+  },
+  {
+    "key": "destination-65",
+    "kind": "DiaDiem",
+    "id": 65,
+    "query": "Dien Bien Phu museum"
+  },
+  {
+    "key": "destination-66",
+    "kind": "DiaDiem",
+    "id": 66,
+    "query": "Sin Suoi Ho"
+  },
+  {
+    "key": "destination-67",
+    "kind": "DiaDiem",
+    "id": 67,
+    "query": "Son La prison"
+  },
+  {
+    "key": "destination-68",
+    "kind": "DiaDiem",
+    "id": 68,
+    "query": "Citadel Ho dynasty"
+  },
+  {
+    "key": "destination-69",
+    "kind": "DiaDiem",
+    "id": 69,
+    "query": "Kim Lien Nghe An"
+  },
+  {
+    "key": "destination-70",
+    "kind": "DiaDiem",
+    "id": 70,
+    "query": "Dong Loc junction"
+  },
+  {
+    "key": "destination-71",
+    "kind": "DiaDiem",
+    "id": 71,
+    "query": "World Coffee Museum"
+  },
+  {
+    "key": "destination-72",
+    "kind": "DiaDiem",
+    "id": 72,
+    "query": "Cat Tien National Park"
+  },
+  {
+    "key": "destination-73",
+    "kind": "DiaDiem",
+    "id": 73,
+    "query": "Independence Palace Saigon"
+  },
+  {
+    "key": "destination-74",
+    "kind": "DiaDiem",
+    "id": 74,
+    "query": "Ba Den mountain"
+  },
+  {
+    "key": "destination-75",
+    "kind": "DiaDiem",
+    "id": 75,
+    "query": "Sa Dec flowers"
+  },
+  {
+    "key": "destination-76",
+    "kind": "DiaDiem",
+    "id": 76,
+    "query": "An Binh island"
+  },
+  {
+    "key": "destination-77",
+    "kind": "DiaDiem",
+    "id": 77,
+    "query": "Mui Ca Mau"
+  },
+  {
+    "key": "destination-110",
+    "kind": "DiaDiem",
+    "id": 110,
+    "query": "Tam Coc"
+  },
+  {
+    "key": "destination-111",
+    "kind": "DiaDiem",
+    "id": 111,
+    "query": "Bich Dong"
+  },
+  {
+    "key": "destination-112",
+    "kind": "DiaDiem",
+    "id": 112,
+    "query": "Hang Mua"
+  },
+  {
+    "key": "destination-113",
+    "kind": "DiaDiem",
+    "id": 113,
+    "query": "Van Long Vietnam"
+  },
+  {
+    "key": "destination-114",
+    "kind": "DiaDiem",
+    "id": 114,
+    "query": "Cuc Phuong national park"
+  },
+  {
+    "key": "destination-115",
+    "kind": "DiaDiem",
+    "id": 115,
+    "query": "Pu Luong"
+  },
+  {
+    "key": "destination-116",
+    "kind": "DiaDiem",
+    "id": 116,
+    "query": "Bach Ma national park"
+  },
+  {
+    "key": "destination-117",
+    "kind": "DiaDiem",
+    "id": 117,
+    "query": "Con Dao national park"
+  },
+  {
+    "key": "destination-118",
+    "kind": "DiaDiem",
+    "id": 118,
+    "query": "Dam Trau"
+  },
+  {
+    "key": "destination-119",
+    "kind": "DiaDiem",
+    "id": 119,
+    "query": "Mai Chau valley"
+  },
+  {
+    "key": "destination-120",
+    "kind": "DiaDiem",
+    "id": 120,
+    "query": "Ban Lac Mai Chau"
+  },
+  {
+    "key": "destination-121",
+    "kind": "DiaDiem",
+    "id": 121,
+    "query": "Cham Islands"
+  },
+  {
+    "key": "destination-122",
+    "kind": "DiaDiem",
+    "id": 122,
+    "query": "Tra Que"
+  },
+  {
+    "key": "destination-123",
+    "kind": "DiaDiem",
+    "id": 123,
+    "query": "Ky Co"
+  },
+  {
+    "key": "destination-124",
+    "kind": "DiaDiem",
+    "id": 124,
+    "query": "Eo Gio"
+  },
+  {
+    "key": "destination-125",
+    "kind": "DiaDiem",
+    "id": 125,
+    "query": "Fairy stream Mui Ne"
+  },
+  {
+    "key": "destination-126",
+    "kind": "DiaDiem",
+    "id": 126,
+    "query": "Ke Ga lighthouse"
+  },
+  {
+    "key": "destination-127",
+    "kind": "DiaDiem",
+    "id": 127,
+    "query": "Mu Cang Chai terraces"
+  },
+  {
+    "key": "destination-128",
+    "kind": "DiaDiem",
+    "id": 128,
+    "query": "Yen Tu"
+  },
+  {
+    "key": "destination-129",
+    "kind": "DiaDiem",
+    "id": 129,
+    "query": "Tra Su forest"
+  },
+  {
+    "key": "destination-130",
+    "kind": "DiaDiem",
+    "id": 130,
+    "query": "Sam mountain Chau Doc"
+  },
+  {
+    "key": "destination-131",
+    "kind": "DiaDiem",
+    "id": 131,
+    "query": "Vietnam Museum Ethnology"
+  }
+]

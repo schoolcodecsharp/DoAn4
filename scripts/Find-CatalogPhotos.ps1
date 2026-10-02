@@ -1,10 +1,12 @@
-param([string]$ProjectRoot=(Split-Path $PSScriptRoot -Parent))
+param([string]$ProjectRoot=(Split-Path $PSScriptRoot -Parent), [string]$ItemsPath='', [string]$CacheName='catalog-photo-candidates.json', [int]$Start=0, [int]$Count=1000)
 $ErrorActionPreference='Stop'
-$manifest=Get-Content (Join-Path $ProjectRoot 'database/catalog-enrichment-20261001.json') -Raw | ConvertFrom-Json
+if($CacheName -notmatch '^[a-z0-9][a-z0-9-]*\.json$' -or $Start -lt 0 -or $Count -lt 1){throw 'Invalid discovery cache or range'}
+if($ItemsPath) {$items=@(Get-Content $ItemsPath -Raw | ConvertFrom-Json)}
+else {$manifest=Get-Content (Join-Path $ProjectRoot 'database/catalog-enrichment-20261001.json') -Raw | ConvertFrom-Json; $items=@($manifest.destinations)+@($manifest.hotels)}
 $folder=Join-Path $ProjectRoot '.local'; New-Item -ItemType Directory -Force $folder | Out-Null
-$cache=Join-Path $folder 'catalog-photo-candidates.json'
+$cache=Join-Path $folder $CacheName
 $results=@(if(Test-Path $cache){Get-Content $cache -Raw | ConvertFrom-Json})
-foreach($item in @($manifest.destinations)+@($manifest.hotels)) {
+foreach($item in @($items | Select-Object -Skip $Start -First $Count)) {
     if($results.key -contains $item.key){continue}
     $uri='https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=5&gsrsearch='+[uri]::EscapeDataString($item.query+' filetype:bitmap')+'&prop=imageinfo&iiprop=url%7Csize%7Cmime%7Cextmetadata&iiurlwidth=1280'
     for($attempt=1;$attempt -le 4;$attempt++) {
@@ -24,5 +26,5 @@ foreach($item in @($manifest.destinations)+@($manifest.hotels)) {
     Start-Sleep -Seconds 5
 }
 $folder=Join-Path $ProjectRoot '.local'; New-Item -ItemType Directory -Force $folder | Out-Null
-$results | ConvertTo-Json -Depth 6 | Set-Content -Encoding utf8 (Join-Path $folder 'catalog-photo-candidates.json')
+$results | ConvertTo-Json -Depth 6 | Set-Content -Encoding utf8 $cache
 $results | ForEach-Object { '{0} | {1} | {2} | {3}' -f $_.key,$_.id,$_.license,$_.title }
