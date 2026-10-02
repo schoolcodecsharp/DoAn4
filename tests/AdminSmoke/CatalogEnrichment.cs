@@ -164,7 +164,7 @@ static class CatalogEnrichment
         Console.WriteLine(JsonSerializer.Serialize(new { totals, verifiedFiles = photos.Length }, Json));
     }
 
-    static async Task Backup(IConfiguration config, string root)
+    public static async Task Backup(IConfiguration config, string root)
     {
         var folder = Path.Combine(root, "backups"); Directory.CreateDirectory(folder);
         var backup = Path.Combine(folder, $"before-enrichment-{DateTime.Now:yyyyMMdd-HHmmssfff}.sql");
