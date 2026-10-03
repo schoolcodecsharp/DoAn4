@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
-import { homePlaces } from './homeContent';
+import { homeDiscoveries, homePlaces } from './homeContent';
 import './home.css';
 
-function Arrow({ direction = 'right' }: { direction?: 'right' | 'left' | 'down' }) {
+function Arrow({ direction = 'right' }: { direction?: 'right' | 'left' | 'down' | 'up' }) {
   return <svg className={`home-arrow home-arrow--${direction}`} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" /></svg>;
 }
 
-function HomePhoto({ place }: { place: typeof homePlaces[number] }) {
+function HomePhoto({ place }: { place: Pick<typeof homePlaces[number], 'image' | 'location' | 'position'> }) {
   const [failed, setFailed] = useState(false);
   return <div className="home-photo">{failed
     ? <p>Ảnh {place.location} đang được cập nhật.</p>
@@ -26,6 +26,8 @@ const HomePage: React.FC = () => {
   const holdTimer = useRef<number | undefined>(undefined);
   const [holding, setHolding] = useState(false);
   const discoveryRef = useRef<HTMLElement>(null);
+  const homeRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const cancelHold = () => {
     window.clearTimeout(holdTimer.current);
     holdTimer.current = undefined;
@@ -81,8 +83,12 @@ const HomePage: React.FC = () => {
     discoveryRef.current?.focus({ preventScroll: true });
   };
   const hero = homePlaces[activeSlide];
+  const backToTop = () => {
+    homeRef.current?.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    headingRef.current?.focus({ preventScroll: true });
+  };
 
-  return <main className="booking-home">
+  return <main className="booking-home" ref={homeRef}>
     <section className={`booking-hero ${holding ? 'is-holding' : ''}`} aria-label="Cảm hứng cho chuyến đi"
       onPointerDown={startHold} onPointerMove={event => { if (!isBannerSurface(event)) cancelHold(); }}
       onPointerUp={cancelHold} onPointerCancel={cancelHold} onPointerLeave={cancelHold}
@@ -99,8 +105,8 @@ const HomePage: React.FC = () => {
       {failedImages.includes(activeSlide) && <div className="booking-hero__error" role="status">
         Ảnh chưa tải được. <button onClick={() => { setFailedImages([]); setRetry(value => value + 1); }}>Thử lại</button>
       </div>}
-      <div className="booking-hero__content">
-        <h1>{hero.title[0]}<br /><em>{hero.title[1]}</em></h1>
+      <div className="booking-hero__content" key={hero.id}>
+        <h1 ref={headingRef} tabIndex={-1}><span>{hero.title[0]}</span><em>{hero.title[1]}</em></h1>
         <div className="booking-hero__aside">
           <p className="booking-hero__copy">{hero.copy}</p>
           <div className="booking-hero__actions">
@@ -114,7 +120,9 @@ const HomePage: React.FC = () => {
         <button className="booking-hero__explore" onClick={explore}>Khám phá tiếp <Arrow direction="down" /></button>
         <div className="booking-hero__controls" aria-label="Đổi ảnh banner">
           <button onClick={() => selectSlide(activeSlide - 1)} aria-label="Ảnh trước"><Arrow direction="left" /></button>
-          <div>{homePlaces.map((slide, index) => <button key={slide.id} onClick={() => selectSlide(index)} aria-label={`Xem ảnh ${index + 1}`} aria-pressed={index === activeSlide}>{String(index + 1).padStart(2, '0')}</button>)}</div>
+          <div className="booking-hero__choices">{homePlaces.map((slide, index) => <button className="booking-hero__choice" key={slide.id} onClick={() => selectSlide(index)} aria-label={`Xem ảnh ${index + 1}: ${slide.name}`} aria-pressed={index === activeSlide}>
+            {index + 1}
+          </button>)}</div>
           <button onClick={() => selectSlide(activeSlide + 1)} aria-label="Ảnh tiếp theo"><Arrow /></button>
           <button className="booking-hero__pause" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Tiếp tục chuyển ảnh' : 'Tạm dừng chuyển ảnh'}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">{paused ? <path d="m8 5 11 7-11 7Z" /> : <path d="M8 5v14M16 5v14" />}</svg>
@@ -129,16 +137,17 @@ const HomePage: React.FC = () => {
       <Link className="booking-search__go" to="/tours">Xem tour <Arrow /></Link>
     </section>
     <section className="home-story" id="gioi-thieu">
-      <div className="home-story__copy"><h2>Đi để thấy.<br />Ở lại để <em>cảm nhận.</em></h2>
+      <h2>Đi để thấy.<br />Ở lại để <em>cảm nhận.</em></h2>
+      <div className="home-story__copy">
         <p className="story-lead">Một buổi sớm bên vịnh.<br />Một chiều đi bộ trong phố cổ.</p>
         <p>Không cần đi thật xa hay xếp kín mỗi ngày. Chọn một nơi bạn thích, tìm chỗ nghỉ vừa ý và để dành thời gian cho cả những điều chưa có trong kế hoạch.</p>
         <p>Ở NVT, bạn có thể tìm tour, khách sạn và tự sắp xếp lịch trình theo từng ngày.</p>
         <Link to="/destinations" className="editorial-link">Tìm điểm đến cho chuyến đi <Arrow /></Link>
       </div>
-      <figure className="home-story__photo"><HomePhoto place={homePlaces[1]} /><figcaption>Phố cổ Hội An <Link to="/image-credits">Nguồn ảnh</Link></figcaption></figure>
+      <figure className="home-story__photo"><Link to="/destinations/4" aria-label="Khám phá Phố cổ Hội An"><HomePhoto place={homePlaces[1]} /></Link><figcaption><span>Phố cổ Hội An · Một chiều bên sông</span><Link to="/image-credits">Nguồn ảnh</Link></figcaption></figure>
     </section>
     <section className="booking-section booking-services">
-      <div className="booking-section__heading"><h2>Chuyến đi của bạn,<br /><em>theo cách bạn muốn.</em></h2><p className="booking-section__description">Đi theo tour hoặc tự lên kế hoạch.<br />Bắt đầu từ điều bạn cần.</p></div>
+      <div className="booking-section__heading"><h2>Chuyến đi<br /> của bạn,<br /><em>theo cách<br /> bạn muốn.</em></h2><p className="booking-section__description">Đi theo tour hoặc tự lên kế hoạch.<br />Bắt đầu từ điều bạn cần.</p><Link className="editorial-link" to="/planner">Lên kế hoạch chuyến đi <Arrow /></Link></div>
       <div className="home-service-links">
         <Link to="/tours"><h3>Tour du lịch</h3><p>Xem lịch trình, giá tour và ngày khởi hành.</p><span>Xem tour <Arrow /></span></Link>
         <Link to="/hotels"><h3>Khách sạn & phòng</h3><p>Tìm nơi nghỉ phù hợp với chuyến đi và ngân sách.</p><span>Tìm phòng <Arrow /></span></Link>
@@ -148,13 +157,20 @@ const HomePage: React.FC = () => {
     </section>
     <section className="booking-featured">
       <div className="booking-featured__intro"><h2>Vài nơi để<br /><em>bắt đầu.</em></h2><Link className="editorial-link" to="/destinations">Xem tất cả địa điểm <Arrow /></Link></div>
-      <div className="booking-destinations">{homePlaces.map((place, index) =>
+      <div className="booking-destinations">{homeDiscoveries.map((place, index) =>
         <Link className={`home-destination home-destination--${index + 1}`} key={place.id} to={`/destinations?keyword=${encodeURIComponent(place.name)}`}>
           <HomePhoto place={place} /><div className="home-destination__caption"><div><h3>{place.name}</h3><p>{place.tag}</p></div><Arrow /></div>
         </Link>)}</div>
     </section>
     <section className="booking-cta"><div><h2>Đã có nơi muốn đến?</h2><p className="booking-cta__copy">Xem lịch trình và chọn tour phù hợp với thời gian của bạn.</p></div><Link className="booking-button booking-button--dark" to="/tours">Khám phá tour <Arrow /></Link></section>
-    <footer className="booking-footer"><b>NVT <span>DU LỊCH</span></b><p>Đi để nhìn thấy nhiều hơn.</p><Link to="/image-credits">Nguồn ảnh</Link><Link to={user ? '/account' : '/login'}>{user ? 'Tài khoản của tôi' : 'Đăng nhập'}</Link></footer>
+    <footer className="booking-footer" aria-label="Thông tin và điều hướng NVT">
+      <div className="booking-footer__main">
+        <div className="booking-footer__identity"><b>NVT<span>DU LỊCH</span></b><p>Đi để nhìn thấy nhiều hơn.</p><span>Mỗi hành trình, một câu chuyện.</span></div>
+        <nav aria-label="Khám phá cùng NVT"><h2>Khám phá</h2><Link to="/destinations">Điểm đến</Link><Link to="/tours">Tour du lịch</Link><Link to="/hotels">Nơi lưu trú</Link><Link to="/restaurants">Nhà hàng</Link></nav>
+        <nav aria-label="Hành trình của bạn"><h2>Hành trình của bạn</h2><Link to="/planner">Lập lịch trình <Arrow /></Link><Link to={user ? '/account' : '/login'}>{user ? 'Tài khoản của tôi' : 'Đăng nhập'} <Arrow /></Link></nav>
+      </div>
+      <div className="booking-footer__bottom"><span>NVT Du lịch</span><Link to="/image-credits">Nguồn ảnh & ghi công</Link><button onClick={backToTop}>Về đầu trang <Arrow direction="up" /></button></div>
+    </footer>
   </main>;
 };
 
