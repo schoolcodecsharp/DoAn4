@@ -29,3 +29,18 @@ export const homePlaces = [
     copy: 'Khám phá những chuyến đi đầy nắng, những căn phòng ấm áp và trải nghiệm dành riêng cho bạn.',
   },
 ];
+
+// Same verified public destinations, selected for a more varied editorial spread.
+// These are discovery links, never promises about tickets or room availability.
+export const homeDiscoveries = [
+  homePlaces[0], homePlaces[1],
+  {
+    id: 112, name: 'Ninh Bình', location: 'Hang Múa, Ninh Bình', tag: 'Núi đá & dòng sông',
+    image: '/media/coverage-20261002/destination-112-121361148.jpg', position: '50% 50%',
+  },
+  homePlaces[2],
+  {
+    id: 127, name: 'Mù Cang Chải', location: 'Ruộng bậc thang Chế Cu Nha, Mù Cang Chải', tag: 'Những mùa trên núi',
+    image: '/media/coverage-20261002/destination-127-61895716.jpg', position: '50% 55%',
+  },
+];
