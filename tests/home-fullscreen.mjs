@@ -23,6 +23,13 @@ try {
     await page.locator('.booking-hero__image').evaluateAll(imgs => Promise.all(imgs.map(img => img.decode())));
     await expect(header).toHaveClass(/is-hero/);
     await expect(page.getByRole('button', { name: 'Tiếp tục chuyển ảnh' })).toBeVisible();
+    await expect(hero.locator('.booking-hero__image.is-active')).toHaveCount(1);
+    await expect(hero.locator('.booking-hero__image.is-active')).toHaveAttribute('aria-hidden', 'false');
+    await expect(hero.locator('.booking-hero__image.is-active')).not.toHaveAttribute('alt', '');
+    for (const image of await hero.locator('.booking-hero__image:not(.is-active)').all()) {
+      await expect(image).toHaveAttribute('aria-hidden', 'true');
+      await expect(image).toHaveAttribute('alt', '');
+    }
     const bounds = await hero.boundingBox();
     assert.equal(bounds.x, 0); assert.equal(bounds.y, 0); assert.equal(bounds.width, width);
     assert(bounds.height >= height, `${name}: hero shorter than viewport`);
@@ -33,7 +40,23 @@ try {
       assert(b.width >= 44 && b.height >= 44, `${name}: small slide control`);
       assert(b.y + b.height <= bounds.height, `${name}: clipped slide control`);
     }
+    for (const [index, place] of ['Hạ Long', 'Hội An', 'Đà Nẵng'].entries()) {
+      const choice = page.getByRole('button', { name: `Xem ảnh ${index + 1}: ${place}`, exact: true });
+      await expect(choice).toBeVisible();
+      await expect(choice).toHaveText(String(index + 1));
+    }
+    await expect(page.locator('.booking-hero__controls img')).toHaveCount(0);
+    await expect(page.locator('.booking-destinations > a')).toHaveCount(5);
+    await expect(page.locator('.booking-hero__image.is-active')).toHaveCSS('transform', 'none');
     if (capture && name !== 'compact') await page.screenshot({ path: path.join(out, `${name}-hero.png`) });
+    const explore = page.getByRole('button', { name: 'Khám phá tiếp' });
+    if (await explore.isVisible()) {
+      await explore.focus();
+      await page.keyboard.press('Enter');
+      await expect(page.locator('.booking-search')).toBeFocused();
+      assert(await home.evaluate(el => el.scrollTop > 0), `${name}: explore should scroll to discovery`);
+      await home.evaluate(el => el.scrollTo({ top: 0, behavior: 'instant' }));
+    }
     await home.evaluate(el => el.scrollTo({ top: 500, behavior: 'instant' }));
     await expect(header).toHaveClass(/is-home-scrolled/);
     await expect(header).toHaveCSS('background-color', 'rgb(40, 75, 65)');
@@ -48,6 +71,17 @@ try {
       await page.locator(selector).locator('img').evaluateAll(imgs => Promise.all(imgs.map(img => img.decode())));
       assert(await home.evaluate(el => el.scrollWidth <= el.clientWidth + 1), `${name}: lower-page overflow`);
     }
+    const footer = page.locator('.booking-footer');
+    await footer.scrollIntoViewIfNeeded();
+    for (const [label, href] of [['Điểm đến','/destinations'],['Tour du lịch','/tours'],['Nơi lưu trú','/hotels'],['Nhà hàng','/restaurants'],['Lập lịch trình','/planner'],['Đăng nhập','/login'],['Nguồn ảnh & ghi công','/image-credits']]) {
+      await expect(footer.getByRole('link', { name: label, exact: true })).toHaveAttribute('href', href);
+    }
+    assert(await home.evaluate(el => el.scrollWidth <= el.clientWidth + 1), `${name}: footer overflow`);
+    if (capture && name !== 'compact') await footer.screenshot({path: path.join(out, `${name}-footer.png`)});
+    await footer.getByRole('button', { name: 'Về đầu trang' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(hero.locator('h1')).toBeFocused();
+    await expect.poll(() => home.evaluate(el => el.scrollTop)).toBe(0);
     await home.evaluate(el => el.scrollTo({ top: 0, behavior: 'instant' }));
     await expect(header).toHaveClass(/is-hero/);
     // The app scrolls a fixed-height main. Expand only for a full-document evidence capture.
@@ -56,15 +90,25 @@ try {
       await page.screenshot({ path: path.join(out, `${name}.png`), fullPage: true });
       await home.evaluate(el => { el.style.removeProperty('height'); el.style.removeProperty('overflow'); });
     }
-    await page.getByRole('button', { name: 'Ảnh tiếp theo' }).click();
+    await page.getByRole('button', { name: 'Ảnh tiếp theo' }).focus();
+    await page.keyboard.press('Enter');
     await expect(page.getByRole('button', { name: 'Xem ảnh 2' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(hero.locator('.booking-hero__image.is-active')).toHaveAttribute('alt', 'Phố cổ Hội An');
+    await expect(hero.locator('.booking-hero__image.is-active')).toHaveAttribute('aria-hidden', 'false');
+    await expect(hero.locator('.booking-hero__image').first()).toHaveAttribute('aria-hidden', 'true');
+    await expect(hero.locator('.booking-hero__image').first()).toHaveAttribute('alt', '');
+    await page.getByRole('button', { name: 'Xem ảnh 3' }).focus();
+    await page.keyboard.press('Space');
+    await expect(page.getByRole('button', { name: 'Xem ảnh 3' })).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: 'Xem ảnh 1' }).click();
+    await page.getByRole('button', { name: 'Ảnh tiếp theo' }).click();
     await page.getByRole('button', { name: 'Ảnh trước' }).click();
     await expect(page.getByRole('button', { name: 'Xem ảnh 1' })).toHaveAttribute('aria-pressed', 'true');
     await page.locator('.home-destination--2').click();
     await expect(page).toHaveURL(/\/destinations\?keyword=/);
     await expect(header).not.toHaveClass(/is-hero|is-home-scrolled/);
     await page.locator('.travel-wordmark').click(); await expect(header).toHaveClass(/is-hero/);
-    results.push(`${name}: fullscreen or accessible short-screen growth, 44px controls, images, routes, scroll/header, menu keyboard focus`);
+    results.push(`${name}: fullscreen or accessible short-screen growth, 44px controls, image semantics, keyboard carousel, explore focus, routes, scroll/header, menu keyboard focus`);
     await page.close();
   }
   assert.deepEqual(errors, []);
@@ -80,16 +124,25 @@ try {
   await motion.locator('.travel-wordmark').focus(); await motion.clock.fastForward(16000);
   await expect(motion.getByRole('button', { name: 'Xem ảnh 2' })).toHaveAttribute('aria-pressed', 'true');
   await motion.close();
+  const reduced = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  await reduced.clock.install(); await reduced.goto('http://127.0.0.1:5173');
+  await expect(reduced.getByRole('button', { name: 'Tiếp tục chuyển ảnh' })).toBeVisible();
+  await reduced.clock.fastForward(16100);
+  await expect(reduced.getByRole('button', { name: 'Xem ảnh 1' })).toHaveAttribute('aria-pressed', 'true');
+  await reduced.getByRole('button', { name: 'Xem ảnh 2' }).click();
+  await reduced.clock.fastForward(16100);
+  await expect(reduced.getByRole('button', { name: 'Xem ảnh 2' })).toHaveAttribute('aria-pressed', 'true');
+  await reduced.close();
   const broken = await browser.newPage({ reducedMotion: 'reduce' });
   await broken.route('**/media/library/ha-long-83214199.jpg', route => route.abort());
   await broken.goto('http://127.0.0.1:5173');
-  await expect(broken.getByRole('status')).toContainText('Ảnh chưa tải được');
+  await expect(broken.locator('.booking-hero').getByRole('status')).toContainText('Ảnh chưa tải được');
   await broken.unroute('**/media/library/ha-long-83214199.jpg');
   await broken.getByRole('button', { name: 'Thử lại' }).click();
   await broken.locator('.booking-hero__image.is-active').evaluate(img => img.decode());
-  await expect(broken.getByRole('status')).toHaveCount(0);
+  await expect(broken.locator('.booking-hero').getByRole('status')).toHaveCount(0);
   await broken.close();
-  results.push('Autoplay 8 seconds, keyboard focus/pause, broken-image retry');
+  results.push('Autoplay 8 seconds, keyboard focus/pause, reduced-motion remains paused, broken-image retry');
   const credits = await browser.newPage();
   await credits.goto('http://127.0.0.1:5173/image-credits');
   const hoiAn = credits.locator('.catalog-card').filter({ has: credits.locator('img[src="/media/vietnam/hoi-an.jpg"]') });
