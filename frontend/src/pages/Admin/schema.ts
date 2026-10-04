@@ -1,7 +1,7 @@
 export type Row = Record<string, unknown>;
-export type Field = { key: string; label: string; type?: string; required?: boolean; min?: number; max?: number; maxLength?: number; createOnly?: boolean; options?: [string, string][]; lookup?: string; id?: string; name?: string };
+export type Field = { key: string; label: string; type?: string; required?: boolean; min?: number; max?: number; step?: string; maxLength?: number; createOnly?: boolean; options?: [string, string][]; lookup?: string; id?: string; name?: string };
 export type Module = { title: string; endpoint: string; id: string; name: string; owner?: string; fields: Field[]; defaults: Row; noDelete?: boolean };
-const f = (key: string, label: string, type = 'text', required = false, min?: number): Field => ({ key, label, type, required, min });
+const f = (key: string, label: string, type = 'text', required = false, min?: number): Field => ({ key, label, type, required, min, step: type === 'number' && /^(gia|chiPhi|soTien|giamToiDa|donHangToiThieu)/.test(key) ? '0.01' : undefined });
 const status = f('trangThai', 'Đang hoạt động', 'checkbox');
 const address = [f('diaChi', 'Địa chỉ'), f('tinhThanh', 'Tỉnh / thành phố', 'province'), f('quanHuyen', 'Quận / huyện'), f('phuongXa', 'Phường / xã')];
 const description = f('moTa', 'Mô tả', 'textarea');

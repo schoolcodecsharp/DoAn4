@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { Link, NavLink, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
 import { api, errorMessage } from '../../lib/api';
 import { normalize, useResource } from '../User/catalog';
 import { FeaturedLibraryPhoto } from '../User/Photo';
 import ProvinceSelect from '../../components/ProvinceSelect';
+import FormDialog from '../../components/FormDialog';
+import ValidatedForm from '../../components/ValidatedForm';
+import { reportFormError } from '../../components/form-validation';
 import ImageManager from './ImageManager';
 import { modules, type Row, type Field, type Module } from './schema';
 import './admin.css';
@@ -19,15 +22,30 @@ const text = (value: unknown) => value == null ? '' : String(value);
 const navigation = ['destinations','tours','hotels','rooms','restaurants','categories','users','coupons','expenses','activities','departures'];
 function Lookup({ field, value, change, disabled }: { field: Field; value: unknown; change: (value: unknown) => void; disabled?: boolean }) {
   const { data, loading, error, reload } = useResource<Row[]>(`/${field.lookup}`);
-  return <><select aria-label={field.label} required={field.required} value={text(value)} onChange={e => change(e.target.value ? Number(e.target.value) : null)} disabled={disabled || loading || !!error}><option value="">{loading ? 'Đang tải…' : 'Chọn ' + field.label.toLowerCase()}</option>{data?.map(row => <option key={text(row[field.id!])} value={text(row[field.id!])}>{text(row[field.name!])}</option>)}</select>{error && <span role="alert">{error} <button type="button" onClick={reload}>Thử lại</button></span>}{!!value && ['diadiem','nhahang','khachsan'].includes(field.lookup || '') && <div className="admin-lookup-photo"><FeaturedLibraryPhoto key={text(value)} ownerId={Number(value)} type={field.lookup === 'nhahang' ? 'NhaHang' : field.lookup === 'khachsan' ? 'KhachSan' : 'DiaDiem'} /></div>}</>;
+  return <><select name={field.key} aria-label={field.label} required={field.required} value={text(value)} onChange={e => change(e.target.value ? Number(e.target.value) : null)} disabled={disabled || loading || !!error}><option value="">{loading ? 'Đang tải…' : 'Chọn ' + field.label.toLowerCase()}</option>{data?.map(row => <option key={text(row[field.id!])} value={text(row[field.id!])}>{text(row[field.name!])}</option>)}</select>{error && <span role="alert">{error} <button type="button" onClick={reload}>Thử lại</button></span>}{!!value && ['diadiem','nhahang','khachsan'].includes(field.lookup || '') && <div className="admin-lookup-photo"><FeaturedLibraryPhoto key={text(value)} ownerId={Number(value)} type={field.lookup === 'nhahang' ? 'NhaHang' : field.lookup === 'khachsan' ? 'KhachSan' : 'DiaDiem'} /></div>}</>;
 }
 function Editor({ config, row, onSaved, onCancel, maxDays }: { config: Module; row: Row; onSaved: (row: Row) => void; onCancel: () => void; maxDays?: number }) {
   const editor = useRef<HTMLFormElement>(null);
-  useEffect(() => { editor.current?.scrollIntoView({ block: 'start' }); editor.current?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll:true }); }, []);
   const [values, setValues] = useState<Row>({ ...row });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const editing = !!row[config.id];
+  const validate = () => {
+    const issues: Record<string,string> = {};
+    const pair = (a:string,b:string,message:string) => { issues[a]=issues[b]=message; };
+    if (Number(values.soNguoiToiThieu)>Number(values.soNguoiToiDa)) pair('soNguoiToiThieu','soNguoiToiDa','Số khách tối thiểu không được lớn hơn tối đa.');
+    if (Number(values.giaVeMin)>Number(values.giaVeMax)) pair('giaVeMin','giaVeMax','Giá vé thấp nhất không được lớn hơn cao nhất.');
+    if (maxDays && Number(values.ngayThu)>maxDays) issues.ngayThu=`Tour này chỉ có ${maxDays} ngày.`;
+    if (Number(values.soChoToiDa)<Number(values.soChoDaDat)) issues.soChoToiDa='Tổng chỗ không được thấp hơn số chỗ đã đặt.';
+    if (values.thoiGianBatDau && values.thoiGianKetThuc && text(values.thoiGianBatDau)>=text(values.thoiGianKetThuc)) pair('thoiGianBatDau','thoiGianKetThuc','Giờ kết thúc phải sau giờ bắt đầu.');
+    if (config.endpoint==='nhahang' && Number(values.giaMin)>Number(values.giaMax)) pair('giaMin','giaMax','Chi phí thấp nhất không được lớn hơn cao nhất.');
+    if (config.endpoint==='diadiem' && values.mienPhi && ['giaVe','giaVeMin','giaVeMax'].some(key=>Number(values[key])>0)) { issues.mienPhi='Miễn phí vé vào cửa thì các giá vé phải bằng 0.'; ['giaVe','giaVeMin','giaVeMax'].forEach(key=>{issues[key]='Đặt bằng 0 nếu đã xác nhận miễn phí.';}); }
+    if (config.endpoint==='magiamgia') {
+      if (text(values.ngayKetThuc)<=text(values.ngayBatDau)) pair('ngayBatDau','ngayKetThuc','Ngày kết thúc phải sau ngày bắt đầu.');
+      if (values.loaiGiam==='PhanTram' && Number(values.giaTriGiam)>100) issues.giaTriGiam='Phần trăm giảm không vượt quá 100.';
+    }
+    return issues;
+  };
   const change = (key: string, value: unknown) => setValues(v => ({ ...v, [key]: value }));
   async function save(e: FormEvent) {
     e.preventDefault(); if (busy) return; setError('');
@@ -54,18 +72,18 @@ function Editor({ config, row, onSaved, onCancel, maxDays }: { config: Module; r
       const id = row[config.id] || response.data?.[config.id] || response.data?.id;
       if (!id) throw new Error('Không nhận được mã bản ghi sau khi lưu.');
       onSaved({ ...payload, [config.id]: id });
-    } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
+    } catch(e) { setError(errorMessage(e)); reportFormError(editor.current,e,Object.fromEntries(config.fields.map(f=>[f.key,[f.key,f.label.split('(')[0].trim(), ...(f.key==='email'?['email']:[])]]))); } finally { setBusy(false); }
   }
-  return <form ref={editor} className="admin-panel" onSubmit={save}><div className="admin-section-title"><h2>{editing ? 'Chỉnh sửa' : 'Thêm mới'} {config.title.toLowerCase()}</h2><button type="button" className="secondary" onClick={onCancel} disabled={busy}>Đóng</button></div><fieldset disabled={busy} className="admin-form-grid">{config.fields.filter(field => !(editing && field.type === 'password')).filter(field => !['maDiaDiem','maNhaHang','maKhachSan'].includes(field.key) || config.endpoint !== 'tourchitiet' || field.key === ({ DiaDiem:'maDiaDiem', NhaHang:'maNhaHang', KhachSan:'maKhachSan' }[text(values.loaiDiaDiem)])).map(field => {
+  return <FormDialog title={`${editing ? 'Chỉnh sửa' : 'Thêm mới'} ${config.title.toLowerCase()}`} onClose={onCancel} busy={busy} wide><ValidatedForm formRef={editor} className="admin-panel" onSubmit={save} validate={validate}><p>Các ô có dấu * là bắt buộc.</p><fieldset disabled={busy} className="admin-form-grid">{config.fields.filter(field => !(editing && field.type === 'password')).filter(field => !['maDiaDiem','maNhaHang','maKhachSan'].includes(field.key) || config.endpoint !== 'tourchitiet' || field.key === ({ DiaDiem:'maDiaDiem', NhaHang:'maNhaHang', KhachSan:'maKhachSan' }[text(values.loaiDiaDiem)])).map(field => {
     if (config.endpoint === 'loaiphong' && ['tenLoaiPhong','moTa'].includes(field.key))
       field = { ...field, maxLength: field.key === 'tenLoaiPhong' ? 150 : 500 };
     if (config.endpoint === 'tourkhoihanh' && !editing && field.key === 'trangThai')
       field = { ...field, options: field.options?.filter(([value]) => value === 'OpenForBooking' || value === 'FullyBooked') };
     const value = values[field.key];
-    if (field.type === 'province') return <ProvinceSelect key={field.key} value={text(value)} onChange={v => change(field.key,v)}/>;
+    if (field.type === 'province') return <ProvinceSelect key={field.key} name={field.key} value={text(value)} onChange={v => change(field.key,v)}/>;
     return <label key={field.key} className={field.type === 'textarea' ? 'wide' : ''}>{field.label}{field.required ? ' *' : ''}
-      {field.lookup ? <Lookup field={field} value={value} disabled={editing && field.createOnly} change={v => change(field.key,v)}/> : field.options ? <select disabled={editing && field.createOnly} value={text(value)} required onChange={e => change(field.key,field.type === 'number' ? Number(e.target.value) : e.target.value)}>{field.options.map(([v,label]) => <option value={v} key={v}>{label}</option>)}</select> : field.type === 'textarea' ? <textarea required={field.required} rows={4} value={text(value)} maxLength={field.maxLength || (field.key === 'ghiChu' ? 500 : undefined)} onChange={e => change(field.key,e.target.value)}/> : field.type === 'checkbox' ? <input type="checkbox" checked={!!value} onChange={e => change(field.key,e.target.checked)}/> : <input disabled={editing && field.createOnly} type={field.type || 'text'} required={field.required} min={field.min} max={field.key === 'ngayThu' ? maxDays : field.max} step={field.type === 'number' && ['viDo','kinhDo'].includes(field.key) ? 'any' : undefined} maxLength={field.maxLength || (field.type === 'password' ? 72 : 200)} minLength={field.type === 'password' ? 8 : undefined} autoComplete={field.type === 'password' ? 'new-password' : undefined} value={field.type === 'datetime-local' ? text(value).slice(0,16) : field.type === 'date' ? text(value).slice(0,10) : field.type === 'time' ? text(value).slice(0,5) : text(value)} onChange={e => change(field.key,field.type === 'number' ? (e.target.value === '' ? null : Number(e.target.value)) : e.target.value)}/>}</label>;
-  })}</fieldset>{config.endpoint === 'tourkhoihanh' && editing && <p>Số chỗ đã đặt: {text(values.soChoDaDat)} (hệ thống quản lý theo đơn đặt).</p>}{error && <p className="admin-error" role="alert">{error}</p>}<button disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu thông tin'}</button></form>;
+      {field.lookup ? <Lookup field={field} value={value} disabled={editing && field.createOnly} change={v => change(field.key,v)}/> : field.options ? <select name={field.key} disabled={editing && field.createOnly} value={text(value)} required onChange={e => change(field.key,field.type === 'number' ? Number(e.target.value) : e.target.value)}>{field.options.map(([v,label]) => <option value={v} key={v}>{label}</option>)}</select> : field.type === 'textarea' ? <textarea name={field.key} required={field.required} rows={4} value={text(value)} maxLength={field.maxLength || (field.key === 'ghiChu' ? 500 : undefined)} onChange={e => change(field.key,e.target.value)}/> : field.type === 'checkbox' ? <input name={field.key} type="checkbox" checked={!!value} onChange={e => change(field.key,e.target.checked)}/> : <input name={field.key} disabled={editing && field.createOnly} type={field.type || 'text'} required={field.required} min={field.min} max={field.key === 'ngayThu' ? maxDays : field.max} step={field.type === 'number' && ['viDo','kinhDo'].includes(field.key) ? 'any' : field.step} maxLength={field.maxLength || (field.type === 'password' ? 72 : 200)} minLength={field.type === 'password' ? 8 : undefined} autoComplete={field.type === 'password' ? 'new-password' : undefined} value={field.type === 'datetime-local' ? text(value).slice(0,16) : field.type === 'date' ? text(value).slice(0,10) : field.type === 'time' ? text(value).slice(0,5) : text(value)} onChange={e => change(field.key,field.type === 'number' ? (e.target.value === '' ? null : Number(e.target.value)) : e.target.value)}/>}</label>;
+  })}</fieldset>{config.endpoint === 'tourkhoihanh' && editing && <p>Số chỗ đã đặt: {text(values.soChoDaDat)} (hệ thống quản lý theo đơn đặt).</p>}{error && <p className="admin-error" role="alert">{error}</p>}<div className="form-dialog-actions"><button disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu thông tin'}</button></div></ValidatedForm></FormDialog>;
 }
 
 function Manager({ moduleKey, tourId, maxDays }: { moduleKey: string; tourId?: number; maxDays?: number }) {
@@ -75,6 +93,7 @@ function Manager({ moduleKey, tourId, maxDays }: { moduleKey: string; tourId?: n
   const { user } = useSession();
   const { data, loading, error, reload } = useResource<Row[]>(`/${config.endpoint}${tourId ? `/bytour/${tourId}` : ''}`);
   const [selected, setSelected] = useState<Row | null>(null);
+  const [managed, setManaged] = useState<Row | null>(null);
   const [version, setVersion] = useState(0);
   const [query, setQuery] = useState('');
   const [page,setPage]=useState(1);
@@ -91,10 +110,13 @@ function Manager({ moduleKey, tourId, maxDays }: { moduleKey: string; tourId?: n
     try { await api.delete(`/${config.endpoint}/${row[config.id]}`); setMessage(softDelete ? 'Đã ngừng bán / ẩn; lịch sử được giữ nguyên.' : 'Đã xóa bản ghi.'); if (selected?.[config.id] === row[config.id]) setSelected(null); reload(); } catch(e) { setMessage(errorMessage(e)); } finally { setBusy(false); }
   }
   return <><section className="admin-panel"><div className="admin-section-title"><div><h2>{config.title}</h2></div><button onClick={() => edit({ ...config.defaults, ...(params.get('hotel') ? {maKhachSan:Number(params.get('hotel'))} : {}), ...(params.get('trip') ? {maChuyenDi:Number(params.get('trip'))} : {}), ...(tourId ? { maTour: tourId } : {}), ...(moduleKey === 'tours' ? { maNguoiTao:user!.maNguoiDung } : {}) })}>+ Thêm mới</button></div>{(params.get('id') || params.get('hotel') || params.get('trip')) && <p>Đang lọc theo liên kết. <button className="secondary" onClick={()=>setParams({})}>Xem tất cả</button></p>}{moduleKey === 'coupons' && <p>Quản lý cấu hình mã. Luồng đặt chỗ hiện chưa áp dụng mã vào tổng tiền; không hứa giảm giá cho khách khi chưa tích hợp nghiệp vụ này.</p>}<label className="admin-search">Tìm trong danh sách<input value={query} placeholder="Nhập tên hoặc mã…" onChange={e => {setQuery(e.target.value);setPage(1);}}/></label>{loading && <p role="status">Đang tải dữ liệu…</p>}{error && <p className="admin-error" role="alert">{error} <button onClick={reload}>Thử lại</button></p>}{!loading && !error && <><p className="admin-count">{rows.length} bản ghi</p><div className="admin-table-wrap" role="region" tabIndex={0} aria-label="Bảng dữ liệu, cuộn ngang để xem thêm"><table><thead><tr><th>Mã</th><th>{config.title}</th><th>{moduleKey === 'activities' ? 'Ngày / Thứ tự' : moduleKey === 'expenses' ? 'Số tiền / chuyến đi' : 'Trạng thái'}</th><th>Thao tác</th></tr></thead><tbody>{rows.slice((current-1)*10,current*10).map(row => <tr key={text(row[config.id])}><td>#{text(row[config.id])}</td><td><strong>{text(row[config.name]) || text(row.tenDiaDiem)}</strong><small>{text(row.email || row.tinhThanh || row.diemDen || row.tenDiaDiem)}</small></td><td><span className="admin-badge">{moduleKey === 'expenses' ? `${Number(row.soTien).toLocaleString('vi-VN')} đ / Chuyến #${row.maChuyenDi}` : moduleKey === 'activities' ? `Ngày ${row.ngayThu} · ${row.thuTu}` : row.trangThai === true ? 'Hoạt động' : row.trangThai === false ? 'Đã khóa / ẩn' : text(row.trangThai)}</span></td><td><div className="admin-actions"><button className="secondary" onClick={() => edit(row)}>Chỉnh sửa</button>{!config.noDelete && <button className="danger" disabled={busy} onClick={() => remove(row)}>{softDelete ? 'Ngừng bán / Ẩn' : 'Xóa'}</button>}</div></td></tr>)}</tbody></table>{!rows.length && <p className="admin-empty">Chưa có bản ghi phù hợp.</p>}</div><Pager current={current} pages={pages} change={setPage}/></>}</section>{message && <p role="status" className="admin-notice">{message}</p>}
-    {selected && <Editor key={version} config={config} row={selected} maxDays={maxDays} onCancel={() => setSelected(null)} onSaved={row => { setSelected(row); setVersion(n => n+1); setMessage('Đã lưu thành công.'); reload(); }}/>} 
-    {selected && !!selected[config.id] && config.owner && <ImageManager key={text(selected[config.id])} owner={config.owner} id={Number(selected[config.id])}/>}
-    {moduleKey === 'hotels' && selected && !!selected.maKhachSan && <p className="admin-panel"><Link to={`/admin/rooms?hotel=${selected.maKhachSan}`}>Quản lý loại phòng, giá và ảnh của khách sạn này</Link></p>}
-    {moduleKey === 'tours' && selected && !!selected.maTour && <section className="admin-tour-children"><div className="admin-tabs"><button className={tourTab === 'activities' ? 'active' : 'secondary'} onClick={() => setTourTab('activities')}>Lịch trình từng ngày</button><button className={tourTab === 'departures' ? 'active' : 'secondary'} onClick={() => setTourTab('departures')}>Ngày khởi hành</button><Link to={`/tours/${selected.maTour}`}>Xem trang khách ↗</Link></div><Manager key={`${selected.maTour}-${tourTab}`} moduleKey={tourTab} tourId={Number(selected.maTour)} maxDays={Number(selected.soNgay)}/></section>}
+    {config.owner && <label className="admin-panel admin-media-picker">{moduleKey === 'tours' ? 'Quản lý bộ ảnh, lịch trình và ngày khởi hành' : 'Quản lý bộ ảnh'}<select value="" onChange={e=>setManaged(rows.find(row=>String(row[config.id])===e.target.value)||null)}><option value="">Chọn bản ghi để quản lý</option>{rows.map(row=><option key={text(row[config.id])} value={text(row[config.id])}>#{text(row[config.id])} · {text(row[config.name])}</option>)}</select></label>}
+    {selected && <Editor key={version} config={config} row={selected} maxDays={maxDays} onCancel={() => setSelected(null)} onSaved={() => { setSelected(null); setMessage('Đã lưu thành công.'); reload(); }}/>}
+    {managed && <FormDialog title={`Quản lý ${text(managed[config.name])}`} onClose={()=>setManaged(null)} wide>
+      {config.owner && <ImageManager key={text(managed[config.id])} owner={config.owner} id={Number(managed[config.id])}/>}
+      {moduleKey === 'hotels' && <p><Link to={`/admin/rooms?hotel=${managed.maKhachSan}`}>Quản lý loại phòng, giá và ảnh của khách sạn này</Link></p>}
+      {moduleKey === 'tours' && <section className="admin-tour-children"><div className="admin-tabs"><button className={tourTab === 'activities' ? 'active' : 'secondary'} onClick={() => setTourTab('activities')}>Lịch trình từng ngày</button><button className={tourTab === 'departures' ? 'active' : 'secondary'} onClick={() => setTourTab('departures')}>Ngày khởi hành</button><Link to={`/tours/${managed.maTour}`}>Xem trang khách ↗</Link></div><Manager key={`${managed.maTour}-${tourTab}`} moduleKey={tourTab} tourId={Number(managed.maTour)} maxDays={Number(managed.soNgay)}/></section>}
+    </FormDialog>}
   </>;
 }
 function Overview() {
