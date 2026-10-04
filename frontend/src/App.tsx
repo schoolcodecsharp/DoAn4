@@ -14,6 +14,7 @@ import ImageCreditsPage from './pages/User/ImageCreditsPage';
 import './index.css';
 import './pages/User/user.css';
 import './experience.css';
+import './pages/User/journey-refinements.css';
 import PageTransition from './components/PageTransition';
 import AdminPage from './pages/Admin/AdminPage';
 
