@@ -52,10 +52,11 @@ try {
     const submit = page.getByRole('button', { name: 'Xác nhận yêu cầu đặt chỗ', exact: true });
     await expect(submit).toBeEnabled();
     assert(await confirmation.evaluate(el => !!(el.compareDocumentPosition(el.parentElement.querySelector('button[type=submit]')) & Node.DOCUMENT_POSITION_FOLLOWING)));
-    await page.getByLabel('Ngày trả phòng', { exact: true }).fill('2027-11-01');
-    await expect(submit).toBeDisabled();
+    await page.locator('[name=ngayTraPhong]').fill('2027-11-01');
+    await submit.click();
+    await expect(page.locator('[name=ngayTraPhong]')).toHaveAttribute('aria-invalid', 'true');
     await expect(confirmation).not.toContainText(/Còn \d+ phòng/);
-    await page.getByLabel('Ngày trả phòng', { exact: true }).fill('2027-11-03');
+    await page.locator('[name=ngayTraPhong]').fill('2027-11-03');
     await expect(submit).toBeEnabled();
     await page.screenshot({ path: path.join(output, `booking-${width}.png`), fullPage: true });
     await confirmation.screenshot({ path: path.join(output, `confirmation-${width}.png`) });
@@ -64,7 +65,9 @@ try {
     await page.goto('/planner');
     const name = page.getByLabel('Tên chuyến đi', { exact: true });
     await name.fill('Bản nháp kiểm thử — không ghi SQL');
-    await page.getByLabel('Tiêu đề', { exact: true }).fill('Ngày khám phá');
+    await page.getByRole('button', { name: 'Chỉnh sửa ngày 1', exact: true }).click();
+    await page.getByLabel('Tiêu đề ngày', { exact: true }).fill('Ngày khám phá');
+    await page.getByRole('button', { name: 'Lưu ngày vào bản nháp', exact: true }).click();
     await expect(page.getByRole('status').filter({ hasText: 'Đã lưu nháp' })).toBeVisible();
     page.on('dialog', async d => d.accept());
     await page.reload();
@@ -72,7 +75,7 @@ try {
     await expect(name).toBeDisabled();
     await page.getByRole('button', { name: 'Khôi phục bản nháp' }).click();
     await expect(name).toHaveValue('Bản nháp kiểm thử — không ghi SQL');
-    await expect(page.getByLabel('Tiêu đề', { exact: true })).toHaveValue('Ngày khám phá');
+    await expect(page.getByRole('heading', { name: 'Ngày khám phá', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Lưu lịch trình', exact: true })).toBeEnabled();
     await page.screenshot({ path: path.join(output, `planner-${width}.png`), fullPage: true });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `planner overflow ${width}`);
@@ -106,7 +109,9 @@ try {
     await edge.getByLabel('Tên chuyến đi', { exact: true }).fill('Kiểm thử lưu bản nháp');
     await edge.getByLabel('Khởi hành từ', { exact: true }).fill('Hà Nội');
     await edge.getByLabel('Điểm đến tại Việt Nam', { exact: true }).fill('Hà Nội');
-    await edge.getByLabel('Tiêu đề', { exact: true }).fill('Khám phá');
+    await edge.getByRole('button', { name: 'Chỉnh sửa ngày 1', exact: true }).click();
+    await edge.getByLabel('Tiêu đề ngày', { exact: true }).fill('Khám phá');
+    await edge.getByRole('button', { name: 'Lưu ngày vào bản nháp', exact: true }).click();
     await expect(edge.getByRole('button', { name: 'Lưu lịch trình', exact: true })).toBeEnabled();
   };
   await fill();
@@ -115,7 +120,7 @@ try {
   // Another account's draft does not appear; malformed own draft never crashes the editor.
   await edge.evaluate(({ k, value }) => { localStorage.removeItem(k); localStorage.setItem('nvt:planner:v1:999999:new', value); }, { k: draftKey, value: stored });
   await edge.reload();
-  await expect(edge.getByRole('heading', { name: 'Một chuyến đi, rõ từng ngày.' })).toBeVisible();
+  await expect(edge.getByRole('dialog', { name: 'Tạo lịch trình mới' })).toBeVisible();
   await expect(edge.getByRole('heading', { name: 'Bạn có một bản nháp chưa lưu' })).toHaveCount(0);
   await edge.evaluate(k => localStorage.setItem(k, '{broken'), draftKey);
   await edge.reload();
@@ -141,12 +146,13 @@ try {
   await expect(book).toBeEnabled();
   await edge.route('**/api/account/itineraries/estimate', r => r.fulfill({ json: { days: [[{ available: false, availableRooms: 0, minTotal: 5000000, message: 'Không đủ phòng trong khoảng ngày này.' }]] } }));
   await edge.getByLabel('Ngày trả phòng', { exact: true }).fill('2027-11-04');
-  await expect(book).toBeDisabled();
+  await book.click();
+  await expect(edge.locator('[name=soLuongPhong]')).toHaveAttribute('aria-invalid', 'true');
   await expect(edge.locator('.booking-confirmation')).toContainText('Không đủ phòng');
   await edge.unroute('**/api/account/itineraries/estimate');
   await edge.route('**/api/account/itineraries/estimate', r => r.fulfill({ status: 503, json: { message: 'Chưa kết nối được phòng trống.' } }));
   await edge.getByRole('button', { name: 'Kiểm tra lại phòng', exact: true }).click();
-  await expect(edge.getByRole('alert')).toContainText('Chưa kết nối được phòng trống.');
+  await expect(edge.getByRole('alert').filter({hasText:'Chưa kết nối được phòng trống.'})).toBeVisible();
   await expect(book).toBeDisabled();
   checks.push('Room quote no-stock and failure disable submit; stale successful quote is removed');
   await ctx.close();

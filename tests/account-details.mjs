@@ -59,16 +59,20 @@ try {
         if(item.days.length)await expect(page.locator('.trip-day').first()).toBeVisible();
         if(item.isOwner) {
           await page.getByRole('button',{name:'Quản lý thành viên',exact:true}).click();
+          await page.getByRole('button',{name:'Mời thành viên',exact:true}).click();
           await expect(page.getByLabel('Email thành viên',{exact:true})).toBeVisible();
+          await page.keyboard.press('Escape'); await page.keyboard.press('Escape');
           await expect(page).toHaveURL('http://localhost:5173'+target);
         }
       }
       if(kind!=='trips') {
         await expect(page.getByRole('heading',{name:'Đánh giá từ khách đã trải nghiệm',exact:true})).toBeVisible();
+        await page.getByRole('button',{name:'Viết bình luận',exact:true}).click();
         await expect(page.getByLabel('Bình luận của bạn',{exact:true})).toBeVisible();
+        await page.keyboard.press('Escape');
         const id=kind==='hotels'?item.hotelId:item.tourId;
         const eligibility=await (await api.get(`/api/feedback/${kind}/${id}/eligibility`,{headers:{Authorization:'Bearer '+record.session.token}})).json();
-        if(eligibility.canReview)await expect(page.getByRole('radio',{name:'5 sao',exact:true})).toBeVisible();
+        if(eligibility.canReview) { await page.getByRole('button',{name:'Viết đánh giá',exact:true}).click(); await expect(page.getByRole('radio',{name:'5 sao',exact:true})).toBeVisible(); await page.keyboard.press('Escape'); }
         else {
           await expect(page.getByRole('button',{name:'Gửi đánh giá',exact:true})).toHaveCount(0);
           await expect(page.getByText(eligibility.alreadyReviewed?/Bạn đã đánh giá dịch vụ này/:eligibility.requirement,{exact:!eligibility.alreadyReviewed})).toBeVisible();

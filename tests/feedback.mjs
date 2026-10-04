@@ -101,11 +101,13 @@ try {
     await page.locator('input[autocomplete="current-password"]').fill(accounts.user.password);
     await page.getByRole('button',{name:'Đăng nhập',exact:true}).click();
     await expect(page).toHaveURL(new RegExp(`/${kind}/${id}#feedback`));
+    await page.getByRole('button',{name:'Viết đánh giá',exact:true}).click();
     await page.getByRole('radio',{name:'4 sao',exact:true}).check();
     await page.getByLabel('Nhận xét về trải nghiệm (không bắt buộc)').fill(tag+' browser rating');
     await page.getByRole('button',{name:'Gửi đánh giá',exact:true}).click();
     await expect(page.getByText('Đã lưu đánh giá của bạn.',{exact:true})).toBeVisible();
     await expect(page.getByText('4/5 sao từ 1 đánh giá đã xác minh',{exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'Viết bình luận',exact:true}).click();
     await page.getByLabel('Bình luận của bạn',{exact:true}).fill('<img src=x onerror=alert(1)> '+tag+' '+width);
     await page.getByRole('button',{name:'Gửi bình luận',exact:true}).click();
     await expect(page.getByText('Đã gửi bình luận.',{exact:true})).toBeVisible();
@@ -127,6 +129,7 @@ try {
   await adminPage.goto(`/tours/${f.tour}`);
   await expect(adminPage.getByText('Chỉ chấm sao sau khi đơn tour của bạn được xác nhận Đã hoàn thành và chuyến đi đã kết thúc.',{exact:true})).toBeVisible();
   await expect(adminPage.getByRole('button',{name:'Gửi đánh giá',exact:true})).toHaveCount(0);
+  await adminPage.getByRole('button',{name:'Viết bình luận',exact:true}).click();
   await adminPage.getByLabel('Bình luận của bạn',{exact:true}).fill(tag+' no experience UI');
   await adminPage.getByRole('button',{name:'Gửi bình luận',exact:true}).click();
   await expect(adminPage.getByText('Đã gửi bình luận.',{exact:true})).toBeVisible();

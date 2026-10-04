@@ -41,13 +41,17 @@ try{
     const page=await ctx.newPage();page.on('pageerror',e=>errors.push(e.message));
     await page.goto('/planner?edit='+id);
     await expect(page.getByRole('heading',{name:'Dự toán chuyến đi',exact:true})).toBeVisible();
-    await expect(page.getByLabel('Loại phòng hoạt động 3 ngày 1')).toHaveValue(String(room.maLoaiPhong));
     await expect(page.locator('.event-cost').first()).toContainText('× 2 vé');
-    await page.getByLabel('Số lượng hoạt động 1 ngày 1').fill('3');
+    await page.getByRole('button',{name:'Chỉnh sửa hoạt động 1 ngày 1',exact:true}).click();
+    await page.locator('dialog[open]').last().locator('[name=quantity]').fill('3');
+    await expect(page.getByRole('button',{name:'Lưu hoạt động',exact:true})).toBeEnabled();
+    await page.getByRole('button',{name:'Lưu hoạt động',exact:true}).click();
     await expect(page.locator('.event-cost').first()).toContainText('× 3 vé');
-    await page.getByLabel('Số phòng hoạt động 3 ngày 1').fill('100');
+    await page.getByRole('button',{name:'Chỉnh sửa hoạt động 3 ngày 1',exact:true}).click();
+    await expect(page.locator('dialog[open]').last().locator('[name=roomId]')).toHaveValue(String(room.maLoaiPhong));
+    await page.locator('dialog[open]').last().locator('[name=rooms]').fill('100');
     await expect(page.locator('.event-cost').last()).toContainText('Không đủ phòng');
-    await page.getByLabel('Số phòng hoạt động 3 ngày 1').fill('1');
+    await page.locator('dialog[open]').last().locator('[name=rooms]').fill('1');
     await expect(page.locator('.event-cost').last()).toContainText('Đủ phòng tại thời điểm kiểm tra');
     const bookLink=page.getByRole('link',{name:'Đặt phòng này (mở tab mới, giữ bản nháp)'});
     await expect(bookLink).toHaveAttribute('target','_blank');
@@ -57,6 +61,7 @@ try{
     await expect(booking.getByLabel('Số khách',{exact:true})).toHaveValue('2');
     await expect(booking.getByRole('combobox',{name:'Loại phòng',exact:true})).toHaveValue(String(room.maLoaiPhong));
     await booking.close();
+    await page.getByRole('button',{name:'Lưu hoạt động',exact:true}).click();
     await page.route('**/api/account/itineraries/estimate',r=>r.abort(),{times:1});
     await page.getByRole('button',{name:'Kiểm tra lại giá và phòng'}).click();
     await expect(page.locator('.planner-ledger [role="alert"]')).toBeVisible();
@@ -64,14 +69,14 @@ try{
     await expect(page.locator('.planner-ledger .cost-grand-total')).toHaveCount(0);
     await page.getByRole('button',{name:'Kiểm tra lại giá và phòng'}).click();
     await expect(page.getByRole('heading',{name:'Dự toán chuyến đi',exact:true})).toBeVisible();
-    await page.getByLabel('Số lượng hoạt động 1 ngày 1').focus();await page.keyboard.press('Tab');
+    await page.getByRole('button',{name:'Chỉnh sửa hoạt động 1 ngày 1',exact:true}).focus();await page.keyboard.press('Tab');
     assert(await page.evaluate(()=>!!document.activeElement?.matches('input,select,button,a,summary')));
     const overflow=await page.locator('main').evaluate(el=>el.scrollWidth>el.clientWidth+2);assert.equal(overflow,false);
     // Capture actual viewport states; scroll container is the app's main, not the document.
     await page.locator('main').evaluate(el=>el.scrollTop=0);
     await page.evaluate(()=>window.scrollTo(0,0));
     await page.screenshot({path:path.join(review,`planner-top-${width}.png`)});
-    await page.locator('.event-cost-editor').last().scrollIntoViewIfNeeded();
+    await page.locator('.event-timeline > li').last().scrollIntoViewIfNeeded();
     if(width===1440){
       const saveBox=await page.getByRole('button',{name:'Lưu lịch trình',exact:true}).boundingBox();
       assert(saveBox&&saveBox.y>=92&&saveBox.y+saveBox.height<=1000,'Save stays in desktop viewport with warning-rich quote');

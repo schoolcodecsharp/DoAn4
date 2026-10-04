@@ -31,12 +31,21 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 | Planner `/planner` | `frontend/src/pages/User/ItineraryPage.tsx`, `ItineraryEvents.tsx`, `itinerary.ts`, `itinerary-events.css`; location suggestions in `PlannerSuggestions.tsx` | `AccountController.cs` + partial `AccountActivities.cs`: atomic ChuyenDi/LichTrinh/LichTrinhChiTiet writes and scoped reads |
 | Login/register | `frontend/src/pages/Auth/LoginPage.tsx`, `RegisterPage.tsx`, `src/context/AuthContext.tsx` | Auth controller; `src/lib/api.ts` |
 | Admin `/admin/*` | `frontend/src/pages/Admin/AdminPage.tsx`, `schema.ts`, `Operations.tsx`, `ImageManager.tsx`, `admin.css` | Domain controllers, AdminReports controller, Security filters; `docs/ADMIN.md` |
-| Payment recording | Admin `Operations.tsx` (confirm exact endpoint) | ThanhToan controller/service/repository; payment rules in README |
+| Payment recording | Admin `Payments.tsx`; cancellations in `CancellationPanel.tsx` + `Operations.tsx` | ThanhToan controller/service/repository; payment rules in README |
 | Image credits `/image-credits` | `frontend/src/pages/User/ImageCreditsPage.tsx`, `Photo.tsx` | HinhAnh controller, `backend/Data/IMAGE-LIBRARY.md`, CatalogImageFilter |
 
 `/saved` and `/favorites` currently redirect to `/account`. Older directories such as `pages/Tours`, `Hotels`, `Planner`, `Saved`, plus `services/api.ts` and `hooks/useAuth.ts`, are not the route/auth authority shown by App.tsx. Trace live imports before using or deleting them; do not infer all are unused solely from this index.
 
 ## Data and non-source folders
+
+### Add/edit form dialogs — verified 2026-10-04
+
+- Shared `components/FormDialog.tsx` uses a portaled native modal dialog: named heading, focus entry/return, keyboard trapping, Escape/backdrop close, unsaved-change confirmation and busy-close protection. Nested forms explicitly stop submit/cancel propagation so an activity or member dialog cannot submit/close its parent.
+- `components/ValidatedForm.tsx` and `form-validation.ts` provide required/format/range/cross-field errors, `aria-invalid` + described errors, a screen-reader announcement, first-error focus and preserved inputs. ASP.NET ModelState keys map to named fields; recognized business messages also map to relevant fields. Network/permission/conflict errors without an identifiable field remain a form-level recovery message, not a fabricated input error.
+- Admin `AdminPage.tsx` opens all 11 schema CRUD editors in dialogs, prefilled for edit; success closes and reloads the list with a notice. Owner records have a separate selection for image management and tour activities/departures. `ImageManager.tsx` opens upload/edit dialogs; a partial multi-file failure retains only unfinished files for retry. `Payments.tsx` and `CancellationPanel.tsx` use the same form behavior; irreversible approval still requires confirmation. Prices accept SQL-compatible cents; counts remain integers.
+- User `BookingPage.tsx` and `ItineraryPage.tsx` open route-driven forms in dialogs. Successful itinerary writes close via navigation to the account with a success notice; booking success retains the pending-booking/payment disclaimer. `ItineraryEvents.tsx` uses selection + activity forms, prefilled editing, time overlap validation, real images and existing estimates; `ItineraryPage.tsx` uses separate day forms. Local day/activity success says “bản nháp”, not a server save. Draft restore/discard stays inside the modal and closing checks draft dirtiness.
+- `Feedback.tsx`, `TripMembers.tsx`, `BookingActions.tsx` open comment/review/invite/cancellation forms and close after success. Public reading, server rating eligibility, member permissions and cancellation policy are unchanged. Read-only information disclosures and login/registration remain appropriate dedicated surfaces, not list editors.
+- Checks: `node tests/form-dialogs.mjs` (existing SQL logins/GET/estimates, browser-intercepted mutations only, admin 1440/390 + user 1440/390/320); `node tests/account-details.mjs`; `node tests/journey-refinements.mjs`; frontend build/lint. Writable `feedback.mjs`, `planner-costs.mjs`, `restaurant-planner.mjs` selectors were adapted but those fixture-writing suites were not run for this change. See `docs/FORM_DIALOGS_2026-10-04.md` for scope/limitations.
 
 ### Search → booking, planner drafts and catalog readiness — verified 2026-10-03
 
@@ -94,6 +103,8 @@ Recovery verified 2026-09-26: the identifiable UI/feature changes from the 23–
 - Verify read-only public/API/UI coverage: `node tests/catalog-system-audit.mjs` (existing local credentials/services, desktop/mobile). Capacity regression: `dotnet run --project tests/AdminSmoke -- --capacity-checks` uses `CapacityChecks.cs`, writes tagged disposable tour/departure fixtures and cleans only those records. Do not confuse these with a production-safe read-only command.
 
 ### Homepage refinement — verified 2026-10-02
+
+- Header follow-up verified 2026-10-04: `experience.css` gives the shared header solid forest green `#284b41` and cream `#fffef8` on every public/account/auth/planner page, including homepage before scrolling. Hero/scrolled classes remain for existing behavior, but no longer change colors. `admin.css` matches the admin topbar. Menu controls are 44px with light border/focus. Build + detector passed; read-only Chromium check covered 10 routes at 1440/390px, no horizontal overflow/page errors and Escape restored menu-button focus. This supersedes the transparent-at-top notes below.
 
 - Latest user follow-up: hero selectors are simple 1–2–3 again (accessible names still include destinations); thumbnail markup/styles removed. `HomePage.tsx`/`home.css` own the forest-green footer with discovery/journey links and image credits. `backToTop` scrolls the nested main via ref and focuses the hero heading; reduced motion uses instant scrolling. `tests/home-fullscreen.mjs` now checks numeric labels, absence of selector images, seven footer links, keyboard back-to-top/focus and captures `*-footer.png`. Build and 1440/820/390/320 tests passed with zero browser errors; detector returned no findings. Previous amplification notes below describe the preceding version where they mention thumbnails.
 
