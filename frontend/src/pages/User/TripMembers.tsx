@@ -1,7 +1,10 @@
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useRef, useState, type FormEvent } from 'react';
 import { api, errorMessage } from '../../lib/api';
 import { useResource } from './catalog';
 import './trip-members.css';
+import FormDialog from '../../components/FormDialog';
+import ValidatedForm from '../../components/ValidatedForm';
+import { reportFormError } from '../../components/form-validation';
 
 type Member = { id: number; name: string; email: string; status: string };
 const labels: Record<string, string> = { Pending: 'Chờ phản hồi', Accepted: 'Đã tham gia', Rejected: 'Đã từ chối' };
@@ -13,14 +16,17 @@ function MemberList({ tripId, onChanged }: { tripId: number; onChanged: (message
   const [message, setMessage] = useState('');
   const [removeId, setRemoveId] = useState<number | null>(null);
   const inputId = useId();
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const editor = useRef<HTMLFormElement>(null);
   async function invite(event: FormEvent) {
     event.preventDefault();
     if (busy) return;
     setBusy(true); setMessage('');
     try {
       await api.post(`/account/itineraries/${tripId}/members`, { email });
+      setInviteOpen(false); setEmail(''); reload();
       onChanged('Đã gửi lời mời. Người được mời xem và phản hồi trong trang tài khoản.');
-    } catch (err) { setMessage(errorMessage(err)); }
+    } catch (err) { setMessage(errorMessage(err)); reportFormError(editor.current, err, { email: ['email', 'thành viên', 'tài khoản'] }); }
     finally { setBusy(false); }
   }
   async function remove(id: number) {
@@ -34,12 +40,13 @@ function MemberList({ tripId, onChanged }: { tripId: number; onChanged: (message
   }
   return <div className="trip-members">
     <p>Mời bằng email tài khoản đã đăng ký. Người được mời chỉ xem lịch trình chung sau khi chấp nhận; chỉ bạn có thể quản lý thành viên.</p>
-    <form className="user-form member-invite-form" onSubmit={invite}>
-      <label htmlFor={inputId}>Email thành viên</label>
-      <div className="member-invite-controls"><input id={inputId} type="email" required maxLength={150} value={email} onChange={e => setEmail(e.target.value)} placeholder="banbe@example.com" />
-      <button className="user-button" disabled={busy} type="submit">{busy ? 'Đang xử lý…' : 'Gửi lời mời'}</button></div>
-    </form>
-    {message && <p role="alert" className="user-alert">{message}</p>}
+    <button type="button" className="user-button" onClick={() => { setMessage(''); setInviteOpen(true); }}>Mời thành viên</button>
+    {inviteOpen && <FormDialog title="Mời thành viên vào chuyến đi" busy={busy} onClose={() => setInviteOpen(false)}><ValidatedForm className="user-form" formRef={editor} onSubmit={invite}>
+      <label htmlFor={inputId}>Email thành viên<input name="email" id={inputId} type="email" required maxLength={150} value={email} onChange={e => setEmail(e.target.value)} placeholder="banbe@example.com" /></label>
+      {message && <p role="alert" className="user-alert">{message}</p>}
+      <button className="user-button" disabled={busy} type="submit">{busy ? 'Đang xử lý…' : 'Gửi lời mời'}</button>
+    </ValidatedForm></FormDialog>}
+    {!inviteOpen && message && <p role="alert" className="user-alert">{message}</p>}
     {loading && <p role="status">Đang tải thành viên…</p>}
     {error && <p role="alert">{error} <button type="button" onClick={reload}>Thử lại</button></p>}
     {data && !data.length && <p>Chưa mời thành viên nào. Bạn là chủ chuyến đi.</p>}
@@ -53,9 +60,8 @@ function MemberList({ tripId, onChanged }: { tripId: number; onChanged: (message
 
 export default function TripMembers({ tripId, onChanged }: { tripId: number; onChanged: (message: string) => void }) {
   const [open, setOpen] = useState(false);
-  const id = useId();
   return <div className="trip-members-section">
-    <button type="button" className="user-button secondary" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>{open ? 'Ẩn thành viên' : 'Quản lý thành viên'}</button>
-    <div id={id}>{open && <MemberList tripId={tripId} onChanged={onChanged} />}</div>
+    <button type="button" className="user-button secondary" onClick={() => setOpen(true)}>Quản lý thành viên</button>
+    {open && <FormDialog title="Thành viên chuyến đi" onClose={() => setOpen(false)}><MemberList tripId={tripId} onChanged={message => { setOpen(false); onChanged(message); }} /></FormDialog>}
   </div>;
 }

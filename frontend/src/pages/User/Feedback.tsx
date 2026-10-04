@@ -4,6 +4,9 @@ import { useSession } from '../../context/AuthContext';
 import { api, dateLabel, errorMessage } from '../../lib/api';
 import { useResource, type Kind } from './catalog';
 import './feedback.css';
+import FormDialog from '../../components/FormDialog';
+import ValidatedForm from '../../components/ValidatedForm';
+import { reportFormError } from '../../components/form-validation';
 
 type Entry = { id: number; author: string; content: string; createdAt: string; stars?: number };
 type FeedbackData = { summary: { average: number; count: number }; reviews: Entry[]; comments: Entry[]; commentCount: number; pageSize: number };
@@ -17,39 +20,41 @@ function ReviewForm({ endpoint, changed }: { endpoint: string; changed: () => vo
   const { data, loading, error, reload } = useResource<Eligibility>(endpoint + '/eligibility');
   const [stars, setStars] = useState(0), [content, setContent] = useState(''), [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false); const sending = useRef(false);
+  const [open, setOpen] = useState(false); const editor = useRef<HTMLFormElement>(null);
   async function submit(e: FormEvent) {
     e.preventDefault(); if (sending.current) return;
     if (!stars) { setMessage('Vui lòng chọn số sao.'); return; }
     sending.current = true; setBusy(true); setMessage('');
-    try { await api.post(endpoint + '/reviews', { stars, content }); changed(); reload(); }
-    catch (err) { setMessage(errorMessage(err)); }
+    try { await api.post(endpoint + '/reviews', { stars, content }); setOpen(false); changed(); reload(); }
+    catch (err) { setMessage(errorMessage(err)); reportFormError(editor.current, err, { stars: ['số sao'], content: ['nội dung'] }); }
     finally { sending.current = false; setBusy(false); }
   }
   if (loading) return <p role="status">Đang kiểm tra trải nghiệm của bạn…</p>;
   if (error) return <p role="alert">{error} <button className="user-text-link" onClick={reload}>Thử lại</button></p>;
   if (data?.alreadyReviewed) return <p role="status">Bạn đã đánh giá dịch vụ này. Mỗi tài khoản được chấm sao một lần. Nội dung bị ẩn bởi quản trị viên sẽ không xuất hiện công khai.</p>;
   if (!data?.canReview) return <p>{data?.requirement}</p>;
-  return <form onSubmit={submit} className="feedback-form">
+  return <><button type="button" className="user-button" onClick={() => { setMessage(''); setOpen(true); }}>Viết đánh giá</button>{open && <FormDialog title="Đánh giá trải nghiệm" busy={busy} onClose={() => setOpen(false)}><ValidatedForm formRef={editor} onSubmit={submit} className="feedback-form">
     <p>Bạn đã hoàn thành trải nghiệm và có thể chia sẻ đánh giá.</p>
-    <fieldset disabled={busy}><legend>Bạn đánh giá bao nhiêu sao?</legend><div className="feedback-stars">{[1,2,3,4,5].map(value => <label key={value}><input type="radio" name="review-stars" value={value} checked={stars === value} onChange={() => setStars(value)} required /><Star filled={value <= stars} /><span>{value} sao</span></label>)}</div></fieldset>
-    <label>Nhận xét về trải nghiệm (không bắt buộc)<textarea maxLength={2000} value={content} onChange={e => setContent(e.target.value)} disabled={busy} rows={3} /></label>
+    <fieldset disabled={busy}><legend>Bạn đánh giá bao nhiêu sao?</legend><div className="feedback-stars">{[1,2,3,4,5].map(value => <label key={value}><input type="radio" name="stars" value={value} checked={stars === value} onChange={() => setStars(value)} required /><Star filled={value <= stars} /><span>{value} sao</span></label>)}</div></fieldset>
+    <label>Nhận xét về trải nghiệm (không bắt buộc)<textarea name="content" maxLength={2000} value={content} onChange={e => setContent(e.target.value)} disabled={busy} rows={3} /></label>
     {message && <p role="alert" className="user-alert">{message}</p>}
     <button className="user-button" disabled={busy}>{busy ? 'Đang gửi…' : 'Gửi đánh giá'}</button>
-  </form>;
+  </ValidatedForm></FormDialog>}</>;
 }
 
 function CommentForm({ endpoint, changed }: { endpoint: string; changed: () => void }) {
   const [content, setContent] = useState(''), [error, setError] = useState('');
   const [busy, setBusy] = useState(false); const sending = useRef(false);
+  const [open, setOpen] = useState(false); const editor = useRef<HTMLFormElement>(null);
   async function submit(e: FormEvent) {
     e.preventDefault(); if (sending.current) return;
     if (!content.trim()) { setError('Nhập nội dung bình luận trước khi gửi.'); return; }
     sending.current = true; setBusy(true); setError('');
-    try { await api.post(endpoint + '/comments', { content }); setContent(''); changed(); }
-    catch (err) { setError(errorMessage(err)); }
+    try { await api.post(endpoint + '/comments', { content }); setContent(''); setOpen(false); changed(); }
+    catch (err) { setError(errorMessage(err)); reportFormError(editor.current, err, { content: ['nội dung', 'bình luận'] }); }
     finally { sending.current = false; setBusy(false); }
   }
-  return <form onSubmit={submit} className="feedback-form"><label>Bình luận của bạn<textarea required maxLength={2000} value={content} onChange={e => setContent(e.target.value)} rows={3} disabled={busy} placeholder="Chia sẻ hoặc đặt câu hỏi về dịch vụ này" /></label><small>{content.length}/2.000 ký tự · Bình luận được hiển thị công khai.</small>{error && <p role="alert" className="user-alert">{error}</p>}<button className="user-button" disabled={busy}>{busy ? 'Đang gửi…' : 'Gửi bình luận'}</button></form>;
+  return <><button type="button" className="user-button" onClick={() => { setError(''); setOpen(true); }}>Viết bình luận</button>{open && <FormDialog title="Viết bình luận" busy={busy} onClose={() => setOpen(false)}><ValidatedForm formRef={editor} onSubmit={submit} className="feedback-form"><label>Bình luận của bạn<textarea name="content" required maxLength={2000} value={content} onChange={e => setContent(e.target.value)} rows={3} disabled={busy} placeholder="Chia sẻ hoặc đặt câu hỏi về dịch vụ này" /></label><small>{content.length}/2.000 ký tự · Bình luận được hiển thị công khai.</small>{error && <p role="alert" className="user-alert">{error}</p>}<button className="user-button" disabled={busy}>{busy ? 'Đang gửi…' : 'Gửi bình luận'}</button></ValidatedForm></FormDialog>}</>;
 }
 
 function Entries({ items }: { items: Entry[] }) {
