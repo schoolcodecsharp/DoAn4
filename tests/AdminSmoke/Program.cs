@@ -15,6 +15,7 @@ var root = Path.GetFullPath(args.Length > 0 && !args[0].StartsWith("--")
 var config = new ConfigurationBuilder().SetBasePath(root).AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", true).AddEnvironmentVariables().Build();
 await using var db = new MySqlConnection(config.GetConnectionString("DefaultConnection"));
 await db.OpenAsync();
+if(args.Contains("--fill-journey-photos") || args.Contains("--check-journey-photos")) { await PhotoCoverage.Run(db,config,root,args.Contains("--fill-journey-photos"),true); return; }
 if(args.Contains("--fill-photo-coverage") || args.Contains("--check-photo-coverage")) { await PhotoCoverage.Run(db,config,root,args.Contains("--fill-photo-coverage")); return; }
 if(args.Contains("--diversify-catalog") || args.Contains("--check-diversity")) { await CatalogDiversity.Run(db,config,root,args.Contains("--diversify-catalog")); return; }
 if(args.Contains("--enrich-catalog") || args.Contains("--check-enrichment")) { await CatalogEnrichment.Run(db,config,root,args.Contains("--enrich-catalog")); return; }

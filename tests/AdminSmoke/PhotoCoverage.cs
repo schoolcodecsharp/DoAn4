@@ -22,18 +22,20 @@ static class PhotoCoverage
         Require(File.Exists(Path.Combine(root, "wwwroot", url.TrimStart('/'))), "Missing local photo: " + url);
     }
 
-    public static async Task Run(MySqlConnection db, IConfiguration config, string root, bool apply)
+    public static async Task Run(MySqlConnection db, IConfiguration config, string root, bool apply, bool journey = false)
     {
-        var selections = JsonSerializer.Deserialize<Selection[]>(await File.ReadAllTextAsync(Path.Combine(root, "Data/photo-coverage-20261002.json")), Json)!;
+        var manifest = journey ? "Data/journey-photos-20261003.json" : "Data/photo-coverage-20261002.json";
+        var mediaFolder = journey ? "journey-20261003" : "coverage-20261002";
+        var selections = JsonSerializer.Deserialize<Selection[]>(await File.ReadAllTextAsync(Path.Combine(root, manifest)), Json)!;
         var prepared = new List<(Selection Target, Photo Image)>();
         foreach (var p in selections)
         {
-            Require(p.Kind is "DiaDiem" or "NhaHang" && Regex.IsMatch(p.Key, "^[a-z0-9-]+$") && p.Id > 0, "Invalid manifest target");
+            Require(p.Kind is "DiaDiem" or "NhaHang" or "KhachSan" && Regex.IsMatch(p.Key, "^[a-z0-9-]+$") && p.Id > 0, "Invalid manifest target");
             Require(Regex.IsMatch(p.License, "^(CC BY(-SA)? [1-4]\\.0|CC0)$"), "Unapproved license");
             Require(p.Source.StartsWith("https://commons.wikimedia.org/wiki/File:") && !string.IsNullOrWhiteSpace(p.Author), "Missing provenance");
             var filename = $"{p.Key}-{p.Id}.jpg";
             var photo = JsonSerializer.Deserialize<Photo>(await File.ReadAllTextAsync(Path.Combine(root, "Data/photo-sources", filename + ".source.json")), Json)!;
-            Require(photo.DuongDan == "/media/coverage-20261002/" + filename && photo.MoTa == p.Caption && photo.Title == p.Title &&
+            Require(photo.DuongDan == $"/media/{mediaFolder}/" + filename && photo.MoTa == p.Caption && photo.Title == p.Title &&
                 photo.Nguon == p.Source && photo.TacGia == p.Author && photo.GiayPhep == p.License && photo.UrlGiayPhep == p.LicenseUrl, "Photo metadata mismatch");
             Require(photo.MoTa.Length <= 255, "Caption too long");
             ValidateLocal(root, photo.DuongDan);
@@ -97,7 +99,7 @@ static class PhotoCoverage
             finally { await db.ExecuteAsync("SELECT RELEASE_LOCK('nvt_verified_catalog')"); }
         }
         var coverage = new List<object>();
-        foreach (var kind in new[] { "DiaDiem", "NhaHang", "Tour" })
+        foreach (var kind in new[] { "DiaDiem", "KhachSan", "NhaHang", "Tour" })
         {
             var active = kind == "Tour" ? "t.TrangThai='Active'" : "t.TrangThai=1";
             var missing = (await db.QueryAsync($"SELECT Ma{kind} id,Ten{kind} name FROM {kind} t WHERE {active} AND NOT EXISTS(SELECT 1 FROM HinhAnh h WHERE h.Ma{kind}=t.Ma{kind}) ORDER BY Ma{kind}")).ToArray();
