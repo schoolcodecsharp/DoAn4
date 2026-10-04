@@ -1,9 +1,12 @@
 import { useRef, useState, type FormEvent } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
 import { api, dateLabel, errorMessage, money, today } from '../../lib/api';
 import { catalogs, itemName, useResource, type CatalogItem, type Departure, type Room } from './catalog';
 import { useRoomQuote } from './useRoomQuote';
+import FormDialog from '../../components/FormDialog';
+import ValidatedForm from '../../components/ValidatedForm';
+import { reportFormError } from '../../components/form-validation';
 
 export default function BookingPage({ kind }: { kind: 'tours' | 'hotels' }) {
   const { id = '' } = useParams();
@@ -14,6 +17,8 @@ export default function BookingPage({ kind }: { kind: 'tours' | 'hotels' }) {
 }
 
 function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
+  const navigate = useNavigate();
+  const editor = useRef<HTMLFormElement>(null);
   const { id = '' } = useParams();
   const [params] = useSearchParams();
   const { user } = useSession();
@@ -37,6 +42,15 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
   const total = choice ? kind === 'tours' ? choice.giaApDung * people : choice.giaMoiDem * rooms * nights : 0;
   const quote = useRoomQuote(id, selected, checkin, nights, rooms, people, kind === 'hotels' && !!choice && checkin >= today());
   const ready = !!choice && (kind === 'tours' || (!quote.loading && !quote.error && quote.quote?.available === true));
+  const validate = () => {
+    const errors: Record<string, string> = {};
+    if (kind === 'hotels') {
+      if (checkout && (!nights || nights > 30)) errors.ngayTraPhong = 'Ngày trả phải sau ngày nhận phòng, tối đa 30 đêm.';
+      if (choice && people > choice.sucChua * rooms) errors.soNguoi = `Số phòng đã chọn chỉ đủ cho ${choice.sucChua * rooms} khách. Giảm số khách hoặc tăng số phòng.`;
+      if (quote.quote?.available === false) errors.soLuongPhong = quote.quote.message || 'Không đủ phòng cho kỳ lưu trú đã chọn.';
+    }
+    return errors;
+  };
   const submit = async (e: FormEvent) => {
     e.preventDefault(); if (submitting.current) return;
     setError('');
@@ -54,26 +68,26 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
       const body = kind === 'tours' ? { maKhoiHanh: choice.maKhoiHanh, soNguoi: people, ghiChu: note } : { maLoaiPhong: choice.maLoaiPhong, ngayNhanPhong: checkin, ngayTraPhong: checkout, soLuongPhong: rooms, soNguoi: people, ghiChu: note };
       const { data } = await api.post(`/account/bookings/${kind}`, body);
       setSuccess(data);
-    } catch (err) { setError(errorMessage(err)); }
+    } catch (err) { setError(errorMessage(err)); reportFormError(editor.current, err, { selected: ['maKhoiHanh', 'maLoaiPhong', 'loại phòng', 'lịch khởi hành'], soNguoi: ['số khách', 'số người', 'sức chứa'], soLuongPhong: ['số phòng', 'phòng trống'], ngayNhanPhong: ['ngày nhận'], ngayTraPhong: ['ngày trả'], ghiChu: ['ghi chú'] }); }
     finally { submitting.current = false; setBusy(false); }
   };
-  if (success) return <main className="user-page"><section className="user-container booking-success user-panel"><h1>Yêu cầu đặt chỗ đã được lưu.</h1><p>Đơn {kind === 'tours' ? 'tour' : 'phòng'} số <strong>{success.id}</strong> đang chờ xác nhận.</p><p>Tổng tiền: <strong>{money(success.total)}</strong>. Bạn chưa bị trừ tiền; đây chưa phải xác nhận thanh toán.</p><Link className="user-button" to={`/account?tab=${kind}`}>Xem đơn đặt của tôi</Link></section></main>;
+  if (success) return <main className="user-page"><section className="user-container booking-success user-panel"><h1 role="status">Yêu cầu đặt chỗ đã được lưu thành công.</h1><p>Đơn {kind === 'tours' ? 'tour' : 'phòng'} số <strong>{success.id}</strong> đang chờ xác nhận.</p><p>Tổng tiền: <strong>{money(success.total)}</strong>. Bạn chưa bị trừ tiền; đây chưa phải xác nhận thanh toán.</p><Link className="user-button" to={`/account?tab=${kind}`}>Xem đơn đặt của tôi</Link></section></main>;
   return <main className="user-page"><div className="user-container"><Link className="user-text-link" to={`/${kind}/${id}`}>Trở lại thông tin chi tiết</Link><div className="detail-heading"><p className="user-kicker">ĐẶT DỊCH VỤ</p><h1>{kind === 'tours' ? 'Sẵn sàng cho chuyến đi.' : 'Chọn ngày nghỉ của bạn.'}</h1><p>{item.data && itemName(item.data)}</p></div>
     {(item.loading || options.loading) && <p role="status">Đang tải thông tin đặt chỗ...</p>}
     {(item.error || options.error) && <div className="user-empty" role="alert"><p>{item.error || options.error}</p><button className="user-button" onClick={() => { item.reload(); options.reload(); }}>Thử lại</button></div>}
-    {item.data && options.data && <div className="detail-layout"><form className="user-panel user-form" onSubmit={submit}>
+    {item.data && options.data && <FormDialog wide title={`Đặt ${kind === 'tours' ? 'tour' : 'phòng'} · ${itemName(item.data)}`} busy={busy} onClose={() => navigate(`/${kind}/${id}`)}><div className="detail-layout"><ValidatedForm className="user-panel user-form" formRef={editor} onSubmit={submit} validate={validate}>
       <h2>Thông tin đặt {kind === 'tours' ? 'tour' : 'phòng'}</h2>
       {!choices.length && <p className="user-alert">Hiện chưa có lựa chọn có thể đặt cho dịch vụ này.</p>}
-      <label>{kind === 'tours' ? 'Ngày khởi hành' : 'Loại phòng'}<select required value={selected} onChange={e => setSelected(e.target.value)}><option value="">Chọn {kind === 'tours' ? 'ngày khởi hành' : 'loại phòng'}</option>{choices.map(o => <option key={kind === 'tours' ? o.maKhoiHanh : o.maLoaiPhong} value={kind === 'tours' ? o.maKhoiHanh : o.maLoaiPhong}>{kind === 'tours' ? `${dateLabel(o.ngayKhoiHanh)} - ${money(o.giaApDung)} - còn ${o.soChoToiDa - o.soChoDaDat} chỗ` : `${o.tenLoaiPhong} - ${money(o.giaMoiDem)} / đêm`}</option>)}</select></label>
-      {kind === 'hotels' && <div className="user-form-grid"><label>Ngày nhận phòng<input type="date" required min={today()} value={checkin} onChange={e => setCheckin(e.target.value)} /></label><label>Ngày trả phòng<input type="date" required min={checkin} value={checkout} onChange={e => setCheckout(e.target.value)} /></label><label>Số phòng<input type="number" required min={1} max={choice?.soLuongPhong || 20} value={rooms} onChange={e => setRooms(Number(e.target.value))} /></label></div>}
-      <label>Số khách<input type="number" required min={1} max={kind === 'tours' && choice ? choice.soChoToiDa - choice.soChoDaDat : 100} value={people} onChange={e => setPeople(Number(e.target.value))} /></label>
+      <label>{kind === 'tours' ? 'Ngày khởi hành' : 'Loại phòng'}<select name="selected" required value={selected} onChange={e => setSelected(e.target.value)}><option value="">Chọn {kind === 'tours' ? 'ngày khởi hành' : 'loại phòng'}</option>{choices.map(o => <option key={kind === 'tours' ? o.maKhoiHanh : o.maLoaiPhong} value={kind === 'tours' ? o.maKhoiHanh : o.maLoaiPhong}>{kind === 'tours' ? `${dateLabel(o.ngayKhoiHanh)} - ${money(o.giaApDung)} - còn ${o.soChoToiDa - o.soChoDaDat} chỗ` : `${o.tenLoaiPhong} - ${money(o.giaMoiDem)} / đêm`}</option>)}</select></label>
+      {kind === 'hotels' && <div className="user-form-grid"><label>Ngày nhận phòng<input name="ngayNhanPhong" type="date" required min={today()} value={checkin} onChange={e => setCheckin(e.target.value)} /></label><label>Ngày trả phòng<input name="ngayTraPhong" type="date" required min={checkin} value={checkout} onChange={e => setCheckout(e.target.value)} /></label><label>Số phòng<input name="soLuongPhong" type="number" required min={1} max={choice?.soLuongPhong || 20} value={rooms} onChange={e => setRooms(Number(e.target.value))} /></label></div>}
+      <label>Số khách<input name="soNguoi" type="number" required min={1} max={kind === 'tours' && choice ? choice.soChoToiDa - choice.soChoDaDat : 100} value={people} onChange={e => setPeople(Number(e.target.value))} /></label>
       {kind === 'hotels' && choice && <p>Tối đa {choice.sucChua} khách mỗi phòng. Phòng trống được kiểm tra lại khi gửi yêu cầu.</p>}
-      <label>Ghi chú (không bắt buộc)<textarea maxLength={500} value={note} onChange={e => setNote(e.target.value)} placeholder="Yêu cầu của bạn cho chuyến đi" /></label>
+      <label>Ghi chú (không bắt buộc)<textarea name="ghiChu" maxLength={500} value={note} onChange={e => setNote(e.target.value)} placeholder="Yêu cầu của bạn cho chuyến đi" /></label>
       {error && <p className="user-alert" role="alert">{error}</p>}
       <section className="booking-confirmation" aria-label="Kiểm tra trước khi đặt"><h3>Kiểm tra trước khi gửi</h3><p>{people} khách{kind === 'hotels' ? ` · ${rooms} phòng · ${nights} đêm` : ''}</p>{kind === 'hotels' ? <p>{dateLabel(checkin)} – {checkout ? dateLabel(checkout) : 'Chưa chọn ngày trả'}</p> : choice && <p>Khởi hành {dateLabel(choice.ngayKhoiHanh)}</p>}
         {kind === 'hotels' && <div aria-live="polite">{quote.loading ? <p>Đang kiểm tra phòng theo ngày đã chọn…</p> : quote.error ? <p role="alert">{quote.error}</p> : quote.quote ? <p>{quote.quote.available ? `Còn ${quote.quote.availableRooms} phòng cho toàn bộ kỳ nghỉ.` : quote.quote.message || 'Không đủ phòng cho lựa chọn này.'}</p> : <p>Chọn loại phòng, ngày nhận–trả và số phòng để kiểm tra.</p>}<button type="button" className="user-text-link" disabled={quote.loading || !choice || !nights} onClick={quote.reload}>Kiểm tra lại phòng</button></div>}
         <small>Tổng tiền dự kiến</small><strong className="summary-total">{kind === 'hotels' ? quote.quote?.minTotal != null ? money(quote.quote.minTotal) : 'Chờ kiểm tra lựa chọn' : choice ? money(total) : 'Chưa chọn ngày khởi hành'}</strong><p>Gửi yêu cầu chưa phải thanh toán hoặc xác nhận giữ chỗ. Giá và chỗ còn sẽ được kiểm tra lại khi gửi.</p>
-      </section><button className="user-button" disabled={busy || !ready} type="submit">{busy ? 'Đang gửi yêu cầu...' : 'Xác nhận yêu cầu đặt chỗ'}</button>
-    </form><aside className="user-panel detail-aside"><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><h3>Sau khi gửi yêu cầu</h3><p>Theo dõi trạng thái đặt chỗ và thanh toán riêng trong tài khoản của bạn.</p><p>Bạn có thể gửi yêu cầu hủy trước ngày sử dụng nếu đơn đủ điều kiện; quản trị viên sẽ xử lý yêu cầu.</p></aside></div>}
+      </section><button className="user-button" disabled={busy || quote.loading || !!quote.error || !choices.length} type="submit">{busy ? 'Đang gửi yêu cầu...' : 'Xác nhận yêu cầu đặt chỗ'}</button>
+    </ValidatedForm><aside className="user-panel detail-aside"><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><h3>Sau khi gửi yêu cầu</h3><p>Theo dõi trạng thái đặt chỗ và thanh toán riêng trong tài khoản của bạn.</p><p>Bạn có thể gửi yêu cầu hủy trước ngày sử dụng nếu đơn đủ điều kiện; quản trị viên sẽ xử lý yêu cầu.</p></aside></div></FormDialog>}
   </div></main>;
 }
