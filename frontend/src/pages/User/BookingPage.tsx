@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
 import { api, dateLabel, errorMessage, money, today } from '../../lib/api';
 import { catalogs, itemName, useResource, type CatalogItem, type Departure, type Room } from './catalog';
+import { useRoomQuote } from './useRoomQuote';
 
 export default function BookingPage({ kind }: { kind: 'tours' | 'hotels' }) {
   const { id = '' } = useParams();
@@ -34,13 +35,20 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
   const choice = choices.find(o => String(kind === 'tours' ? o.maKhoiHanh : o.maLoaiPhong) === selected);
   const nights = Math.max(0, (Date.parse(checkout) - Date.parse(checkin)) / 86400000) || 0;
   const total = choice ? kind === 'tours' ? choice.giaApDung * people : choice.giaMoiDem * rooms * nights : 0;
+  const quote = useRoomQuote(id, selected, checkin, nights, rooms, people, kind === 'hotels' && !!choice && checkin >= today());
+  const ready = !!choice && (kind === 'tours' || (!quote.loading && !quote.error && quote.quote?.available === true));
   const submit = async (e: FormEvent) => {
     e.preventDefault(); if (submitting.current) return;
     setError('');
     if (!choice) return setError('Vui lòng chọn lịch khởi hành hoặc loại phòng.');
     if (!Number.isInteger(people) || people < 1 || people > 100) return setError('Số khách phải từ 1 đến 100.');
     if (kind === 'tours' && people > choice.soChoToiDa - choice.soChoDaDat) return setError('Số khách vượt quá số chỗ còn lại.');
-    if (kind === 'hotels' && (!Number.isInteger(rooms) || rooms < 1 || rooms > choice.soLuongPhong || !nights || nights > 30 || checkin < today() || people > choice.sucChua * rooms)) return setError('Kiểm tra ngày nhận/trả phòng (tối đa 30 đêm), số phòng và sức chứa.');
+    if (kind === 'hotels') {
+      if (!nights || nights > 30 || checkin < today()) return setError('Chọn ngày nhận phòng từ hôm nay và ngày trả sau ngày nhận, tối đa 30 đêm.');
+      if (!Number.isInteger(rooms) || rooms < 1 || rooms > choice.soLuongPhong) return setError('Số phòng phải là số nguyên trong số lượng đang mở bán.');
+      if (people > choice.sucChua * rooms) return setError(`Số phòng đã chọn chỉ đủ cho ${choice.sucChua * rooms} khách. Hãy tăng số phòng hoặc giảm số khách.`);
+      if (!ready) return setError('Hãy kiểm tra lại phòng trống cho ngày đã chọn trước khi gửi yêu cầu.');
+    }
     submitting.current = true; setBusy(true);
     try {
       const body = kind === 'tours' ? { maKhoiHanh: choice.maKhoiHanh, soNguoi: people, ghiChu: note } : { maLoaiPhong: choice.maLoaiPhong, ngayNhanPhong: checkin, ngayTraPhong: checkout, soLuongPhong: rooms, soNguoi: people, ghiChu: note };
@@ -62,7 +70,10 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
       {kind === 'hotels' && choice && <p>Tối đa {choice.sucChua} khách mỗi phòng. Phòng trống được kiểm tra lại khi gửi yêu cầu.</p>}
       <label>Ghi chú (không bắt buộc)<textarea maxLength={500} value={note} onChange={e => setNote(e.target.value)} placeholder="Yêu cầu của bạn cho chuyến đi" /></label>
       {error && <p className="user-alert" role="alert">{error}</p>}
-      <button className="user-button" disabled={busy || !choice} type="submit">{busy ? 'Đang gửi yêu cầu...' : 'Xác nhận yêu cầu đặt chỗ'}</button>
-    </form><aside className="user-panel detail-aside"><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><p>{people} khách{kind === 'hotels' ? ` / ${rooms} phòng / ${nights} đêm` : ''}</p><small>Tổng tiền dự kiến</small><strong className="summary-total">{money(total)}</strong><p>Giá và tình trạng chỗ sẽ được kiểm tra lại khi gửi yêu cầu. Đơn đang chờ xác nhận, chưa thanh toán.</p></aside></div>}
+      <section className="booking-confirmation" aria-label="Kiểm tra trước khi đặt"><h3>Kiểm tra trước khi gửi</h3><p>{people} khách{kind === 'hotels' ? ` · ${rooms} phòng · ${nights} đêm` : ''}</p>{kind === 'hotels' ? <p>{dateLabel(checkin)} – {checkout ? dateLabel(checkout) : 'Chưa chọn ngày trả'}</p> : choice && <p>Khởi hành {dateLabel(choice.ngayKhoiHanh)}</p>}
+        {kind === 'hotels' && <div aria-live="polite">{quote.loading ? <p>Đang kiểm tra phòng theo ngày đã chọn…</p> : quote.error ? <p role="alert">{quote.error}</p> : quote.quote ? <p>{quote.quote.available ? `Còn ${quote.quote.availableRooms} phòng cho toàn bộ kỳ nghỉ.` : quote.quote.message || 'Không đủ phòng cho lựa chọn này.'}</p> : <p>Chọn loại phòng, ngày nhận–trả và số phòng để kiểm tra.</p>}<button type="button" className="user-text-link" disabled={quote.loading || !choice || !nights} onClick={quote.reload}>Kiểm tra lại phòng</button></div>}
+        <small>Tổng tiền dự kiến</small><strong className="summary-total">{kind === 'hotels' ? quote.quote?.minTotal != null ? money(quote.quote.minTotal) : 'Chờ kiểm tra lựa chọn' : choice ? money(total) : 'Chưa chọn ngày khởi hành'}</strong><p>Gửi yêu cầu chưa phải thanh toán hoặc xác nhận giữ chỗ. Giá và chỗ còn sẽ được kiểm tra lại khi gửi.</p>
+      </section><button className="user-button" disabled={busy || !ready} type="submit">{busy ? 'Đang gửi yêu cầu...' : 'Xác nhận yêu cầu đặt chỗ'}</button>
+    </form><aside className="user-panel detail-aside"><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><h3>Sau khi gửi yêu cầu</h3><p>Theo dõi trạng thái đặt chỗ và thanh toán riêng trong tài khoản của bạn.</p><p>Bạn có thể gửi yêu cầu hủy trước ngày sử dụng nếu đơn đủ điều kiện; quản trị viên sẽ xử lý yêu cầu.</p></aside></div>}
   </div></main>;
 }
