@@ -46,13 +46,13 @@ export function EventCostEditor({ event, estimate, onChange, date, people, label
   const nights = event.nights ?? 1;
   return <div className="event-cost-editor">
     <div className="event-hours">
-      <label>{hotel ? 'Số khách lưu trú' : event.loaiDiaDiem === 'DiaDiem' ? 'Số vé' : 'Số suất dự kiến'}<input aria-label={`Số lượng ${label}`} type="number" min={1} max={100} required value={event.quantity ?? people} onChange={e => onChange({ quantity: Number(e.target.value) })} /></label>
-      {hotel && <label>Số phòng<input aria-label={`Số phòng ${label}`} type="number" min={1} max={100} required value={event.rooms ?? 1} onChange={e => onChange({ rooms: Number(e.target.value) })} /></label>}
+      <label>{hotel ? 'Số khách lưu trú' : event.loaiDiaDiem === 'DiaDiem' ? 'Số vé' : 'Số suất dự kiến'}<input name="quantity" aria-label={`Số lượng ${label}`} type="number" min={1} max={100} required value={event.quantity ?? people} onChange={e => onChange({ quantity: Number(e.target.value) })} /></label>
+      {hotel && <label>Số phòng<input name="rooms" aria-label={`Số phòng ${label}`} type="number" min={1} max={100} required value={event.rooms ?? 1} onChange={e => onChange({ rooms: Number(e.target.value) })} /></label>}
     </div>
     {hotel && <>
       <p>Nhận phòng: <strong>{dateLabel(date)}</strong> (ngày của hoạt động). Đổi ngày bắt đầu chuyến đi hoặc chuyển hoạt động sang ngày khác để đổi ngày nhận phòng.</p>
-      <div className="event-hours"><label>Ngày trả phòng<input aria-label={`Ngày trả phòng ${label}`} type="date" required min={dayDate(date, 1)} max={dayDate(date, 30)} value={dayDate(date, nights)} onChange={e => onChange({ nights: Math.round((Date.parse(e.target.value) - Date.parse(date)) / 86400000) || 1 })} /></label>
-      <label>Loại phòng<select aria-label={`Loại phòng ${label}`} value={event.roomId || ''} onChange={e => onChange({ roomId: Number(e.target.value) || undefined })} disabled={loading}>
+      <div className="event-hours"><label>Ngày trả phòng<input name="checkout" aria-label={`Ngày trả phòng ${label}`} type="date" required min={dayDate(date, 1)} max={dayDate(date, 30)} value={dayDate(date, nights)} onChange={e => onChange({ nights: Math.round((Date.parse(e.target.value) - Date.parse(date)) / 86400000) || 1 })} /></label>
+      <label>Loại phòng<select name="roomId" required aria-label={`Loại phòng ${label}`} value={event.roomId || ''} onChange={e => onChange({ roomId: Number(e.target.value) || undefined })} disabled={loading}>
         <option value="">Chọn loại phòng</option>
         {loading && event.roomId && <option value={event.roomId}>Đang kiểm tra loại phòng đã chọn…</option>}
         {estimate?.roomOptions?.map(r => <option key={r.id} value={r.id}>{r.name} · {money(r.price)}/đêm · còn {r.available} phòng · {r.capacity} khách/phòng</option>)}
