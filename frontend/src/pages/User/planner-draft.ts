@@ -62,5 +62,5 @@ export function usePlannerDraft(key: string, revision: number | null, form: Plan
   }, [dirty]);
   const discard = () => { try { localStorage.removeItem(key); } catch { /* The editor remains usable when storage is blocked. */ } setPending(null); setMessage('Đã bỏ bản nháp.'); };
   const finish = () => { completed.current = true; try { localStorage.removeItem(key); } catch { /* Saved server data is authoritative. */ } };
-  return { pending, message, discard, finish, restored: () => setPending(null) };
+  return { pending, message, dirty, discard, finish, restored: () => setPending(null) };
 }

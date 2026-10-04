@@ -1,6 +1,6 @@
 import { FeaturedLibraryPhoto } from './Photo';
 import { useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
 import { api, dateLabel, errorMessage, money } from '../../lib/api';
 import { SavedEvents } from './ItineraryEvents';
@@ -35,7 +35,8 @@ export default function AccountPage() {
     next.delete('trip');
     setParams(next);
   };
-  const [notice, setNotice] = useState('');
+  const location = useLocation();
+  const [notice, setNotice] = useState<string>(location.state?.formNotice || '');
   const [actionError, setActionError] = useState('');
   const [responding, setResponding] = useState(false);
   const changed = (message: string) => { setNotice(message); setActionError(''); reload(); };

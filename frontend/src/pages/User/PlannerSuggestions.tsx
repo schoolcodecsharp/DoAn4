@@ -6,15 +6,15 @@ export type PlannerPlace = {
   trangThai: boolean; thoiGianThamQuan?: number;
 };
 
-export function LocationSuggestions({ label, value, options, onChange }: {
-  label: string; value: string; options: string[]; onChange: (value: string) => void;
+export function LocationSuggestions({ label, name, value, options, onChange }: {
+  label: string; name?: string; value: string; options: string[]; onChange: (value: string) => void;
 }) {
   const id = useId();
   const query = normalize(value.trim());
   const choices = options.filter(option => !query || normalize(option).includes(query)).slice(0, 6);
   return <div className="planner-location">
     <label htmlFor={id}>{label}</label>
-    <input id={id} required maxLength={200} value={value} onChange={e => onChange(e.target.value)}
+    <input name={name} id={id} required maxLength={200} value={value} onChange={e => onChange(e.target.value)}
       placeholder="Nhập tên hoặc chọn gợi ý bên dưới" autoComplete="off" aria-describedby={`${id}-hint`} />
     <small id={`${id}-hint`}>Gõ có dấu hoặc không dấu; bạn cũng có thể nhập địa điểm khác.</small>
     <div className="planner-location-options" role="group" aria-label={`Gợi ý ${label.toLowerCase()}`}>
