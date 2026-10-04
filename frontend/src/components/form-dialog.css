@@ -1,0 +1,54 @@
+.form-dialog { color: #284b41; background: #fffef8; border: 0; border-radius: 14px; padding: 0; width: min(640px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; box-shadow: 0 20px 65px #102d2945; overflow: auto; }
+.form-dialog--wide { width: min(1000px, calc(100vw - 32px)); }
+.form-dialog::backdrop { background: #102d2999; }
+.form-dialog-heading { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 28px; background: #284b41; color: #fffef8; }
+.form-dialog-heading h2 { margin: 0; font-size: 24px; line-height: 1.35; font-weight: 500; overflow-wrap: anywhere; }
+.form-dialog button { cursor: pointer; border: 0; border-radius: 8px; padding: 12px 18px; min-height: 44px; color: #fffef8; background: #284b41; font: inherit; }
+.form-dialog button.secondary { background: #e5e9da; color: #284b41; }
+.form-dialog button.danger { background: #9d3434; }
+.form-dialog button:disabled { opacity: .55; cursor: not-allowed; }
+.form-dialog .form-dialog-close { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; color: inherit; background: transparent; }
+.form-dialog-content { padding: 28px; }
+.form-dialog-content > form.admin-panel { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.form-dialog label { line-height: 1.5; }
+.form-dialog input:not([type=checkbox]):not([type=radio]), .form-dialog select, .form-dialog textarea { width: 100%; min-width: 0; box-sizing: border-box; padding: 12px; border: 1px solid #acb5a4; border-radius: 7px; color: #284b41; background: #fffef8; font: inherit; margin-top: 6px; }
+.form-dialog fieldset { min-width: 0; }
+.form-dialog-content .admin-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; padding: 0; margin: 0 0 24px; border: 0; }
+.form-dialog-content .wide { grid-column: 1 / -1; }
+.form-dialog .user-form, .form-dialog .feedback-form { display: grid; gap: 18px; }
+.form-dialog :focus-visible { outline: 2px solid #9fac7a; outline-offset: 3px; }
+.form-dialog { scrollbar-color: #667c62 #f0f0df; overscroll-behavior: contain; }
+.form-dialog input, .form-dialog textarea { caret-color: #284b41; }
+.form-dialog ::selection { color: #fffef8; background: #284b41; }
+.form-dialog button:not(:disabled):hover { filter: brightness(.92); }
+.form-dialog input::placeholder, .form-dialog textarea::placeholder { color: #63705f; opacity: 1; }
+.form-dialog .event-type-buttons button:not([aria-pressed=true]) { background: transparent; color: #284b41; border: 1px solid #677667; }
+.form-dialog .user-panel { box-shadow: none; border: 0; background: transparent; padding: 0; }
+.form-dialog .user-form label { font-size: 16px; }
+.form-dialog input, .form-dialog select, .form-dialog textarea { scroll-margin-block: 110px 24px; }
+.form-dialog .detail-aside { position: static; }
+.form-dialog .planner-ledger { align-self: start; position: sticky; top: 100px; max-height: calc(100dvh - 164px); }
+.form-dialog .planner-ledger-content { overflow: auto; }
+.form-dialog .planner-day { border: 0; border-top: 1px solid #d8dbcb; border-radius: 0; padding: 24px 0; margin-top: 32px; }
+.form-dialog .planner-day legend { font-size: 18px; }
+.form-dialog .cost-disclaimer { color: #4c6559; font-size: 14px; line-height: 1.6; }
+.form-dialog .cost-warning { color: #80351f; font-size: 16px; line-height: 1.6; }
+.form-dialog .planner-layout { grid-template-columns: minmax(0, 1fr) minmax(230px, .55fr); }
+.form-dialog .planner-editor { border: 0; padding: 0; }
+.form-dialog .user-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.form-dialog label, .form-dialog p, .form-dialog li { overflow-wrap: anywhere; }
+.form-dialog .form-dialog-close { flex-shrink: 0; }
+@media (max-width: 900px) { .form-dialog .detail-layout, .form-dialog .planner-layout { grid-template-columns: minmax(0, 1fr); } .form-dialog .planner-ledger { position: static; max-height: none; } .form-dialog .planner-ledger-content { overflow: visible; } }
+@media (max-width: 600px) { .form-dialog-heading h2 { font-size: 20px; } .form-dialog .user-form-grid, .form-dialog .event-hours { grid-template-columns: minmax(0, 1fr); } }
+.form-field-error { display: block; color: #9d3434; font-size: 14px; line-height: 1.5; margin-top: 6px; }
+.form-error-announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[aria-invalid=true] { border-color: #9d3434 !important; }
+.form-dialog .admin-error, .form-dialog .user-alert { color: #9d3434; }
+.form-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 20px; }
+.form-dialog .admin-lookup-photo img { width: 100%; height: 120px; object-fit: cover; }
+.form-dialog .admin-tabs { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 20px; }
+.form-dialog .admin-table-wrap { overflow-x: auto; }
+@media(max-width:600px) { .form-dialog-content { padding: 20px; } .form-dialog-heading { padding: 14px 20px; } .form-dialog-content .admin-form-grid { grid-template-columns: 1fr; } .form-dialog input, .form-dialog select, .form-dialog textarea { font-size: 16px !important; } }
+.form-image-preview { width: 100%; max-height: 240px; object-fit: contain; }
+.admin-media-picker { display: grid; gap: 12px; }
+.admin-media-picker select { min-height: 44px; max-width: 100%; }
