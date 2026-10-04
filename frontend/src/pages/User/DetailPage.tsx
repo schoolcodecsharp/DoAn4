@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
 import { dateLabel, money, today } from '../../lib/api';
 import { catalogs, itemLocation, itemName, useResource, type CatalogItem, type Departure, type Kind, type Room } from './catalog';
@@ -19,16 +19,20 @@ function Rooms({ id }: { id: string }) {
 }
 export default function DetailPage({ kind }: { kind: Kind }) {
   const { id = '' } = useParams();
+  const location = useLocation();
+  const from = location.state?.catalogUrl;
+  const catalogUrl = typeof from === 'string' && (from === `/${kind}` || from.startsWith(`/${kind}?`)) ? from : `/${kind}`;
   const { user } = useSession();
   const { data, loading, error, reload } = useResource<CatalogItem>(`/${catalogs[kind].endpoint}/${id}`);
   return <main className="user-page"><div className="user-container">
-    <Link className="user-text-link" to={`/${kind}`}>Trở lại {catalogs[kind].title.toLowerCase()}</Link>
+    <Link className="user-text-link" to={catalogUrl}>Trở lại {catalogs[kind].title.toLowerCase()}</Link>
     {loading && <div className="user-empty" role="status">Đang tải thông tin...</div>}
     {error && <div className="user-empty" role="alert"><p>{error}</p><button className="user-button" onClick={reload}>Thử lại</button></div>}
     {data && <><div className="detail-heading"><p className="user-kicker">{itemLocation(data)}</p><h1>{itemName(data)}</h1><p>{data.diaChi || (data.diemKhoiHanh ? `Khởi hành từ ${data.diemKhoiHanh}` : 'Khám phá Việt Nam cùng NVT Du lịch')}</p></div>
+      {kind === 'tours' && (data.trangThai === 'Active' ? <Departures id={id} /> : <p role="status">Tour hiện ngừng nhận đặt chỗ.</p>)}
       <PhotoGallery key={`${kind}/${id}`} images={data.hinhAnh || []} />
       <div className="detail-layout"><div><section className="user-panel"><h2>Thông tin giới thiệu</h2><CatalogDescription text={data.moTa} />{kind === 'tours' && <p>Thời gian: {data.soNgay} ngày, {data.soDem} đêm.</p>}{data.soDienThoai && <p>Liên hệ: {data.soDienThoai}</p>}</section>
-      {kind === 'tours' && <><TourSchedule key={id} id={id} days={data.soNgay || 1} />{data.trangThai==='Active' ? <Departures id={id} /> : <p role="status">Tour hiện ngừng nhận đặt chỗ. Lịch sử và thông tin vẫn được giữ lại.</p>}</>}{kind === 'hotels' && (data.trangThai ? <Rooms id={id} /> : <p role="status">Khách sạn hiện ngừng nhận đặt phòng.</p>)}</div>
+      {kind === 'tours' && <TourSchedule key={id} id={id} days={data.soNgay || 1} />}{kind === 'hotels' && (data.trangThai ? <Rooms id={id} /> : <p role="status">Khách sạn hiện ngừng nhận đặt phòng.</p>)}</div>
       <aside className="user-panel detail-aside"><h2>Thông tin cho chuyến đi</h2><p>{user ? 'Bạn đã đăng nhập. Chỉ có thể đặt khi dịch vụ có phòng hoặc lịch khởi hành đang mở trên hệ thống.' : 'Bạn đang xem với tư cách khách. Đăng nhập khi đặt tour, đặt phòng hoặc tạo lịch trình.'}</p>{kind === 'destinations' && <><p>{data.mienPhi ? 'Miễn phí vé vào cửa' : data.giaVe ? `Giá vé tham khảo: ${money(data.giaVe)}` : 'Giá vé: liên hệ điểm tham quan để xác nhận.'}</p><Link className="user-button" to={`/planner?destination=${encodeURIComponent(itemName(data))}`}>Lập lịch trình đến đây</Link></>}{kind === 'restaurants' && <><p>{data.giaMin && data.giaMin > 0 ? `Chi phí tham khảo: ${money(data.giaMin)}${data.giaMax && data.giaMax > 0 ? ` – ${money(data.giaMax)}` : ''}` : 'Chi phí: liên hệ nhà hàng để xác nhận.'}</p><p>Giờ mở cửa: {data.gioMoCua?.slice(0, 5) || 'Chưa cập nhật'} – {data.gioDongCua?.slice(0, 5) || 'Chưa cập nhật'}</p>{data.trangThai ? <Link className="user-button" to={`/planner?destination=${encodeURIComponent(data.tinhThanh || '')}&restaurant=${id}`}>Thêm vào lịch trình</Link> : <p>Nhà hàng hiện ngừng hoạt động trên hệ thống.</p>}<p>Thêm vào kế hoạch không phải đặt bàn. Liên hệ nhà hàng để xác nhận chỗ và giá.</p></>}<Link className="user-text-link" to="/account">Quản lý chuyến đi của tôi</Link></aside></div>
       {kind !== 'restaurants' && <Feedback key={`${kind}/${id}`} kind={kind} id={id} />}
     </>}

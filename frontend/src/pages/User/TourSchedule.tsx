@@ -23,7 +23,7 @@ export default function TourSchedule({ id, days }: { id: string; days: number })
     {error && <div className="user-panel" role="alert"><p>{error}</p><button className="user-button" onClick={reload}>Thử lại</button></div>}
     {!loading && !error && dayNumbers.map(day => {
       const stops = activities.filter(a => a.ngayThu === day);
-      return <details className="schedule-day" key={day} open>
+      return <details className="schedule-day" key={day} open={day === dayNumbers[0]}>
         <summary><span className="schedule-day-number">{String(day).padStart(2, '0')}</span><span><strong>Ngày {day}</strong><small>{stops.length ? stops.map(a => a.tenDiaDiem || labels[a.loaiDiaDiem]).join(' → ') : 'Lịch trình đang được cập nhật'}</small></span><span className="schedule-toggle" aria-hidden="true">⌄</span></summary>
         <div className="schedule-day-body">{!stops.length ? <p className="schedule-missing">Chưa có hoạt động được nhập cho ngày {day}. Vui lòng liên hệ để xác nhận lịch trình trước khi đặt tour.</p> : stops.map(activity => {
           const detailUrl = activity.loaiDiaDiem === 'DiaDiem' && activity.maDiaDiem ? `/destinations/${activity.maDiaDiem}` : activity.loaiDiaDiem === 'KhachSan' && activity.maKhachSan ? `/hotels/${activity.maKhachSan}` : activity.loaiDiaDiem === 'NhaHang' && activity.maNhaHang ? `/restaurants/${activity.maNhaHang}` : null;
