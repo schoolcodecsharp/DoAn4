@@ -1,21 +1,17 @@
 /* Shared visual language: warm paper, forest ink, generous rhythm. */
 :root { --paper: #f1efdf; --ink: #284b41; --muted: #7d887b; --line: #d8dbcb; --surface: #fffef8; --ease: cubic-bezier(.22,1,.36,1); }
 body { background: var(--paper); color: var(--ink); }
-.travel-header { height: 92px; background: #f1efdfef; color: var(--ink); border-bottom: 1px solid #284b4112; padding: 0 4vw; transition: background .4s, color .4s; }
+.travel-header { height: 92px; background: var(--ink); color: var(--surface); border-bottom: 1px solid #fffef833; padding: 0 4vw; backdrop-filter: none; }
 .travel-wordmark { color: inherit; font-size: 33px; font-weight: 400; letter-spacing: -1.8px; }
 .travel-wordmark span { border-color: currentColor; font-size: 7px; padding: 4px; letter-spacing: 1px; }
-.header-motto { font-size: 10px; letter-spacing: .3px; opacity: .65; }
+.header-motto { font-size: 10px; letter-spacing: .3px; opacity: .85; }
 .travel-header-actions { margin-left: auto; gap: 28px; }
 .travel-account { color: inherit; border: 0; padding: 8px 0; border-radius: 0; font-size: 11px; }
-.travel-menu-button { width: 42px; height: 42px; padding: 12px; border: 1px solid #8c9a7d55; border-radius: 10px; display: grid; gap: 4px; color: inherit; }
+.travel-menu-button { width: 44px; height: 44px; padding: 12px; border: 1px solid #fffef880; border-radius: 10px; display: grid; gap: 4px; color: inherit; }
 .travel-menu-button span { display: block; height: 1px; width: 100%; background: currentColor; transform-origin: left; transition: transform .25s; }
 .travel-menu-button:hover span:nth-child(2) { transform: scaleX(.65); }
-.travel-header.is-hero { color: white; background: linear-gradient(#102d2938,transparent); border-color: transparent; backdrop-filter: none; }
-.travel-header.is-hero .travel-menu-button { border-color: #ffffff45; }
-.travel-header.is-home-scrolled { background: #284b41; color: #fffef8; border-color: transparent; backdrop-filter: none; }
-.travel-header.is-home-scrolled .travel-menu-button { border-color: #fffef880; }
-.travel-header.is-home-scrolled .header-motto { opacity: .85; }
-.travel-header:is(.is-hero, .is-home-scrolled) :focus-visible { outline-color: #e5edcf; }
+.travel-header :focus-visible { outline-color: #e5edcf; }
+.travel-header a:hover { color: #e5edcf; }
 .immersive-navigation { position: fixed; inset: 0; z-index: 200; background: var(--paper); color: var(--ink); padding: 46px 4vw 25px; overflow-y: auto; visibility: hidden; transform: translateY(-102%); transition: transform .75s var(--ease), visibility .75s; }
 .immersive-navigation.is-open { visibility: visible; transform: translateY(0); }
 .menu-close { position: absolute; right: 4vw; top: 24px; border: 0; background: none; color: inherit; font-size: 34px; width: 44px; height: 44px; }

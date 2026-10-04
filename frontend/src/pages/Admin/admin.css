@@ -9,8 +9,8 @@
 .admin-sidebar nav small { opacity:.5; }
 .admin-sidebar-bottom { margin-top:auto; display:grid; gap:20px; }
 .admin-main { min-width:0; flex:1; overflow-y:auto; }
-.admin-topbar { padding:24px 35px; display:flex; justify-content:space-between; gap:15px; border-bottom:1px solid #dce1d4; background:#fafaf5; font-size:12px; }
-.admin-topbar b { font-size:10px; padding:5px 9px; border-radius:20px; background:#e2ead9; margin-left:10px; }
+.admin-topbar { padding:24px 35px; display:flex; justify-content:space-between; gap:15px; border-bottom:1px solid #fffef833; background:#284b41; color:#fffef8; font-size:12px; }
+.admin-topbar b { font-size:10px; padding:5px 9px; border-radius:20px; background:#e2ead9; color:#284b41; margin-left:10px; }
 .admin-content { padding:35px; max-width:1500px; margin:auto; }
 .admin-welcome { padding:20px 0 38px; }
 .admin-welcome h1 { font-size:clamp(30px,3vw,48px); font-weight:400; line-height:1.18; letter-spacing:-1.5px; margin:20px 0; }
