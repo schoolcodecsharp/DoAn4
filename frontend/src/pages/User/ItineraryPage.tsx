@@ -10,12 +10,15 @@ import type { AccountData, Trip } from './AccountPage';
 import { CostLedger } from './PlannerCosts';
 import { dayDate, useEstimates } from './planner-pricing';
 import './planner-costs.css';
+import { useSession } from '../../context/AuthContext';
+import { usePlannerDraft, type PlannerDay } from './planner-draft';
 const newDay = () => ({ key: crypto.randomUUID(), tieuDe: '', ghiChu: '', activities: [] as PlannedEvent[] });
 
 export default function ItineraryPage() {
   const [params] = useSearchParams();
+  const { user } = useSession();
   const id = params.get('edit');
-  return id ? <EditItinerary key={id} id={id} /> : <ItineraryForm key={params.toString()} />;
+  return id ? <EditItinerary key={`${user?.maNguoiDung}:${id}`} id={id} /> : <ItineraryForm key={`${user?.maNguoiDung}:${params.toString()}`} />;
 }
 
 function EditItinerary({ id }: { id: string }) {
@@ -30,8 +33,9 @@ function EditItinerary({ id }: { id: string }) {
 function ItineraryForm({ initial }: { initial?: Trip }) {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useSession();
   const [form, setForm] = useState(initial ? { tenChuyenDi: initial.tenChuyenDi, diemKhoiHanh: initial.diemKhoiHanh, diemDen: initial.diemDen, ngayBatDau: initial.ngayBatDau.slice(0, 10), soNguoi: initial.soNguoi, nganSach: initial.nganSach, moTa: initial.moTa || '' } : { tenChuyenDi: '', diemKhoiHanh: '', diemDen: params.get('destination') || '', ngayBatDau: today(), soNguoi: 1, nganSach: 0, moTa: '' });
-  const [days, setDays] = useState(() => {
+  const [days, setDays] = useState<PlannerDay[]>(() => {
     if (initial?.days.length) return initial.days.map(d => ({ key: crypto.randomUUID(), tieuDe: d.tieuDe, ghiChu: d.ghiChu || '', activities: (d.activities || []).map(a => ({ ...a, quantity: a.estimate?.quantity, roomId: a.estimate?.roomId, rooms: a.estimate?.rooms, nights: a.estimate?.nights, key: crypto.randomUUID(), ghiChu: a.ghiChu || '', thoiGianBatDau: a.thoiGianBatDau?.slice(0, 5) || '', thoiGianKetThuc: a.thoiGianKetThuc?.slice(0, 5) || '' })) }));
     const day = newDay();
     const restaurant = Number(params.get('restaurant'));
@@ -41,6 +45,7 @@ function ItineraryForm({ initial }: { initial?: Trip }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const submitting = useRef(false);
+  const draft = usePlannerDraft(`nvt:planner:v1:${user!.maNguoiDung}:${initial ? `edit-${initial.maChuyenDi}` : 'new'}`, initial?.revision ?? null, form, days);
   const catalog = useResource<PlannerPlace[]>('/diadiem');
   const restaurants = useResource<CatalogItem[]>('/nhahang');
   const hotels = useResource<CatalogItem[]>('/khachsan');
@@ -62,14 +67,18 @@ function ItineraryForm({ initial }: { initial?: Trip }) {
     try {
       const payload = { ...form, revision: initial?.revision, days: days.map(d => ({ tieuDe: d.tieuDe, ghiChu: d.ghiChu, activities: d.activities.map(a => ({ loaiDiaDiem: a.loaiDiaDiem, maDoiTuong: a.maDoiTuong, ghiChu: a.ghiChu, quantity: a.quantity, roomId: a.roomId, rooms: a.rooms, nights: a.nights, thoiGianBatDau: a.thoiGianBatDau + ':00', thoiGianKetThuc: a.thoiGianKetThuc + ':00' })) })) };
       const response = initial ? await api.put(`/account/itineraries/${initial.maChuyenDi}`, payload) : await api.post('/account/itineraries', payload);
+      draft.finish();
       navigate(`/account?tab=trips&trip=${response.data.id}`, { replace: true });
     }
     catch (err) { setError(errorMessage(err)); }
     finally { setBusy(false); submitting.current = false; }
   };
-  return <main className="user-page planner-page"><div className="user-container"><Link className="user-text-link" to={initial ? `/account/trips/${initial.maChuyenDi}` : '/account'}>{initial ? 'Trở lại lịch trình (không lưu thay đổi)' : 'Tài khoản của tôi'}</Link><div className="detail-heading"><h1>{initial ? 'Sửa lịch trình của bạn.' : 'Một chuyến đi, rõ từng ngày.'}</h1><p>Sắp xếp điểm dừng, chọn nơi nghỉ và dự tính chi phí trước khi lên đường.</p></div><form className="detail-layout planner-layout" onSubmit={submit}><div className="planner-main">
+  return <main className="user-page planner-page"><div className="user-container"><Link className="user-text-link" to={initial ? `/account/trips/${initial.maChuyenDi}` : '/account'}>{initial ? 'Trở lại lịch trình (không lưu thay đổi)' : 'Tài khoản của tôi'}</Link><div className="detail-heading"><h1>{initial ? 'Sửa lịch trình của bạn.' : 'Một chuyến đi, rõ từng ngày.'}</h1><p>Sắp xếp điểm dừng, chọn nơi nghỉ và dự tính chi phí trước khi lên đường.</p></div>
+    {draft.pending && <section className="planner-draft-notice" aria-label="Khôi phục bản nháp"><h2>Bạn có một bản nháp chưa lưu</h2><p>Lưu trên thiết bị lúc {new Date(draft.pending.savedAt).toLocaleString('vi-VN')}. Giá và phòng trống sẽ được tính lại khi khôi phục.</p><button className="user-button" type="button" onClick={() => { setForm(draft.pending!.form); setDays(draft.pending!.days); draft.restored(); }}>Khôi phục bản nháp</button> <button className="user-button secondary" type="button" onClick={draft.discard}>Bỏ bản nháp</button></section>}
+    <p className="planner-draft-status" role="status">{draft.message || 'Bản nháp tự lưu trên trình duyệt này trong 7 ngày, riêng theo tài khoản. Không đồng bộ sang thiết bị khác.'}</p>
+    <form onSubmit={submit}><fieldset className="detail-layout planner-layout planner-editor" disabled={!!draft.pending || busy}><div className="planner-main">
     <section className="user-panel user-form"><h2>Thông tin chuyến đi</h2><label>Tên chuyến đi<input required maxLength={200} value={form.tenChuyenDi} onChange={e => change('tenChuyenDi', e.target.value)} placeholder="Ví dụ: Cuối tuần khám phá Hội An" /></label><div className="user-form-grid"><LocationSuggestions label="Khởi hành từ" value={form.diemKhoiHanh} options={origins} onChange={value => change('diemKhoiHanh', value)} /><LocationSuggestions label="Điểm đến tại Việt Nam" value={form.diemDen} options={destinations} onChange={value => change('diemDen', value)} /><label>Ngày bắt đầu<input required type="date" min={today()} value={form.ngayBatDau} onChange={e => change('ngayBatDau', e.target.value)} /></label><label>Số người<input required type="number" min={1} max={100} value={form.soNguoi} onChange={e => change('soNguoi', Number(e.target.value))} /></label><label>Ngân sách dự kiến (VND)<input required type="number" min={0} max={1000000000} step={1000} value={form.nganSach} onChange={e => change('nganSach', Number(e.target.value))} /></label></div><label>Ghi chú chung<textarea maxLength={2000} value={form.moTa} onChange={e => change('moTa', e.target.value)} placeholder="Điều bạn muốn trải nghiệm trong chuyến đi" /></label></section>
     <section className="user-panel user-form"><h2>Kế hoạch từng ngày</h2>
       <p>Thêm điểm tham quan, nhà hàng hoặc khách sạn. Các hoạt động sẽ được xếp theo giờ khi lưu; tối đa 20 hoạt động mỗi ngày.</p>{days.map((day, index) => <fieldset className="planner-day" key={day.key}><legend>Ngày {index + 1} · {dateLabel(dayDate(form.ngayBatDau, index))}</legend><label>Tiêu đề<input required maxLength={200} value={day.tieuDe} onChange={e => setDays(old => old.map((d, i) => i === index ? { ...d, tieuDe: e.target.value } : d))} placeholder="Ví dụ: Dạo phố cổ và thưởng thức ẩm thực" /></label><label htmlFor={`planner-notes-${index}`}>Ghi chú cho ngày này</label><textarea id={`planner-notes-${index}`} maxLength={4000} value={day.ghiChu} onChange={e => setDays(old => old.map((d, i) => i === index ? { ...d, ghiChu: e.target.value } : d))} placeholder="Điều cần chuẩn bị, phương tiện di chuyển…" /><ItineraryEvents events={day.activities} day={index + 1} date={dayDate(form.ngayBatDau, index)} people={form.soNguoi} estimates={estimate.days?.[index]} estimating={estimate.loading} destination={form.diemDen} catalog={eventCatalog} onChange={activities => setDays(old => old.map(d => d.key === day.key ? { ...d, activities } : d))} />{days.length > 1 && <button type="button" className="user-text-link" onClick={() => { if (!day.activities.length || window.confirm('Bỏ ngày này và các hoạt động đã thêm? Ngày phía sau sẽ được dời lên.')) setDays(old => old.filter((_, i) => i !== index)); }}>Bỏ ngày này</button>}</fieldset>)}<button className="user-button secondary" type="button" disabled={days.length >= 30} onClick={() => setDays(old => [...old, newDay()])}>Thêm một ngày</button><p className="subtle">Tối đa 30 ngày cho một lịch trình.</p></section>
-    </div><aside className="user-panel detail-aside planner-ledger"><div className="planner-ledger-content" tabIndex={0} aria-label="Chi tiết dự toán có thể cuộn"><p>{form.diemDen || 'Chuyến đi của bạn'} · {days.length} ngày / {form.soNguoi} người</p>{estimate.loading ? <p role="status">Đang cập nhật dự toán…</p> : estimate.error ? <p role="alert">{estimate.error}</p> : <CostLedger days={estimate.days || []} budget={form.nganSach} people={form.soNguoi} endDate={dayDate(form.ngayBatDau, days.length - 1)} />}<button className="user-text-link" type="button" disabled={estimate.loading} onClick={estimate.reload}>Kiểm tra lại giá và phòng</button><p className="cost-disclaimer">Lưu lịch trình không đặt vé, giữ phòng hay đặt bàn. Giá và phòng trống sẽ được kiểm tra lại khi đặt dịch vụ.</p>{error && <p className="user-alert" role="alert">{error}</p>}</div><div className="planner-save-actions"><button className="user-button" type="submit" disabled={busy || estimate.loading || !!estimate.error}>{busy ? 'Đang lưu...' : 'Lưu lịch trình'}</button></div></aside></form></div></main>;
+    </div><aside className="user-panel detail-aside planner-ledger"><div className="planner-ledger-content" tabIndex={0} aria-label="Chi tiết dự toán có thể cuộn"><p>{form.diemDen || 'Chuyến đi của bạn'} · {days.length} ngày / {form.soNguoi} người</p>{estimate.loading ? <p role="status">Đang cập nhật dự toán…</p> : estimate.error ? <p role="alert">{estimate.error}</p> : <CostLedger days={estimate.days || []} budget={form.nganSach} people={form.soNguoi} endDate={dayDate(form.ngayBatDau, days.length - 1)} />}<button className="user-text-link" type="button" disabled={estimate.loading} onClick={estimate.reload}>Kiểm tra lại giá và phòng</button><p className="cost-disclaimer">Lưu lịch trình không đặt vé, giữ phòng hay đặt bàn. Giá và phòng trống sẽ được kiểm tra lại khi đặt dịch vụ.</p>{error && <p className="user-alert" role="alert">{error}</p>}</div><div className="planner-save-actions"><button className="user-button" type="submit" disabled={busy || estimate.loading || !!estimate.error}>{busy ? 'Đang lưu...' : 'Lưu lịch trình'}</button></div></aside></fieldset></form></div></main>;
 }
