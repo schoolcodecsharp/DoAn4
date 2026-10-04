@@ -11,7 +11,7 @@ public sealed class CustomerAccessFilter(INguoiDungRepository users) : IAsyncAut
 {
     private static readonly HashSet<string> PublicCatalogs = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Tour", "TourKhoiHanh", "TourChiTiet", "KhachSan", "LoaiPhong", "DiaDiem", "LoaiDiaDiem", "NhaHang", "HinhAnh", "Provinces"
+        "Tour", "TourKhoiHanh", "TourChiTiet", "KhachSan", "LoaiPhong", "DiaDiem", "LoaiDiaDiem", "NhaHang", "HinhAnh", "Provinces", "CatalogAvailability"
     };
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
