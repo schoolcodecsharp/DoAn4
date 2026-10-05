@@ -112,8 +112,8 @@ try {
       checks.push(`${width}px admin/${key}: add modal, required + API field error, value retained, success closes; ${editAvailable ? 'existing edit prefill/save' : 'no existing edit row'}`);
     }
     // Images: prefilled edit; partial upload failure retains only unfinished files for retry.
-    await page.goto('/admin/hotels'); await expect(page.locator('.admin-count')).toBeVisible();
-    await page.locator('.admin-media-picker select').selectOption(String(hotelId));
+    await page.goto('/admin/hotels?id=' + hotelId); await expect(page.locator('.admin-count')).toBeVisible();
+    await page.getByRole('button', { name: /^Quản lý bộ ảnh của / }).click();
     await expect(top(page).getByRole('button', { name: 'Thêm ảnh', exact: true })).toBeVisible();
     const imageEdit = top(page).getByRole('button', { name: 'Chỉnh sửa ảnh', exact: true }).first();
     if (await imageEdit.count()) {
@@ -122,7 +122,7 @@ try {
       reply = { status: 400, json: { errors: { MoTa: ['Sửa mô tả ảnh.'] } } };
       await d.getByRole('button', { name: 'Lưu thay đổi', exact: true }).click(); await expect(d.locator('[name=moTa]')).toHaveAttribute('aria-invalid', 'true');
       reply = { status: 200, json: {} }; await d.getByRole('button', { name: 'Lưu thay đổi', exact: true }).click();
-      await expect(page.locator('dialog[open]')).toHaveCount(1); await expect(top(page).getByRole('status')).toContainText('Đã cập nhật');
+      await expect(page.locator('dialog[open]')).toHaveCount(1); await expect(top(page).getByRole('status').filter({ hasText: 'Đã cập nhật' })).toBeVisible();
     }
     await top(page).getByRole('button', { name: 'Thêm ảnh', exact: true }).click();
     await top(page).getByRole('button', { name: 'Tải ảnh lên', exact: true }).click(); await expect(top(page).locator('[name=files]')).toHaveAttribute('aria-invalid', 'true');
