@@ -16,11 +16,12 @@ import { usePlannerDraft, type PlannerDay } from './planner-draft';
 import FormDialog from '../../components/FormDialog';
 import ValidatedForm from '../../components/ValidatedForm';
 import { reportFormError } from '../../components/form-validation';
+import './planner-typography.css';
 const newDay = () => ({ key: crypto.randomUUID(), tieuDe: '', ghiChu: '', activities: [] as PlannedEvent[] });
 
 function DayForm({ day, onSave, onClose }: { day: PlannerDay; onSave: (day: PlannerDay) => void; onClose: () => void }) {
   const [values, setValues] = useState({ ...day });
-  return <FormDialog title={day.tieuDe ? 'Chỉnh sửa thông tin ngày' : 'Thêm ngày vào lịch trình'} onClose={onClose}><ValidatedForm className="user-form" onSubmit={e => { e.preventDefault(); onSave(values); }}><label>Tiêu đề ngày<input name="tieuDe" required maxLength={200} value={values.tieuDe} onChange={e => setValues(v => ({ ...v, tieuDe: e.target.value }))} placeholder="Ví dụ: Dạo phố cổ và thưởng thức ẩm thực" /></label><label>Ghi chú cho ngày này<textarea name="ghiChu" maxLength={4000} value={values.ghiChu} onChange={e => setValues(v => ({ ...v, ghiChu: e.target.value }))} /></label><button className="user-button">Lưu ngày vào bản nháp</button></ValidatedForm></FormDialog>;
+  return <FormDialog className="planner-dialog" title={day.tieuDe ? 'Chỉnh sửa thông tin ngày' : 'Thêm ngày vào lịch trình'} onClose={onClose}><ValidatedForm className="user-form" onSubmit={e => { e.preventDefault(); onSave(values); }}><label>Tiêu đề ngày<input name="tieuDe" required maxLength={200} value={values.tieuDe} onChange={e => setValues(v => ({ ...v, tieuDe: e.target.value }))} placeholder="Ví dụ: Dạo phố cổ và thưởng thức ẩm thực" /></label><label>Ghi chú cho ngày này<textarea name="ghiChu" maxLength={4000} value={values.ghiChu} onChange={e => setValues(v => ({ ...v, ghiChu: e.target.value }))} /></label><button className="user-button">Lưu ngày vào bản nháp</button></ValidatedForm></FormDialog>;
 }
 
 export default function ItineraryPage() {
@@ -86,7 +87,7 @@ function ItineraryForm({ initial }: { initial?: Trip }) {
     finally { setBusy(false); submitting.current = false; }
   };
   return <main className="user-page planner-page"><div className="user-container"><Link className="user-text-link" to={initial ? `/account/trips/${initial.maChuyenDi}` : '/account'}>{initial ? 'Trở lại lịch trình (không lưu thay đổi)' : 'Tài khoản của tôi'}</Link><div className="detail-heading"><h1>{initial ? 'Sửa lịch trình của bạn.' : 'Một chuyến đi, rõ từng ngày.'}</h1><p>Sắp xếp điểm dừng, chọn nơi nghỉ và dự tính chi phí trước khi lên đường.</p></div>
-    <FormDialog wide unsaved={draft.dirty} title={initial ? 'Chỉnh sửa lịch trình' : 'Tạo lịch trình mới'} busy={busy} onClose={() => navigate(initial ? `/account/trips/${initial.maChuyenDi}` : '/account?tab=trips')}>
+    <FormDialog className="planner-dialog" wide unsaved={draft.dirty} title={initial ? 'Chỉnh sửa lịch trình' : 'Tạo lịch trình mới'} busy={busy} onClose={() => navigate(initial ? `/account/trips/${initial.maChuyenDi}` : '/account?tab=trips')}>
     {draft.pending && <section className="planner-draft-notice" aria-label="Khôi phục bản nháp"><h2>Bạn có một bản nháp chưa lưu</h2><p>Lưu trên thiết bị lúc {new Date(draft.pending.savedAt).toLocaleString('vi-VN')}. Giá và phòng trống sẽ được tính lại khi khôi phục.</p><button className="user-button" type="button" onClick={() => { setForm(draft.pending!.form); setDays(draft.pending!.days); draft.restored(); }}>Khôi phục bản nháp</button> <button className="user-button secondary" type="button" onClick={draft.discard}>Bỏ bản nháp</button></section>}
     <p className="planner-draft-status" role="status">{draft.message || 'Bản nháp tự lưu trên trình duyệt này trong 7 ngày, riêng theo tài khoản. Không đồng bộ sang thiết bị khác.'}</p>
     <ValidatedForm formRef={editor} onSubmit={submit}><fieldset className="detail-layout planner-layout planner-editor" disabled={!!draft.pending || busy}><div className="planner-main">

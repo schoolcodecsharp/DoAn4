@@ -1,0 +1,36 @@
+/* The portaled planner dialogs share one compact type scale, independent of .user-page. */
+.form-dialog.planner-dialog {
+  --planner-body-size: .9375rem;
+  --planner-section-size: 1rem;
+  --planner-emphasis: 500;
+  font-family: inherit;
+  font-size: var(--planner-body-size);
+  font-weight: 400;
+  line-height: 1.6;
+}
+.form-dialog.planner-dialog :is(h2,h3,h4,h5) {
+  font-family: inherit;
+  font-size: var(--planner-section-size);
+  font-weight: var(--planner-emphasis);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.form-dialog.planner-dialog .form-dialog-heading h2 { font-size: 1.25rem; }
+.form-dialog.planner-dialog :is(strong,b) { font-weight: var(--planner-emphasis); }
+.form-dialog.planner-dialog .user-form label { font-size: var(--planner-body-size); color: #284b41; }
+.form-dialog.planner-dialog :is(.cost-ledger h2,.cost-grand-total) {
+  font-family: inherit;
+  font-size: var(--planner-body-size);
+  font-weight: var(--planner-emphasis);
+  line-height: 1.6;
+}
+.form-dialog.planner-dialog .event-cost strong { font-size: var(--planner-section-size); }
+.form-dialog.planner-dialog .planner-day legend { font-size: var(--planner-section-size); font-weight: var(--planner-emphasis); }
+.form-dialog.planner-dialog :is(.cost-warning,.planner-draft-status) { font-size: var(--planner-body-size); }
+.form-dialog.planner-dialog :is(.cost-disclaimer,.planner-location > small) { font-size: .875rem; line-height: 1.6; }
+.form-dialog.planner-dialog .cost-grand-total { margin-block: .5rem; }
+.form-dialog.planner-dialog .cost-ledger :is(dt,dd,.cost-budget strong) { font-variant-numeric: tabular-nums; }
+@media(max-width:600px) {
+  /* Preserve 16px mobile inputs to avoid automatic browser zoom. */
+  .form-dialog.planner-dialog :is(input,select,textarea) { font-size: 1rem; }
+}
