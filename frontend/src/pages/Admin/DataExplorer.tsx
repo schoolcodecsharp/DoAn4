@@ -6,6 +6,7 @@ import { LibraryPhoto, FeaturedLibraryPhoto } from '../User/Photo';
 import { dataSections, tableCoverage } from './dataRegistry';
 import { Pager } from './Operations';
 import ImageManager from './ImageManager';
+import FormDialog from '../../components/FormDialog';
 import type { Row } from './schema';
 
 const labels: Record<string,string> = {Planning:'Đang lập kế hoạch',Draft:'Bản nháp',Ongoing:'Đang đi',Completed:'Hoàn thành',Cancelled:'Đã hủy',Pending:'Chờ phản hồi',Accepted:'Đã tham gia',Rejected:'Đã từ chối',Owner:'Chủ chuyến đi',Member:'Thành viên',DiaDiem:'Điểm tham quan',NhaHang:'Nhà hàng',KhachSan:'Khách sạn',Tour:'Tour',LoaiPhong:'Loại phòng'};
@@ -33,6 +34,7 @@ export default function DataExplorer({section}:{section:string}) {
   const [params,setParams]=useSearchParams();
   const [query,setQuery]=useState(''),[page,setPage]=useState(1),[selected,setSelected]=useState<Row|null>(null);
   const [busy,setBusy]=useState(false),[notice,setNotice]=useState('');
+  const [detailError,setDetailError]=useState('');
   const [album,setAlbum]=useState<{type:string;id:number}|null>(null);
   const idFilter=params.get('id'),trip=params.get('trip'),day=params.get('day');
   const rows=(data||[]).filter(r=>(!idFilter||String(r[config.id])===idFilter)&&(!trip||String(r.maChuyenDi)===trip)&&(!day||String(r.maLichTrinh)===day)&&normalize(config.fields.map(([key])=>String(r[key]??'')).join(' ')).includes(normalize(query)));
@@ -40,19 +42,24 @@ export default function DataExplorer({section}:{section:string}) {
   async function moderate(row:Row) {
     const label=section==='comments'?'bình luận':'đánh giá';
     if(!window.confirm(`${row.trangThai?'Ẩn':'Hiện lại'} ${label} #${row[config.id]}? Nội dung của khách được giữ nguyên.`))return;
-    setBusy(true);setNotice('');
-    try {await api.put(`/${config.endpoint}/${row[config.id]}`,{trangThai:!row.trangThai});setSelected(null);setNotice(`Đã cập nhật trạng thái ${label}.`);reload();}catch(e){setNotice(errorMessage(e));}finally{setBusy(false);}
+    if(busy)return;
+    setBusy(true);setNotice('');setDetailError('');
+    try {await api.put(`/${config.endpoint}/${row[config.id]}`,{trangThai:!row.trangThai});setSelected(null);setNotice(`Đã cập nhật trạng thái ${label}.`);reload();}catch(e){setDetailError(errorMessage(e));}finally{setBusy(false);}
   }
+  function closeDetails() {setSelected(null);setAlbum(null);setDetailError('');}
+  function openDetails(row:Row) {setSelected(row);setAlbum(null);setDetailError('');}
   function cell(key:string,value:unknown) {
     return refRoutes[key]&&value ? <Link to={`/admin/${refRoutes[key]}?id=${value}`}>#{String(value)}</Link> : valueOf(key,value);
   }
-  return <><section className="admin-panel"><div className="admin-section-title"><h1>{config.title}</h1><button className="secondary" onClick={reload}>Làm mới</button></div><p>{config.description}</p><label className="admin-search">Tìm trong dữ liệu<input value={query} onChange={e=>{setQuery(e.target.value);setPage(1);}}/></label>{(idFilter||trip||day)&&<p>Đang lọc theo liên kết. <button className="secondary" onClick={()=>{setParams({});setSelected(null);}}>Xem tất cả</button></p>}{notice&&<p role="status" className="admin-notice">{notice}</p>}{loading&&<p role="status">Đang tải dữ liệu…</p>}{error&&<p role="alert">{error} <button onClick={reload}>Thử lại</button></p>}{!loading&&!error&&<><p>{rows.length} bản ghi</p><div className="admin-table-wrap" role="region" tabIndex={0} aria-label="Bảng dữ liệu, cuộn ngang để xem thêm"><table><thead><tr><th>Mã</th>{config.fields.slice(0,4).map(([key,label])=><th key={key}>{label}</th>)}<th>Chi tiết</th></tr></thead><tbody>{rows.slice((current-1)*10,current*10).map(row=><tr key={String(row[config.id])}><td>#{String(row[config.id])}</td>{config.fields.slice(0,4).map(([key])=><td key={key}>{cell(key,row[key])}</td>)}<td><button className="secondary" onClick={()=>{setSelected(row);setAlbum(null);}}>Xem chi tiết #{String(row[config.id])}</button></td></tr>)}</tbody></table></div>{!rows.length&&<p>Chưa có bản ghi phù hợp. Thử bỏ bộ lọc hoặc tìm kiếm khác.</p>}<Pager current={current} pages={pages} change={setPage}/></>}</section>
-    {selected&&<section className="admin-panel" aria-label="Chi tiết bản ghi"><div className="admin-section-title"><h2>Chi tiết #{String(selected[config.id])}</h2><button className="secondary" onClick={()=>{setSelected(null);setAlbum(null);}}>Đóng chi tiết</button></div><dl className="admin-record-detail">{config.fields.filter(([key])=>selected[key]!==null&&selected[key]!==undefined).map(([key,label])=><div key={key}><dt>{label}</dt><dd>{cell(key,selected[key])}</dd></div>)}</dl>
+  return <><section className="admin-panel"><div className="admin-section-title"><h1>{config.title}</h1><button className="secondary" onClick={reload}>Làm mới</button></div><p>{config.description}</p><label className="admin-search">Tìm trong dữ liệu<input value={query} onChange={e=>{setQuery(e.target.value);setPage(1);}}/></label>{(idFilter||trip||day)&&<p>Đang lọc theo liên kết. <button className="secondary" onClick={()=>{setParams({});closeDetails();}}>Xem tất cả</button></p>}{notice&&<p role="status" className="admin-notice">{notice}</p>}{loading&&<p role="status">Đang tải dữ liệu…</p>}{error&&<p role="alert">{error} <button onClick={reload}>Thử lại</button></p>}{!loading&&!error&&<><p>{rows.length} bản ghi</p><div className="admin-table-wrap" role="region" tabIndex={0} aria-label="Bảng dữ liệu, cuộn ngang để xem thêm"><table><thead><tr><th>Mã</th>{config.fields.slice(0,4).map(([key,label])=><th key={key}>{label}</th>)}<th>Chi tiết</th></tr></thead><tbody>{rows.slice((current-1)*10,current*10).map(row=><tr key={String(row[config.id])}><td>#{String(row[config.id])}</td>{config.fields.slice(0,4).map(([key])=><td key={key}>{cell(key,row[key])}</td>)}<td><button className="secondary" onClick={()=>openDetails(row)}>Xem chi tiết #{String(row[config.id])}</button></td></tr>)}</tbody></table></div>{!rows.length&&<p>Chưa có bản ghi phù hợp. Thử bỏ bộ lọc hoặc tìm kiếm khác.</p>}<Pager current={current} pages={pages} change={setPage}/></>}</section>
+    {selected&&<FormDialog title={`${config.title} — Chi tiết #${String(selected[config.id])}`} wide busy={busy} onClose={closeDetails}><section className="admin-detail-dialog" aria-label="Chi tiết bản ghi"><dl className="admin-record-detail">{config.fields.filter(([key])=>selected[key]!==null&&selected[key]!==undefined).map(([key,label])=><div key={key}><dt>{label}</dt><dd>{cell(key,selected[key])}</dd></div>)}</dl>
       {section==='trips'&&<nav className="admin-related" aria-label="Dữ liệu chuyến đi"><Link to={`/admin/days?trip=${selected.maChuyenDi}`}>Xem từng ngày</Link><Link to={`/admin/members?trip=${selected.maChuyenDi}`}>Thành viên</Link><Link to={`/admin/expenses?trip=${selected.maChuyenDi}`}>Các khoản chi</Link></nav>}
       {section==='days'&&<Link to={`/admin/events?day=${selected.maLichTrinh}`}>Xem hoạt động trong ngày</Link>}
       {section==='reviews'&&<button disabled={busy} onClick={()=>moderate(selected)}>{selected.trangThai?'Ẩn đánh giá':'Hiện đánh giá'}</button>}
       {section==='comments'&&<button disabled={busy} onClick={()=>moderate(selected)}>{selected.trangThai?'Ẩn bình luận':'Hiện bình luận'}</button>}
       {section==='events'&&<FeaturedLibraryPhoto ownerId={Number(selected.maDiaDiem||selected.maNhaHang||selected.maKhachSan)} type={String(selected.loaiDiaDiem)}/>}
       {section==='images'&&<><LibraryPhoto photo={selected as unknown as TravelImage} className="admin-library-preview"/><button onClick={()=>setAlbum({type:String(selected.loaiDoiTuong),id:Number(selected.maDoiTuong)})}>Quản lý bộ ảnh dịch vụ này</button></>}
-    </section>}{album&&<ImageManager key={`${album.type}/${album.id}`} owner={album.type} id={album.id}/>}</>;
+      {detailError&&<p className="admin-error" role="alert">{detailError}</p>}
+      <div className="form-dialog-actions"><button type="button" className="secondary" disabled={busy} onClick={closeDetails}>Đóng chi tiết</button></div>
+    </section></FormDialog>}{album&&<FormDialog title={`Bộ ảnh ${labels[album.type]||album.type} #${album.id}`} wide onClose={()=>setAlbum(null)}><ImageManager key={`${album.type}/${album.id}`} owner={album.type} id={album.id}/></FormDialog>}</>;
 }

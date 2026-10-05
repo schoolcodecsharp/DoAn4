@@ -5,7 +5,12 @@
 .admin-record-detail dt { font-size:14px; color:#4a6457; margin-bottom:6px; }
 .admin-record-detail dd { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
 .admin-related { display:flex; gap:24px; flex-wrap:wrap; margin-block:24px; }
-.admin-panel a { text-decoration:underline; text-underline-offset:4px; }
+.admin-panel a,.admin-detail-dialog a { text-decoration:underline; text-underline-offset:4px; }
+.admin-detail-dialog .admin-record-detail { margin-top:0; }
+.admin-detail-dialog .admin-record-detail dd { line-height:1.6; }
+.admin-detail-dialog .admin-error { max-width:70ch; }
+.admin-actions .admin-media-action { min-height:44px; }
+.form-dialog-content > .admin-panel { padding:0; background:transparent; border:0; box-shadow:none; }
 .admin-library-preview { max-width:500px; }
 .admin-library-preview img { width:100%; max-height:320px; object-fit:cover; }
 .admin-panel h1 { font-size:clamp(25px,3vw,36px); letter-spacing:-.025em; font-weight:500; margin:0; }
