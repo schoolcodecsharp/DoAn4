@@ -43,11 +43,19 @@ body { background: var(--paper); color: var(--ink); }
 .immersive-bottom-actions a:hover,.immersive-bottom-actions button:hover { text-decoration:underline; }
 .immersive-bottom-actions :focus-visible { outline:2px solid var(--ink); outline-offset:4px; border-radius:2px; }
 @media(max-width:600px) { .immersive-bottom { align-items:flex-start; gap:12px; } .immersive-bottom-actions { width:100%; justify-content:space-between; gap:8px 16px; } }
-.route-curtain { position: fixed; inset: 0; z-index: 180; background: #2d5a4d; color: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; pointer-events: none; animation: curtain-pass 1.6s var(--ease) both; }
-.route-curtain span { font-size: 40px; letter-spacing: -2px; }
-.route-curtain small { font-size: 10px; letter-spacing: 2px; }
-.route-curtain i { font-size: 11px; font-style: normal; letter-spacing: 1px; }
-@keyframes curtain-pass { 0% { transform: translateY(0); } 25% { transform: translateY(0); } 100% { transform: translateY(-102%); } }
+.route-curtain { position:fixed; inset:0; z-index:180; overflow:hidden; padding:24px; background:var(--ink); color:var(--surface); display:grid; place-items:center; pointer-events:none; animation:curtain-pass 1.6s var(--ease) both; }
+.route-curtain-brand { max-width:100%; text-align:center; }
+.route-curtain-wordmark { display:flex; align-items:center; justify-content:center; gap:clamp(14px,2.5vw,36px); }
+.route-curtain-logo { display:inline-flex; font-size:clamp(96px,16vw,224px); font-weight:300; line-height:1.08; letter-spacing:-.035em; }
+.route-curtain-letter { display:block; overflow:hidden; }
+.route-curtain-letter > span { display:block; animation:curtain-letter .5s var(--ease) both; }
+.route-curtain-letter:nth-child(2) > span { animation-delay:.07s; }
+.route-curtain-letter:nth-child(3) > span { animation-delay:.14s; }
+.route-curtain-badge { flex-shrink:0; border:1px solid currentColor; padding:8px 10px; font-size:clamp(11px,1.1vw,15px); font-weight:500; line-height:1.3; letter-spacing:.08em; animation:curtain-caption .35s var(--ease) .2s both; }
+.route-curtain-motto { margin:22px 0 0; font-size:clamp(17px,1.6vw,24px); font-weight:400; line-height:1.5; text-wrap:balance; animation:curtain-caption .35s var(--ease) .24s both; }
+@keyframes curtain-letter { from { transform:translateY(105%); } to { transform:translateY(0); } }
+@keyframes curtain-caption { from { opacity:0; clip-path:inset(0 0 100%); } to { opacity:1; clip-path:inset(0); } }
+@keyframes curtain-pass { 0%,42% { transform:translateY(0); } 100% { transform:translateY(-102%); } }
 /* Homepage styling is owned by pages/Home/home.css. */
 .user-page { background: var(--paper); padding-top: 145px; }
 .user-page h1 { font-weight: 300; font-size: clamp(36px,4.4vw,62px); letter-spacing: -.05em; }

@@ -11,5 +11,13 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   if (location.pathname.startsWith('/admin')) return <>{children}</>;
   // Query-string filters update the current page in place; only a new page
   // restarts the curtain and resets scroll position.
-  return <><div key={location.pathname} className="route-curtain" aria-hidden="true"><span>NVT <small>DU LỊCH</small></span><i>Mỗi hành trình, một câu chuyện.</i></div><div className="route-content">{children}</div></>;
+  return <><div key={location.pathname} className="route-curtain" aria-hidden="true">
+    <div className="route-curtain-brand">
+      <div className="route-curtain-wordmark">
+        <span className="route-curtain-logo">{'NVT'.split('').map(letter => <span className="route-curtain-letter" key={letter}><span>{letter}</span></span>)}</span>
+        <small className="route-curtain-badge">DU LỊCH</small>
+      </div>
+      <p className="route-curtain-motto">Mỗi hành trình, một câu chuyện.</p>
+    </div>
+  </div><div className="route-content">{children}</div></>;
 }
