@@ -1,3 +1,4 @@
+import SiteFooter from '../../components/SiteFooter';
 import { useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { catalogPrice, matchesBudget } from './catalog-price';
@@ -71,6 +72,5 @@ export default function CatalogPage({ kind }: { kind: Kind }) {
       </article>;
     })}</div>
     {!loading && !error && filtered.length>0 && <nav className="catalog-pagination" aria-label="Phân trang kết quả"><button className="user-button secondary" disabled={page<=1} onClick={()=>update('page',String(page-1))}>Trang trước</button><span aria-live="polite">Trang {page} / {pages}</span><button className="user-button secondary" disabled={page>=pages} onClick={()=>update('page',String(page+1))}>Trang sau</button></nav>}
-    <footer className="user-footer">NVT DU LỊCH <span>Những hành trình trên dải đất Việt Nam.</span></footer>
-  </div></main>;
+  </div><SiteFooter /></main>;
 }

@@ -1,3 +1,4 @@
+import SiteFooter from '../../components/SiteFooter';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
 import { dateLabel, money, today } from '../../lib/api';
@@ -36,5 +37,5 @@ export default function DetailPage({ kind }: { kind: Kind }) {
       <aside className="user-panel detail-aside"><h2>Thông tin cho chuyến đi</h2><p>{user ? 'Bạn đã đăng nhập. Chỉ có thể đặt khi dịch vụ có phòng hoặc lịch khởi hành đang mở trên hệ thống.' : 'Bạn đang xem với tư cách khách. Đăng nhập khi đặt tour, đặt phòng hoặc tạo lịch trình.'}</p>{kind === 'destinations' && <><p>{data.mienPhi ? 'Miễn phí vé vào cửa' : data.giaVe ? `Giá vé tham khảo: ${money(data.giaVe)}` : 'Giá vé: liên hệ điểm tham quan để xác nhận.'}</p><Link className="user-button" to={`/planner?destination=${encodeURIComponent(itemName(data))}`}>Lập lịch trình đến đây</Link></>}{kind === 'restaurants' && <><p>{data.giaMin && data.giaMin > 0 ? `Chi phí tham khảo: ${money(data.giaMin)}${data.giaMax && data.giaMax > 0 ? ` – ${money(data.giaMax)}` : ''}` : 'Chi phí: liên hệ nhà hàng để xác nhận.'}</p><p>Giờ mở cửa: {data.gioMoCua?.slice(0, 5) || 'Chưa cập nhật'} – {data.gioDongCua?.slice(0, 5) || 'Chưa cập nhật'}</p>{data.trangThai ? <Link className="user-button" to={`/planner?destination=${encodeURIComponent(data.tinhThanh || '')}&restaurant=${id}`}>Thêm vào lịch trình</Link> : <p>Nhà hàng hiện ngừng hoạt động trên hệ thống.</p>}<p>Thêm vào kế hoạch không phải đặt bàn. Liên hệ nhà hàng để xác nhận chỗ và giá.</p></>}<Link className="user-text-link" to="/account">Quản lý chuyến đi của tôi</Link></aside></div>
       {kind !== 'restaurants' && <Feedback key={`${kind}/${id}`} kind={kind} id={id} />}
     </>}
-  </div></main>;
+  </div><SiteFooter /></main>;
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useSession } from '../../context/AuthContext';
+import SiteFooter from '../../components/SiteFooter';
 import { homeDiscoveries, homePlaces } from './homeContent';
 import './home.css';
 
@@ -16,7 +16,6 @@ function HomePhoto({ place }: { place: Pick<typeof homePlaces[number], 'image' |
 }
 
 const HomePage: React.FC = () => {
-  const { user } = useSession();
   const [activeSlide, setActiveSlide] = useState(0);
   const [paused, setPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [focusWithin, setFocusWithin] = useState(false);
@@ -163,14 +162,7 @@ const HomePage: React.FC = () => {
         </Link>)}</div>
     </section>
     <section className="booking-cta"><div><h2>Đã có nơi muốn đến?</h2><p className="booking-cta__copy">Xem lịch trình và chọn tour phù hợp với thời gian của bạn.</p></div><Link className="booking-button booking-button--dark" to="/tours">Khám phá tour <Arrow /></Link></section>
-    <footer className="booking-footer" aria-label="Thông tin và điều hướng NVT">
-      <div className="booking-footer__main">
-        <div className="booking-footer__identity"><b>NVT<span>DU LỊCH</span></b><p>Đi để nhìn thấy nhiều hơn.</p><span>Mỗi hành trình, một câu chuyện.</span></div>
-        <nav aria-label="Khám phá cùng NVT"><h2>Khám phá</h2><Link to="/destinations">Điểm đến</Link><Link to="/tours">Tour du lịch</Link><Link to="/hotels">Nơi lưu trú</Link><Link to="/restaurants">Nhà hàng</Link></nav>
-        <nav aria-label="Hành trình của bạn"><h2>Hành trình của bạn</h2><Link to="/planner">Lập lịch trình <Arrow /></Link><Link to={user ? '/account' : '/login'}>{user ? 'Tài khoản của tôi' : 'Đăng nhập'} <Arrow /></Link></nav>
-      </div>
-      <div className="booking-footer__bottom"><span>NVT Du lịch</span><Link to="/image-credits">Nguồn ảnh & ghi công</Link><button onClick={backToTop}>Về đầu trang <Arrow direction="up" /></button></div>
-    </footer>
+    <SiteFooter onBackToTop={backToTop} />
   </main>;
 };
 

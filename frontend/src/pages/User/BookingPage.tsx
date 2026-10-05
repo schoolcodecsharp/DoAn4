@@ -1,3 +1,4 @@
+import SiteFooter from '../../components/SiteFooter';
 import { useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSession } from '../../context/AuthContext';
@@ -71,7 +72,7 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
     } catch (err) { setError(errorMessage(err)); reportFormError(editor.current, err, { selected: ['maKhoiHanh', 'maLoaiPhong', 'loại phòng', 'lịch khởi hành'], soNguoi: ['số khách', 'số người', 'sức chứa'], soLuongPhong: ['số phòng', 'phòng trống'], ngayNhanPhong: ['ngày nhận'], ngayTraPhong: ['ngày trả'], ghiChu: ['ghi chú'] }); }
     finally { submitting.current = false; setBusy(false); }
   };
-  if (success) return <main className="user-page"><section className="user-container booking-success user-panel"><h1 role="status">Yêu cầu đặt chỗ đã được lưu thành công.</h1><p>Đơn {kind === 'tours' ? 'tour' : 'phòng'} số <strong>{success.id}</strong> đang chờ xác nhận.</p><p>Tổng tiền: <strong>{money(success.total)}</strong>. Bạn chưa bị trừ tiền; đây chưa phải xác nhận thanh toán.</p><Link className="user-button" to={`/account?tab=${kind}`}>Xem đơn đặt của tôi</Link></section></main>;
+  if (success) return <main className="user-page"><section className="user-container booking-success user-panel"><h1 role="status">Yêu cầu đặt chỗ đã được lưu thành công.</h1><p>Đơn {kind === 'tours' ? 'tour' : 'phòng'} số <strong>{success.id}</strong> đang chờ xác nhận.</p><p>Tổng tiền: <strong>{money(success.total)}</strong>. Bạn chưa bị trừ tiền; đây chưa phải xác nhận thanh toán.</p><Link className="user-button" to={`/account?tab=${kind}`}>Xem đơn đặt của tôi</Link></section><SiteFooter /></main>;
   return <main className="user-page"><div className="user-container"><Link className="user-text-link" to={`/${kind}/${id}`}>Trở lại thông tin chi tiết</Link><div className="detail-heading"><p className="user-kicker">ĐẶT DỊCH VỤ</p><h1>{kind === 'tours' ? 'Sẵn sàng cho chuyến đi.' : 'Chọn ngày nghỉ của bạn.'}</h1><p>{item.data && itemName(item.data)}</p></div>
     {(item.loading || options.loading) && <p role="status">Đang tải thông tin đặt chỗ...</p>}
     {(item.error || options.error) && <div className="user-empty" role="alert"><p>{item.error || options.error}</p><button className="user-button" onClick={() => { item.reload(); options.reload(); }}>Thử lại</button></div>}
@@ -89,5 +90,5 @@ function BookingForm({ kind }: { kind: 'tours' | 'hotels' }) {
         <small>Tổng tiền dự kiến</small><strong className="summary-total">{kind === 'hotels' ? quote.quote?.minTotal != null ? money(quote.quote.minTotal) : 'Chờ kiểm tra lựa chọn' : choice ? money(total) : 'Chưa chọn ngày khởi hành'}</strong><p>Gửi yêu cầu chưa phải thanh toán hoặc xác nhận giữ chỗ. Giá và chỗ còn sẽ được kiểm tra lại khi gửi.</p>
       </section><button className="user-button" disabled={busy || quote.loading || !!quote.error || !choices.length} type="submit">{busy ? 'Đang gửi yêu cầu...' : 'Xác nhận yêu cầu đặt chỗ'}</button>
     </ValidatedForm><aside className="user-panel detail-aside"><h2>{itemName(item.data)}</h2><p>Người đặt: {user?.hoTen}</p><p>{user?.email}</p><hr /><h3>Sau khi gửi yêu cầu</h3><p>Theo dõi trạng thái đặt chỗ và thanh toán riêng trong tài khoản của bạn.</p><p>Bạn có thể gửi yêu cầu hủy trước ngày sử dụng nếu đơn đủ điều kiện; quản trị viên sẽ xử lý yêu cầu.</p></aside></div></FormDialog>}
-  </div></main>;
+  </div><SiteFooter /></main>;
 }

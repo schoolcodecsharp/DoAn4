@@ -127,20 +127,6 @@
 .booking-cta__copy { margin: 20px 0 0; color: var(--home-muted); font-size: 15px; }
 .booking-home .booking-button--dark { flex-shrink: 0; background: var(--home-green); color: #fffef8; }
 .booking-home .booking-button--dark:hover { background: #183f35; }
-.booking-footer { padding: 76px var(--home-gutter) 24px; background: var(--home-green); color: #fffef8; font-size: 14px; }
-.booking-footer__main { display: grid; grid-template-columns: 1.7fr 1fr 1fr; gap: 48px; padding-bottom: 64px; max-width: 1440px; margin: auto; }
-.booking-footer__identity > b { display: inline-flex; align-items: center; gap: 20px; font-size: 96px; line-height: 1; font-weight: 300; letter-spacing: -.035em; }
-.booking-footer b span { font-size: 11px; letter-spacing: .08em; border: 1px solid currentColor; padding: 6px; }
-.booking-footer p { margin: 24px 0 8px; font-size: 20px; }
-.booking-footer__identity > span { color: #dae4d7; }
-.booking-footer nav { display: flex; flex-direction: column; align-items: start; }
-.booking-footer nav h2 { margin: 6px 0 20px; font-size: 18px; font-weight: 500; letter-spacing: 0; }
-.booking-home .booking-footer nav a { display: inline-flex; align-items: center; gap: 20px; min-height: 44px; color: #dae4d7; }
-.booking-footer :is(a, button):hover { text-decoration: underline; text-underline-offset: 6px; }
-.booking-footer__bottom { display: flex; align-items: center; gap: 36px; max-width: 1440px; margin: auto; padding-top: 20px; border-top: 1px solid #ffffff40; font-size: 13px; }
-.booking-footer__bottom > span { margin-right: auto; color: #dae4d7; }
-.booking-footer__bottom > :is(a, button) { display: inline-flex; align-items: center; min-height: 44px; }
-.booking-footer__bottom button { gap: 16px; padding: 0; border: 0; background: transparent; color: inherit; }
 .booking-home .booking-hero h1:focus-visible { outline: 2px solid #e5edcf; outline-offset: 8px; }
 
 @media (max-width: 1100px) {
@@ -151,8 +137,6 @@
   .booking-search { grid-template-columns: 1fr 1fr; gap: 24px 40px; }
   .booking-destinations { gap: 40px; }
   .home-destination--1 .home-photo { min-height: 430px; }
-  .booking-footer__main { grid-template-columns: 1.3fr 1fr 1fr; gap: 32px; }
-  .booking-footer__identity > b { font-size: 80px; gap: 12px; }
 }
 @media (max-width: 760px) {
   .booking-home { scroll-padding-top: 76px; }
@@ -190,13 +174,6 @@
   .home-destination h3 { font-size: 28px; }
   .home-destination--5 .home-photo { aspect-ratio: 4 / 3; }
   .booking-cta { flex-direction: column; align-items: start; padding-top: 64px; padding-bottom: 64px; gap: 28px; }
-  .booking-footer { padding-top: 56px; }
-  .booking-footer__main { grid-template-columns: 1fr 1fr; gap: 36px 24px; padding-bottom: 40px; }
-  .booking-footer__identity { grid-column: 1 / -1; }
-  .booking-footer nav h2 { font-size: 16px; margin-bottom: 12px; }
-  .booking-footer__bottom { flex-wrap: wrap; gap: 4px 24px; }
-  .booking-footer__bottom > span { flex-basis: 100%; }
-  .booking-footer__bottom button { margin-left: auto; }
 }
 @media (max-width: 360px) {
   .booking-home { --home-gutter: 20px; }

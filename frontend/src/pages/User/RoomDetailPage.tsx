@@ -1,3 +1,4 @@
+import SiteFooter from '../../components/SiteFooter';
 import { Link, useParams } from 'react-router-dom';
 import { money } from '../../lib/api';
 import { useResource, type CatalogItem, type Room } from './catalog';
@@ -23,5 +24,5 @@ export default function RoomDetailPage() {
       <div className="detail-layout"><section className="user-panel"><h2>Thông tin phòng</h2><CatalogDescription text={room.data.moTa} /><dl className="room-facts"><div><dt>Sức chứa</dt><dd>Tối đa {room.data.sucChua} khách / phòng</dd></div><div><dt>Giá hiện tại / đêm</dt><dd>{money(room.data.giaMoiDem)}</dd></div></dl><p className="subtle">Đây là thông tin phòng hiện tại. Ngày lưu trú, số phòng và tổng tiền của đơn đã đặt được giữ tại mục Phòng đã đặt.</p></section>
       <aside className="user-panel detail-aside"><h2>Khách sạn</h2><p>{hotel.data.tenKhachSan}</p>{hotel.data.soDienThoai && <p>Liên hệ: {hotel.data.soDienThoai}</p>}<Link className="user-text-link" to={`/hotels/${id}`}>Xem khách sạn và đánh giá</Link>{room.data.trangThai && hotel.data.trangThai && room.data.soLuongPhong > 0 ? <><p>Ngày lưu trú và khả năng nhận đặt sẽ được kiểm tra khi đặt phòng.</p><Link className="user-button" to={`/hotels/${id}/book?room=${roomId}`}>Đặt phòng này</Link></> : <p role="status">Phòng hiện ngừng nhận đặt mới. Thông tin vẫn được giữ để bạn xem lại.</p>}</aside></div>
     </>}
-  </div></main>;
+  </div><SiteFooter /></main>;
 }

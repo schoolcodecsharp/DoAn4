@@ -17,6 +17,7 @@ import './experience.css';
 import './pages/User/journey-refinements.css';
 import PageTransition from './components/PageTransition';
 import AdminPage from './pages/Admin/AdminPage';
+import SiteFooter from './components/SiteFooter';
 
 export default function App() {
   return <BrowserRouter><AuthProvider><Header /><PageTransition><Routes>
@@ -33,8 +34,8 @@ export default function App() {
     <Route path="/my-trips" element={<RequireLogin><AccountPage /></RequireLogin>} />
     <Route path="/saved" element={<Navigate to="/account" replace />} />
     <Route path="/favorites" element={<Navigate to="/account" replace />} />
-    <Route path="/login" element={<LoginPage />} />
-    <Route path="/register" element={<RegisterPage />} />
+    <Route path="/login" element={<><LoginPage /><SiteFooter /></>} />
+    <Route path="/register" element={<><RegisterPage /><SiteFooter /></>} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></PageTransition></AuthProvider></BrowserRouter>;
 }
