@@ -5,8 +5,10 @@ body { background: var(--paper); color: var(--ink); }
 .travel-wordmark { color: inherit; font-size: 33px; font-weight: 400; letter-spacing: -1.8px; }
 .travel-wordmark span { border-color: currentColor; font-size: 7px; padding: 4px; letter-spacing: 1px; }
 .header-motto { font-size: 10px; letter-spacing: .3px; opacity: .85; }
-.travel-header-actions { margin-left: auto; gap: 28px; }
-.travel-account { color: inherit; border: 0; padding: 8px 0; border-radius: 0; font-size: 11px; }
+.travel-header-actions { margin-left: auto; gap: 28px; min-width:0; }
+.travel-account { display:inline-flex; align-items:center; gap:4px; min-width:0; min-height:44px; max-width:240px; color: inherit; border: 0; padding: 8px 0; border-radius: 0; font-size: 11px; }
+.travel-account-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.travel-wordmark,.travel-menu-button,.travel-admin { flex-shrink:0; }
 .travel-menu-button { width: 44px; height: 44px; padding: 12px; border: 1px solid #fffef880; border-radius: 10px; display: grid; gap: 4px; color: inherit; }
 .travel-menu-button span { display: block; height: 1px; width: 100%; background: currentColor; transform-origin: left; transition: transform .25s; }
 .travel-menu-button:hover span:nth-child(2) { transform: scaleX(.65); }
@@ -35,8 +37,12 @@ body { background: var(--paper); color: var(--ink); }
 .immersive-gallery a > span { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(transparent,#082d2cc4); color: white; font-size: 22px; }
 .immersive-gallery small { font-size: 8px; letter-spacing: 2px; margin-bottom: 3px; }
 .immersive-gallery b { position: absolute; bottom: 20px; right: 20px; font-weight: 300; }
-.immersive-bottom { display: flex; justify-content: space-between; margin-top: 28px; font-size: 10px; color: var(--muted); }
-.immersive-bottom button { background: none; border: 0; color: inherit; }
+.immersive-bottom { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px 32px; margin-top:28px; padding-top:16px; border-top:1px solid var(--line); font-size:14px; line-height:1.5; color:#4c6559; }
+.immersive-bottom-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px 28px; }
+.immersive-bottom-actions a,.immersive-bottom-actions button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:8px 0; background:none; border:0; color:var(--ink); font:inherit; font-size:16px; font-weight:500; line-height:1.5; text-decoration:none; text-underline-offset:5px; cursor:pointer; }
+.immersive-bottom-actions a:hover,.immersive-bottom-actions button:hover { text-decoration:underline; }
+.immersive-bottom-actions :focus-visible { outline:2px solid var(--ink); outline-offset:4px; border-radius:2px; }
+@media(max-width:600px) { .immersive-bottom { align-items:flex-start; gap:12px; } .immersive-bottom-actions { width:100%; justify-content:space-between; gap:8px 16px; } }
 .route-curtain { position: fixed; inset: 0; z-index: 180; background: #2d5a4d; color: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; pointer-events: none; animation: curtain-pass 1.3s var(--ease) both; }
 .route-curtain span { font-size: 40px; letter-spacing: -2px; }
 .route-curtain small { font-size: 10px; letter-spacing: 2px; }
@@ -151,4 +157,5 @@ button:disabled { opacity:.5; cursor:not-allowed; }
 :root .travel-admin { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; border: 1px solid currentColor; border-radius: 6px; color: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; }
 .travel-admin:hover { text-decoration: underline; text-underline-offset: 4px; }
 .travel-admin:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
-@media (max-width: 600px) { .travel-header .travel-header-actions { gap: 10px; } :root .travel-admin { padding-inline: 10px; } }
+@media (max-width: 600px) { .travel-header { gap:12px; padding-inline:16px; } .travel-header .travel-header-actions { gap: 10px; } .travel-header .travel-account { padding:8px 0; max-width:140px; } :root .travel-admin { padding-inline: 10px; } }
+@media (max-width: 380px) { .travel-wordmark span { display:none; } }

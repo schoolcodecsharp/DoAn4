@@ -8,6 +8,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, logout } = useSession();
+  const accountName = user?.hoTen?.trim() || 'Tài khoản';
   const location = useLocation();
   const navigate = useNavigate();
   const toggle = useRef<HTMLButtonElement>(null);
@@ -51,12 +52,12 @@ export default function Header() {
   return <><header className={`travel-header ${location.pathname === '/' ? (scrolled ? 'is-home-scrolled' : 'is-hero') : ''}`}>
     <Link className="travel-wordmark" to="/">NVT <span>DU LỊCH</span></Link>
     <span className="header-motto">Mỗi hành trình, một câu chuyện.</span>
-    <div className="travel-header-actions">{user?.maVaiTro === 1 && <Link className="travel-admin" to="/admin">Quản trị</Link>}<Link className="travel-account" to={user ? '/account' : '/login'}>{user ? 'Tài khoản' : 'Đăng nhập'} ↗</Link><button ref={toggle} className="travel-menu-button" aria-label="Mở menu" aria-expanded={open} aria-controls="immersive-navigation" onClick={() => setOpen(true)}><span/><span/><span/></button></div>
+    <div className="travel-header-actions">{user?.maVaiTro === 1 && <Link className="travel-admin" to="/admin">Quản trị</Link>}<Link className="travel-account" to={user ? '/account' : '/login'} title={user ? accountName : undefined} aria-label={user ? `${accountName} — Mở tài khoản` : 'Đăng nhập'}><span className="travel-account-name">{user ? accountName : 'Đăng nhập'}</span><span aria-hidden="true">↗</span></Link><button ref={toggle} className="travel-menu-button" aria-label="Mở menu" aria-expanded={open} aria-controls="immersive-navigation" onClick={() => setOpen(true)}><span/><span/><span/></button></div>
   </header><div ref={menu} id="immersive-navigation" className={`immersive-navigation ${open ? 'is-open' : ''}`} role="dialog" aria-modal={open || undefined} aria-label="Menu điều hướng" inert={!open}>
     <button className="menu-close" aria-label="Đóng menu" onClick={() => { setOpen(false); toggle.current?.focus(); }}>×</button>
     <div className="immersive-top"><div className="immersive-brand"><Link to="/" onClick={() => setOpen(false)}>NVT <small>DU LỊCH</small></Link><p>Mỗi hành trình, một câu chuyện.</p><span>ĐI ĐÂU ĐÓ,<br/>ĐỂ THẤY NHIỀU HƠN.</span></div><nav>{links.map(([to, label], i) => <NavLink key={to} end={to === '/'} to={to} onClick={() => setOpen(false)}><small>0{i + 1}</small><span>{label}</span><b>↗</b></NavLink>)}</nav></div>
     <div className="menu-gallery-label"><span>MỘT CHÚT CẢM HỨNG CHO CHUYẾN ĐI</span><span>YOUR NEXT JOURNEY ↗</span></div>
     <div className="immersive-gallery">{places.map(([name, file]) => <Link key={name} to={`/destinations?keyword=${encodeURIComponent(name)}`} onClick={() => setOpen(false)}><img src={`/images/${file}`} alt={name}/><span><small>VIỆT NAM</small>{name}<b>↗</b></span></Link>)}</div>
-    <div className="immersive-bottom"><span>NVT Du lịch — Đi theo cách của bạn.</span>{user?.maVaiTro === 1 && <Link to="/admin" onClick={() => setOpen(false)}>Quản trị hệ thống ↗</Link>}{user ? <button onClick={() => { logout(); setOpen(false); navigate('/'); }}>Đăng xuất ↗</button> : <Link to="/register" onClick={() => setOpen(false)}>Bắt đầu hành trình ↗</Link>}</div>
+    <div className="immersive-bottom"><span>NVT Du lịch — Đi theo cách của bạn.</span><div className="immersive-bottom-actions">{user?.maVaiTro === 1 && <Link to="/admin" onClick={() => setOpen(false)}>Quản trị hệ thống ↗</Link>}{user ? <button onClick={() => { logout(); setOpen(false); navigate('/'); }}>Đăng xuất ↗</button> : <Link to="/register" onClick={() => setOpen(false)}>Bắt đầu hành trình ↗</Link>}</div></div>
   </div></>;
 }
