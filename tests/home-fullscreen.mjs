@@ -40,12 +40,16 @@ try {
       assert(b.width >= 44 && b.height >= 44, `${name}: small slide control`);
       assert(b.y + b.height <= bounds.height, `${name}: clipped slide control`);
     }
-    for (const [index, place] of ['Hạ Long', 'Hội An', 'Đà Nẵng'].entries()) {
+    await expect(hero.locator('.booking-hero__image')).toHaveCount(6);
+    await expect(hero.locator('.booking-hero__choice')).toHaveCount(6);
+    for (const [index, place] of ['Hạ Long', 'Hội An', 'Đà Nẵng', 'Tràng An', 'Mù Cang Chải', 'Eo Gió'].entries()) {
       const choice = page.getByRole('button', { name: `Xem ảnh ${index + 1}: ${place}`, exact: true });
       await expect(choice).toBeVisible();
       await expect(choice).toHaveText(String(index + 1));
     }
     await expect(page.locator('.booking-hero__controls img')).toHaveCount(0);
+    await expect(page.locator('.booking-search')).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Bạn muốn đi đâu?' })).toHaveCount(0);
     await expect(page.locator('.booking-destinations > a')).toHaveCount(5);
     await expect(page.locator('.booking-hero__image.is-active')).toHaveCSS('transform', 'none');
     if (capture && name !== 'compact') await page.screenshot({ path: path.join(out, `${name}-hero.png`) });
@@ -53,7 +57,7 @@ try {
     if (await explore.isVisible()) {
       await explore.focus();
       await page.keyboard.press('Enter');
-      await expect(page.locator('.booking-search')).toBeFocused();
+      await expect(page.locator('.home-story h2')).toBeFocused();
       assert(await home.evaluate(el => el.scrollTop > 0), `${name}: explore should scroll to discovery`);
       await home.evaluate(el => el.scrollTo({ top: 0, behavior: 'instant' }));
     }
@@ -63,7 +67,7 @@ try {
     const menuButton = page.getByRole('button', { name: 'Mở menu' });
     await menuButton.click(); await expect(page.getByRole('dialog')).toBeVisible();
     await page.keyboard.press('Escape'); await expect(menuButton).toBeFocused();
-    for (const [label, route] of [['Xem tour', '/tours'], ['Tìm phòng', '/hotels'], ['Xem nhà hàng', '/restaurants'], ['Tạo lịch trình', '/planner']]) {
+    for (const [label, route] of [['Xem tour', '/tours'], ['Tìm phòng', '/hotels'], ['Xem nhà hàng', '/restaurants'], ['Lên kế hoạch chuyến đi', '/planner']]) {
       await expect(page.locator('.home-service-links a').filter({ hasText: label })).toHaveAttribute('href', route);
     }
     for (const selector of ['.home-story', '.booking-services', '.booking-featured', '.booking-cta']) {
