@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SiteFooter from '../../components/SiteFooter';
-import { homeDiscoveries, homePlaces } from './homeContent';
+import { homeClosingPhoto, homeDiscoveries, homePlaces, homeServices } from './homeContent';
 import './home.css';
 
 function Arrow({ direction = 'right' }: { direction?: 'right' | 'left' | 'down' | 'up' }) {
@@ -25,6 +25,7 @@ const HomePage: React.FC = () => {
   const holdTimer = useRef<number | undefined>(undefined);
   const [holding, setHolding] = useState(false);
   const discoveryRef = useRef<HTMLElement>(null);
+  const discoveryHeadingRef = useRef<HTMLHeadingElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const cancelHold = () => {
@@ -79,7 +80,7 @@ const HomePage: React.FC = () => {
   };
   const explore = () => {
     discoveryRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
-    discoveryRef.current?.focus({ preventScroll: true });
+    discoveryHeadingRef.current?.focus({ preventScroll: true });
   };
   const hero = homePlaces[activeSlide];
   const backToTop = () => {
@@ -118,26 +119,20 @@ const HomePage: React.FC = () => {
         <div className="booking-hero__note"><Link to={`/destinations/${hero.id}`}>{hero.location}<Arrow /></Link><Link to="/image-credits">Nguồn ảnh</Link></div>
         <button className="booking-hero__explore" onClick={explore}>Khám phá tiếp <Arrow direction="down" /></button>
         <div className="booking-hero__controls" aria-label="Đổi ảnh banner">
-          <button onClick={() => selectSlide(activeSlide - 1)} aria-label="Ảnh trước"><Arrow direction="left" /></button>
           <div className="booking-hero__choices">{homePlaces.map((slide, index) => <button className="booking-hero__choice" key={slide.id} onClick={() => selectSlide(index)} aria-label={`Xem ảnh ${index + 1}: ${slide.name}`} aria-pressed={index === activeSlide}>
             {index + 1}
           </button>)}</div>
-          <button onClick={() => selectSlide(activeSlide + 1)} aria-label="Ảnh tiếp theo"><Arrow /></button>
+          <button className="booking-hero__previous" onClick={() => selectSlide(activeSlide - 1)} aria-label="Ảnh trước"><Arrow direction="left" /></button>
+          <button className="booking-hero__next" onClick={() => selectSlide(activeSlide + 1)} aria-label="Ảnh tiếp theo"><Arrow /></button>
           <button className="booking-hero__pause" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Tiếp tục chuyển ảnh' : 'Tạm dừng chuyển ảnh'}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">{paused ? <path d="m8 5 11 7-11 7Z" /> : <path d="M8 5v14M16 5v14" />}</svg>
           </button>
         </div>
       </div>
     </section>
-    <section className="booking-search" aria-label="Khám phá dịch vụ du lịch" ref={discoveryRef} tabIndex={-1}>
-      <h2>Bạn muốn đi đâu?</h2>
-      <Link className="booking-search__field" to="/destinations"><div><b>Tìm điểm đến</b><small>Biển, núi hay một phố nhỏ</small></div><Arrow /></Link>
-      <Link className="booking-search__field" to="/hotels"><div><b>Tìm khách sạn</b><small>Chọn nơi nghỉ cho chuyến đi</small></div><Arrow /></Link>
-      <Link className="booking-search__go" to="/tours">Xem tour <Arrow /></Link>
-    </section>
-    <section className="home-story" id="gioi-thieu">
-      <h2>Đi để thấy.<br />Ở lại để <em>cảm nhận.</em></h2>
+    <section className="home-story" id="gioi-thieu" ref={discoveryRef}>
       <div className="home-story__copy">
+        <h2 ref={discoveryHeadingRef} tabIndex={-1}>Đi để thấy.<br />Ở lại để <em>cảm nhận.</em></h2>
         <p className="story-lead">Một buổi sớm bên vịnh.<br />Một chiều đi bộ trong phố cổ.</p>
         <p>Không cần đi thật xa hay xếp kín mỗi ngày. Chọn một nơi bạn thích, tìm chỗ nghỉ vừa ý và để dành thời gian cho cả những điều chưa có trong kế hoạch.</p>
         <p>Ở NVT, bạn có thể tìm tour, khách sạn và tự sắp xếp lịch trình theo từng ngày.</p>
@@ -145,14 +140,15 @@ const HomePage: React.FC = () => {
       </div>
       <figure className="home-story__photo"><Link to="/destinations/4" aria-label="Khám phá Phố cổ Hội An"><HomePhoto place={homePlaces[1]} /></Link><figcaption><span>Phố cổ Hội An · Một chiều bên sông</span><Link to="/image-credits">Nguồn ảnh</Link></figcaption></figure>
     </section>
-    <section className="booking-section booking-services">
-      <div className="booking-section__heading"><h2>Chuyến đi<br /> của bạn,<br /><em>theo cách<br /> bạn muốn.</em></h2><p className="booking-section__description">Đi theo tour hoặc tự lên kế hoạch.<br />Bắt đầu từ điều bạn cần.</p><Link className="editorial-link" to="/planner">Lên kế hoạch chuyến đi <Arrow /></Link></div>
+    <section className="booking-section booking-services" aria-labelledby="home-services-heading">
+      <div className="booking-section__heading"><h2 id="home-services-heading">Chuyến đi của bạn,<br /><em>theo cách bạn muốn.</em></h2><p className="booking-section__description">Đi đâu, nghỉ ở đâu, ăn gì —<br />bắt đầu từ điều bạn cần.</p></div>
       <div className="home-service-links">
-        <Link to="/tours"><h3>Tour du lịch</h3><p>Xem lịch trình, giá tour và ngày khởi hành.</p><span>Xem tour <Arrow /></span></Link>
-        <Link to="/hotels"><h3>Khách sạn & phòng</h3><p>Tìm nơi nghỉ phù hợp với chuyến đi và ngân sách.</p><span>Tìm phòng <Arrow /></span></Link>
-        <Link to="/restaurants"><h3>Nhà hàng</h3><p>Tìm địa chỉ ăn uống ở nơi bạn sắp đến.</p><span>Xem nhà hàng <Arrow /></span></Link>
-        <Link to="/planner"><h3>Lịch trình riêng</h3><p>Đăng nhập để sắp xếp và lưu kế hoạch từng ngày.</p><span>Tạo lịch trình <Arrow /></span></Link>
+        {homeServices.map(service => <Link className={`home-service home-service--${service.key}`} key={service.key} to={service.route} aria-label={`${service.title} — ${service.action}`}>
+          <figure className="home-service__media"><HomePhoto place={service.photo} /><figcaption>{service.caption}</figcaption></figure>
+          <div className="home-service__body"><h3>{service.title}</h3><p>{service.copy}</p><span className="home-service__action">{service.action}<Arrow /></span></div>
+        </Link>)}
       </div>
+      <div className="home-services-credit"><span>Ảnh giới thiệu điểm đến, nơi lưu trú và ẩm thực; không cam kết dịch vụ hay tình trạng còn chỗ.</span><Link to="/image-credits">Nguồn ảnh và ghi công <Arrow /></Link></div>
     </section>
     <section className="booking-featured">
       <div className="booking-featured__intro"><h2>Vài nơi để<br /><em>bắt đầu.</em></h2><Link className="editorial-link" to="/destinations">Xem tất cả địa điểm <Arrow /></Link></div>
@@ -161,7 +157,12 @@ const HomePage: React.FC = () => {
           <HomePhoto place={place} /><div className="home-destination__caption"><div><h3>{place.name}</h3><p>{place.tag}</p></div><Arrow /></div>
         </Link>)}</div>
     </section>
-    <section className="booking-cta"><div><h2>Đã có nơi muốn đến?</h2><p className="booking-cta__copy">Xem lịch trình và chọn tour phù hợp với thời gian của bạn.</p></div><Link className="booking-button booking-button--dark" to="/tours">Khám phá tour <Arrow /></Link></section>
+    <section className="booking-cta" aria-labelledby="home-closing-heading">
+      <div className="booking-cta__inner">
+        <figure className="booking-cta__photo"><HomePhoto place={homeClosingPhoto} /><figcaption><span>Tràng An, Ninh Bình</span><Link to="/image-credits">Nguồn ảnh</Link></figcaption></figure>
+        <div className="booking-cta__body"><h2 id="home-closing-heading">Đã có nơi<br />muốn đến?</h2><p className="booking-cta__copy">Xem lịch trình, chọn một chuyến đi vừa ý.<br />Phần còn lại, cứ thong thả khám phá.</p><Link className="booking-button booking-button--dark" to="/tours">Khám phá tour <Arrow /></Link><Link className="editorial-link" to="/planner">Tự lên lịch trình <Arrow /></Link></div>
+      </div>
+    </section>
     <SiteFooter onBackToTop={backToTop} />
   </main>;
 };
