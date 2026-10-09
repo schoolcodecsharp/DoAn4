@@ -41,7 +41,7 @@ export default function ValidatedForm({ onSubmit, validate, formRef, ...props }:
     controls(form).forEach((c, i) => {
       if (c.matches(':disabled')) return;
       const labelNode = c.labels?.[0]?.cloneNode(true) as Element | undefined;
-      labelNode?.querySelectorAll('.form-field-error,input,select,textarea').forEach(node => node.remove());
+      labelNode?.querySelectorAll('.form-field-error,input,select,textarea,button').forEach(node => node.remove());
       const key = keyOf(c, i), label = labelNode?.textContent?.replace(/\s*\*\s*$/, '').trim() || c.getAttribute('aria-label') || 'Thông tin';
       if (c.required && !c.value.trim()) next[key] = `Vui lòng nhập hoặc chọn ${label.toLowerCase()}.`;
       else if (!c.validity.valid) next[key] = c.type === 'radio' && c.validity.valueMissing ? 'Vui lòng chọn số sao cho trải nghiệm của bạn.' : c.validity.typeMismatch ? 'Nhập đúng định dạng email.' : c.validity.rangeUnderflow ? `Giá trị tối thiểu là ${(c as HTMLInputElement).min}.` : c.validity.rangeOverflow ? `Giá trị tối đa là ${(c as HTMLInputElement).max}.` : c.validity.tooShort ? `Nhập ít nhất ${(c as HTMLInputElement).minLength} ký tự.` : c.validity.stepMismatch ? 'Kiểm tra định dạng số hoặc phần thập phân.' : 'Kiểm tra lại giá trị và định dạng trong ô này.';

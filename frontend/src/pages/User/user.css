@@ -143,7 +143,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .booking-hero__controls div button::after { display: none; }
 .booking-hero__controls div button[aria-pressed=true] { border-color: #d8e9b8; }
 .service-number { color: #7c926a; font-size: 13px; letter-spacing: 2px; padding-bottom: 20px; }
-.auth-page { height: 100dvh; padding-top: 36px; }
+.auth-page { height: auto; padding-top: 36px; }
 .auth-panel { border-radius: 14px; overflow: hidden; }
 @media (max-width: 1050px) {
   .travel-nav { gap: 14px; }
