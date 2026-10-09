@@ -4,6 +4,16 @@
 .catalog-availability input { width: 20px; height: 20px; accent-color: #284b41; flex-shrink: 0; }
 .catalog-availability small { display: block; color: #435d51; }
 .catalog-inventory { font-size: 14px; line-height: 1.5; padding: 12px 20px; margin: 0; background: #e5e9da; color: #284b41; }
+.catalog-card .user-kicker { font-size: 11px; letter-spacing: .12em; color: #4a6457; }
+.catalog-card .library-photo figcaption { font-size: 12px; line-height: 1.5; color: #4a6457; }
+.catalog-card-body .card-meta { font-size: 13px; color: #4a6457; }
+.catalog-card .card-bottom small { font-size: 12px; color: #4a6457; }
+.catalog-card .card-bottom a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-block: 8px; font-size: 14px; line-height: 1.5; }
+.catalog-card .card-bottom a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.catalog-intro > div > p:not(.user-kicker) { color: #4a6457; }
+.catalog-search .province-filter small { font-size: 12px; color: #4a6457; }
+.catalog-results > span { font-size: 13px; color: #4a6457; }
+.catalog-results > .user-text-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
 .catalog-filter-disclosure > summary { cursor: pointer; min-height: 48px; padding-block: 14px; color: #284b41; font-weight: 600; }
 .catalog-filter-disclosure .catalog-advanced { border: 0; margin-top: 0; }
 .booking-confirmation { border-block-start: 1px solid #d8dbcb; margin-top: 12px; padding-top: 24px; }
@@ -17,6 +27,7 @@
 .planner-draft-status { color: #435d51; line-height: 1.6; margin-bottom: 24px; max-width: 75ch; }
 .catalog-filter-disclosure summary:focus-visible { outline: 2px solid #284b41; outline-offset: 4px; }
 @media (max-width: 640px) {
+  .catalog-search input, .catalog-search select, .catalog-filter-disclosure input, .catalog-filter-disclosure select { font-size: 16px; }
   .catalog-intro { gap: 12px; margin-bottom: 20px; padding-bottom: 0; }
   .catalog-intro p { margin-block: 12px; }
   .catalog-intro .user-kicker { display: none; }

@@ -83,6 +83,7 @@ try {
     await visit('/hotels?province='+encodeURIComponent('Hưng Yên'));
     await page.locator('.catalog-grid').scrollIntoViewIfNeeded();
     await page.screenshot({path:path.join(root,`.local/catalog-verified-list-${width}.png`)});
+    await page.locator('.catalog-filter-disclosure > summary').click();
     await page.getByLabel('Giá đến (đ)').fill('1000000');
     await expect(page.getByText('Chưa có kết quả phù hợp')).toBeVisible();
     await page.evaluate(s=>localStorage.setItem('tripmate_auth',JSON.stringify(s)),sessions.user);
