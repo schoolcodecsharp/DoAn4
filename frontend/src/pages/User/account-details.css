@@ -18,3 +18,8 @@
 .booking-actions summary:focus-visible { outline: 2px solid var(--forest, #284b41); outline-offset: 3px; }
 .booking-actions textarea { min-height: 100px; font-size: 16px; }
 .booking-actions .user-button { justify-self: start; }
+.user-page .account-tabs button { min-height: 44px; }
+@media (max-width: 600px) {
+  .user-page .account-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .user-page .account-tabs button { min-width: 0; padding: 8px 4px; font-size: 13px; line-height: 1.4; text-wrap: balance; }
+}
