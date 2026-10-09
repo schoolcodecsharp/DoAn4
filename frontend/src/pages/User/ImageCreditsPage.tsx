@@ -2,6 +2,7 @@ import SiteFooter from '../../components/SiteFooter';
 import { Link } from 'react-router-dom';
 import { useResource, type TravelImage } from './catalog';
 import { LibraryPhoto } from './Photo';
+import { homeEditorialImages } from '../Home/homeContent';
 
 export default function ImageCreditsPage() {
   const { data, loading, error, reload } = useResource<TravelImage[]>('/hinhanh');
@@ -9,7 +10,7 @@ export default function ImageCreditsPage() {
   // over an older duplicate that only carries the image URL.
   const creditScore = (photo: TravelImage) => [photo.tacGia, photo.nguon, photo.giayPhep, photo.urlGiayPhep].filter(Boolean).length;
   const byPath = new Map<string, TravelImage>();
-  for (const photo of data || []) {
+  for (const photo of [...homeEditorialImages, ...(data || [])]) {
     const previous = byPath.get(photo.duongDan);
     if (!previous || creditScore(photo) > creditScore(previous)) byPath.set(photo.duongDan, photo);
   }
