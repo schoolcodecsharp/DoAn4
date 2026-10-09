@@ -7,7 +7,10 @@
   "GiayPhep": "CC BY-SA 2.0",
   "UrlGiayPhep": "https://creativecommons.org/licenses/by-sa/2.0",
   "DownloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Hotel_Continental_Saigon_%2853854035740%29.jpg/1280px-Hotel_Continental_Saigon_%2853854035740%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "Sha256": "681aa9d16621cfcfe14992a427aba886fe275a9627466ef6bcba238de5ddd9e8",
+  "OriginalSha256": "681aa9d16621cfcfe14992a427aba886fe275a9627466ef6bcba238de5ddd9e8",
+  "Sha256": "ef7aa9e66de6819a553156db5b7e7caf2773ff3be465462518dfb15ad5a726fa",
+  "ProvenanceEmbeddedAt": "2026-10-08",
+  "Alterations": "Source provenance embedded in JPEG COM only; pixel content is unchanged.",
   "DownloadedAt": "2026-10-01T15:43:03.3743229Z",
   "Width": 1280,
   "Height": 960

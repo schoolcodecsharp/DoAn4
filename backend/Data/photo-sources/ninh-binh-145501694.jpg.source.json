@@ -7,7 +7,10 @@
   "GiayPhep": "CC BY 4.0",
   "UrlGiayPhep": "https://creativecommons.org/licenses/by/4.0",
   "DownloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Trang_An_Landscape_Complex%2C_Ninh_Binh_Province%2C_Vietnam%2C_20240202_1433_5283.jpg/1280px-Trang_An_Landscape_Complex%2C_Ninh_Binh_Province%2C_Vietnam%2C_20240202_1433_5283.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "Sha256": "07208c6b20817eea6cbb95c2d4826917c8263113ce20e671cfbba528075f0673",
+  "OriginalSha256": "07208c6b20817eea6cbb95c2d4826917c8263113ce20e671cfbba528075f0673",
+  "Sha256": "a90d85297aa6080c448ff186dfd1de1561d9d6bd5da6ae3b89a0ff11306a50ba",
+  "ProvenanceEmbeddedAt": "2026-10-08",
+  "Alterations": "Source provenance embedded in JPEG COM only; pixel content is unchanged.",
   "DownloadedAt": "2026-09-21T14:35:07.1261959Z",
   "Width": 1280,
   "Height": 855

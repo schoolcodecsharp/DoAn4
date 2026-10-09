@@ -7,7 +7,10 @@
   "GiayPhep": "CC BY-SA 4.0",
   "UrlGiayPhep": "https://creativecommons.org/licenses/by-sa/4.0",
   "DownloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/View_from_Hang_Mua.jpg/1280px-View_from_Hang_Mua.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "Sha256": "2a8e19d512f5c963ccd04104487c9cc7e321c4242461b0412d3077841483231b",
+  "OriginalSha256": "2a8e19d512f5c963ccd04104487c9cc7e321c4242461b0412d3077841483231b",
+  "Sha256": "261339d5d1cfade7b1f83eeb8b27594d14d80c0c6ca44e39858d199fd7b2c5b5",
+  "ProvenanceEmbeddedAt": "2026-10-08",
+  "Alterations": "Source provenance embedded in JPEG COM only; pixel content is unchanged.",
   "DownloadedAt": "2026-10-02T10:08:17.0199465Z",
   "Width": 1280,
   "Height": 576
